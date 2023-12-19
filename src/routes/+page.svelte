@@ -1,11 +1,12 @@
 <script lang="ts">
     import words from "../words/words.json";
-    const wordsSize = 60;
+    const wordsSize = 1;
     let wordList = "";
     let currentPosition = 0;
     for(let i = 0; i<wordsSize; i+=1){
         wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
     }
+    let hasMistaken = false;
 
     function handleTiping(keydown:any){
         const pressedKey = keydown.data;
@@ -15,7 +16,11 @@
             const letter = document.getElementById("main-text")?.childNodes[currentPosition]
             if(letter){
                 if(letter.classList.contains("removable")){
-                    letter.remove()
+                    letter.remove();
+                    const previousLetter = document.getElementById("main-text")?.childNodes[currentPosition-1]
+                    if(previousLetter.style.color == "white"){
+                        hasMistaken=false;
+                    }
                 }
                 else{
                     letter.style.color= "rgb(127, 106, 106)";
@@ -25,10 +30,12 @@
         }
         const letter = document.getElementById("main-text")?.childNodes[currentPosition]
         if(letter){
-            if(pressedKey == wordList[currentPosition]){
+            if(pressedKey == wordList[currentPosition] && !hasMistaken){
                 letter.style.color= "white";
+                
             }
             else{
+                hasMistaken = true;
                 let newLetter = letter.cloneNode()
                 newLetter.textContent=pressedKey;
                 newLetter.classList.add("removable");
@@ -38,6 +45,9 @@
             }
         }
         currentPosition+=1;
+        if(currentPosition==wordList.length-1 && !hasMistaken){
+            alert("AAAAAAAAAAAA")
+        }
 
     }
 
@@ -66,7 +76,7 @@
     }
     #main-text{
         color: rgb(127, 106, 106);
-        font-size: larger;
+        font-size: 2em;
         width: 80%;
         user-select: none;
     }
