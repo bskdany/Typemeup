@@ -9,34 +9,44 @@
 
     function handleTiping(keydown:any){
         const pressedKey = keydown.data;
-        console.log(keydown)
+
         if(keydown.inputType=="deleteContentBackward"){
             currentPosition -=1
-            const letter = document.getElementById("letterAtIndex"+currentPosition);
+            const letter = document.getElementById("main-text")?.childNodes[currentPosition]
             if(letter){
-                letter.style.color= "rgb(127, 106, 106)";
+                if(letter.classList.contains("removable")){
+                    letter.remove()
+                }
+                else{
+                    letter.style.color= "rgb(127, 106, 106)";
+                }
             }
             return
         }
-
-        const letter = document.getElementById("letterAtIndex"+currentPosition);
+        const letter = document.getElementById("main-text")?.childNodes[currentPosition]
         if(letter){
             if(pressedKey == wordList[currentPosition]){
                 letter.style.color= "white";
             }
             else{
-                letter.style.color= "red";
+                let newLetter = letter.cloneNode()
+                newLetter.textContent=pressedKey;
+                newLetter.classList.add("removable");
+                newLetter.style.color = "red";
+                let parent = document.getElementById("main-text")
+                parent.insertBefore(newLetter, letter)
             }
         }
         currentPosition+=1;
+
     }
 
 </script>
 
 
-<div id="main-text" >
-    {#each wordList as letter, index}
-        <span class="letter" id="letterAtIndex{index}">{letter}</span>
+<div id="main-text">
+    {#each wordList as letter}
+        <span class="letter">{letter}</span>
     {/each}
 </div>
 <input id="wordsInput" on:input={handleTiping}>
@@ -58,9 +68,19 @@
         color: rgb(127, 106, 106);
         font-size: larger;
         width: 80%;
+        user-select: none;
     }
     #wordsInput{
-        width: 50%;
+        width: 80%;
+        height: 100px;
+        position:absolute;
+        background: transparent;
+        border: none;
+        opacity: none;
+        outline: none;
+        color: transparent;
+        user-select: none;
+        cursor: default;
     }
 </style>
 
