@@ -1,6 +1,6 @@
 <script lang="ts">
     import words from "../words/words.json";
-    const wordsSize = 1;
+    const wordsSize = 10;
     let wordList = "";
     let currentPosition = 0;
     for(let i = 0; i<wordsSize; i+=1){
@@ -10,15 +10,17 @@
 
     function handleTiping(keydown:any){
         const pressedKey = keydown.data;
-
+        // console.log(currentPosition)
         if(keydown.inputType=="deleteContentBackward"){
-            currentPosition -=1
+            currentPosition -=1;
             const letter = document.getElementById("main-text")?.childNodes[currentPosition]
             if(letter){
                 if(letter.classList.contains("removable")){
                     letter.remove();
                     const previousLetter = document.getElementById("main-text")?.childNodes[currentPosition-1]
-                    if(previousLetter.style.color == "white"){
+                    console.log(currentPosition)
+                    if(currentPosition==1 || previousLetter?.style?.color == "white"){
+                        console.log("AA")
                         hasMistaken=false;
                     }
                 }
@@ -26,29 +28,31 @@
                     letter.style.color= "rgb(127, 106, 106)";
                 }
             }
-            return
         }
-        const letter = document.getElementById("main-text")?.childNodes[currentPosition]
-        if(letter){
-            if(pressedKey == wordList[currentPosition] && !hasMistaken){
-                letter.style.color= "white";
-                
+        else{
+            const letter = document.getElementById("main-text")?.childNodes[currentPosition]
+            if(letter){
+                if(pressedKey == wordList[currentPosition] && !hasMistaken){
+                    letter.style.color= "white";
+                    
+                }
+                else{
+                    hasMistaken = true;
+                    let newLetter = letter.cloneNode()
+                    newLetter.textContent=pressedKey;
+                    newLetter.classList.add("removable");
+                    newLetter.style.color = "red";
+                    let parent = document.getElementById("main-text")
+                    parent.insertBefore(newLetter, letter)
+                }
             }
-            else{
-                hasMistaken = true;
-                let newLetter = letter.cloneNode()
-                newLetter.textContent=pressedKey;
-                newLetter.classList.add("removable");
-                newLetter.style.color = "red";
-                let parent = document.getElementById("main-text")
-                parent.insertBefore(newLetter, letter)
+            currentPosition+=1;
+            if(currentPosition==wordList.length-1 && !hasMistaken){
+                alert("AAAAAAAAAAAA")
             }
         }
-        currentPosition+=1;
-        if(currentPosition==wordList.length-1 && !hasMistaken){
-            alert("AAAAAAAAAAAA")
-        }
-
+        
+        console.log(currentPosition)
     }
 
 </script>
