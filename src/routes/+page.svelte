@@ -2,47 +2,66 @@
     import words from "../words/words.json";
     const wordsSize = 10;
     let wordList = "";
-    let offset = 2;
-    let currentPosition = 0 + offset;
+    let currentPosition = 0;
 
     for(let i = 0; i<wordsSize; i+=1){
         wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
     }
     let hasMistaken = false;
 
-    function handleCursor(letter, movingDirection){
+    function handleCursor(movingDirection:number){
+        const parentDiv = document.getElementById('main-text');
         const cursor = document.getElementById("cursor");
-        const letterWidth = letter.offsetWidth;
-        console.log(letterWidth)
-        const currentMargin = parseInt(window.getComputedStyle(cursor).getPropertyValue('margin-left').slice(0,-2)) + 2;
-        console.log(currentMargin + letterWidth*movingDirection + "px")
-        cursor.style.marginLeft = currentMargin + letterWidth*movingDirection + "px";
+        const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition+movingDirection];
+        parentDiv.insertBefore(cursor, newPosition);
+        // const letterWidth = letter.offsetWidth;
+        // console.log(letterWidth, letter.textContent)
+        // const currentMargin = parseInt(window.getComputedStyle(cursor).getPropertyValue('margin-left').slice(0,-2));
+        // console.log(currentMargin + letterWidth*movingDirection + "px")
+        // cursor.style.marginLeft = currentMargin + (2+letterWidth)*movingDirection + "px";
+    }
+
+    function backspace(){
+        if(currentPosition == 0){
+            return
+        }
+        const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition-1];
+
+        handleCursor(-1)
+        if(letter){
+            if(letter.classList.contains("removable")){
+                letter.remove();
+
+                const previousLetter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition-2];
+                if(currentPosition==1 || previousLetter?.style?.color == "white"){
+                    hasMistaken=false;
+                }
+            }
+            else{
+                letter.style.color= "rgb(127, 106, 106)";
+            }
+        }
+        currentPosition -=1;
+    }
+
+    function checkIfEnd(){
+        if(currentPosition==wordList.length-1 && !hasMistaken){
+            alert("End")
+        }
     }
 
     function handleTiping(keydown:any){
         const pressedKey = keydown.data;
         if(keydown.inputType=="deleteContentBackward"){
-            currentPosition -=1;
-            const letter = document.getElementById("main-text")?.childNodes[currentPosition]
-            if(letter){
-                if(letter.classList.contains("removable")){
-                    letter.remove();
-                    const previousLetter = document.getElementById("main-text")?.childNodes[currentPosition-1]
-                    if(currentPosition==1 || previousLetter?.style?.color == "white"){
-                        hasMistaken=false;
-                    }
-                }
-                else{
-                    letter.style.color= "rgb(127, 106, 106)";
-                }
-            }
+           backspace()
         }
         else{
-            let letter = document.getElementById("main-text").childNodes[currentPosition]
-            handleCursor(letter, 1)
+            const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition];
+            const expectedLetter = wordList[currentPosition];
             if(letter){
-                if(pressedKey == wordList[currentPosition-offset] && !hasMistaken){
+                if(pressedKey == expectedLetter && !hasMistaken){
                     letter.style.color= "white";
+                    handleCursor(1);
                 }
 
                 else{
@@ -51,14 +70,13 @@
                     newLetter.textContent=pressedKey;
                     newLetter.classList.add("removable");
                     newLetter.style.color = "red";
-                    let parent = document.getElementById("main-text")
-                    parent.insertBefore(newLetter, letter)
+                    const parent = document.getElementById("main-text")
+                    parent.insertBefore(newLetter, letter);
+                    handleCursor(1)
                 }
             }
             currentPosition+=1;
-            if(currentPosition==wordList.length-1 && !hasMistaken){
-                alert("End")
-            }
+            checkIfEnd()
         }
     }
 </script>
