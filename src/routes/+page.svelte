@@ -1,24 +1,40 @@
 <script lang="ts">
     import words from "../words/words.json";
-    const wordsSize = 10;
+    import {recordKeystroke} from "./recordKeystrokes";
+    import {msTime, resetTime, startTime, stopTime} from "./stopwatch";
+    import { onMount } from 'svelte';
+
+    let wordsSize = 15;
     let wordList = "";
     let currentPosition = 0;
-
-    for(let i = 0; i<wordsSize; i+=1){
-        wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
-    }
+    let startedTyping = false;
+    let correctCharCount = 0;
+    let backspaceMinPosition = -1;
     let hasMistaken = false;
+
+    function generateWords(){
+        let letters = document.getElementById("main-text")?.getElementsByClassName("letter");
+        for(var letter of letters){
+            letter.style.color = "rgb(127, 106, 106)";
+        }
+        wordList = "";
+        for(let i = 0; i<wordsSize; i+=1){
+            wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
+        }
+    }
 
     function handleCursor(movingDirection:number){
         const parentDiv = document.getElementById('main-text');
         const cursor = document.getElementById("cursor");
         const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition+movingDirection];
         parentDiv.insertBefore(cursor, newPosition);
-        // const letterWidth = letter.offsetWidth;
-        // console.log(letterWidth, letter.textContent)
-        // const currentMargin = parseInt(window.getComputedStyle(cursor).getPropertyValue('margin-left').slice(0,-2));
-        // console.log(currentMargin + letterWidth*movingDirection + "px")
-        // cursor.style.marginLeft = currentMargin + (2+letterWidth)*movingDirection + "px";
+    }
+
+    function resetCursor(){
+        const parentDiv = document.getElementById('main-text');
+        const cursor = document.getElementById("cursor");
+        const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[0];
+        parentDiv.insertBefore(cursor, newPosition);
     }
 
     function backspace(){
@@ -38,6 +54,7 @@
                 }
             }
             else{
+                correctCharCount-=1;
                 letter.style.color= "rgb(127, 106, 106)";
             }
         }
@@ -46,22 +63,40 @@
 
     function checkIfEnd(){
         if(currentPosition==wordList.length-1 && !hasMistaken){
-            alert("End")
+            console.log(`Correct chars: ${correctCharCount}`)
+            console.log(`time: ${msTime/100}`)
+            const wpmSpeed = ((correctCharCount / 5 ) * (60/(msTime/100))).toFixed(2);
+            stopTime();
+            resetTime()
+            console.log(wpmSpeed)
+            resetTyping();
         }
     }
 
     function handleTiping(keydown:any){
         const pressedKey = keydown.data;
-        if(keydown.inputType=="deleteContentBackward"){
-           backspace()
+        if(!startedTyping){
+            startedTyping = true;
+            startTime()
         }
-        else{
+
+        if(keydown.inputType=="deleteContentBackward" && currentPosition > backspaceMinPosition+1){
+            recordKeystroke("backspace")
+            backspace()
+        }
+        else if(pressedKey){
             const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition];
-            const expectedLetter = wordList[currentPosition];
+            const expectedKey = wordList[currentPosition];
             if(letter){
-                if(pressedKey == expectedLetter && !hasMistaken){
+                if(pressedKey == expectedKey && !hasMistaken){
+                    recordKeystroke(pressedKey);
                     letter.style.color= "white";
                     handleCursor(1);
+                    correctCharCount+=1;
+
+                    if(pressedKey==" "){
+                        backspaceMinPosition = currentPosition;
+                    }
                 }
 
                 else{
@@ -79,16 +114,44 @@
             checkIfEnd()
         }
     }
+
+    function resetTyping(){
+        generateWords();
+        stopTime();
+        resetTime();
+        resetCursor();
+        currentPosition = 0;
+        startedTyping = false;
+        correctCharCount = 0;
+        backspaceMinPosition = -1;
+        hasMistaken = false;
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            resetTyping();
+        }
+    }
+
+    function resetLetterToDefaultColor(letter){
+        console.log("value changed")
+        letter.style.color = rgb(127, 106, 106);
+    }
+
+    onMount(()=>{
+        generateWords();
+    })
+
 </script>
 
-
-<div id="main-text">
+<div id="main-text" on:mount>
     <span id="cursor"></span>
     {#each wordList as letter}
         <span class="letter">{letter}</span>
     {/each}
 </div>
-<input id="wordsInput" on:input={handleTiping}>
+<input id="wordsInput" on:input={handleTiping} on:keydown={handleKeyDown}>
 
 <style>
     :global(body){
@@ -125,7 +188,7 @@
         position:absolute;
         width: 2px;
         height: 2rem;
-        background-color: rgb(186, 175, 175);
+        background-color: rgb(172, 209, 79);
     }
     .letter{
         margin-left: 2px;
