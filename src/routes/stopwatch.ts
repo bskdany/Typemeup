@@ -1,7 +1,8 @@
 export let msTime :number = 0;
 let time :any;
+let secondTime :number = 0;
 export function startTime(){
-    time = setInterval(handleTime, 1);
+    time = setInterval(handleTime, 10);
 }
 
 export function stopTime(){
@@ -13,5 +14,5 @@ export function resetTime(){
 }
 
 function handleTime(){
-    msTime+=1;
+    msTime+=1;  
 }

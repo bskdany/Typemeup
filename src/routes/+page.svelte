@@ -4,7 +4,7 @@
     import {msTime, resetTime, startTime, stopTime} from "./stopwatch";
     import { onMount } from 'svelte';
 
-    let wordsSize = 15;
+    let wordsSize = 5;
     let wordList = "";
     let currentPosition = 0;
     let startedTyping = false;
@@ -64,7 +64,7 @@
     function checkIfEnd(){
         if(currentPosition==wordList.length-1 && !hasMistaken){
             console.log(`Correct chars: ${correctCharCount}`)
-            console.log(`time: ${msTime/100}`)
+            console.log(`time: ${msTime}`)
             const wpmSpeed = ((correctCharCount / 5 ) * (60/(msTime/100))).toFixed(2);
             stopTime();
             resetTime()
@@ -77,6 +77,7 @@
         const pressedKey = keydown.data;
         if(!startedTyping){
             startedTyping = true;
+            resetTime()
             startTime()
         }
 
@@ -145,6 +146,7 @@
 
 </script>
 
+<div id=""></div>
 <div id="main-text" on:mount>
     <span id="cursor"></span>
     {#each wordList as letter}
