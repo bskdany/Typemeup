@@ -2,16 +2,20 @@
     import words from "../words/words.json";
     import {recordKeystroke} from "./recordKeystrokes";
     import {msTime, resetTime, startTime, stopTime} from "./stopwatch";
-    import { onMount } from 'svelte';
-    import WpmCounter from "./wpmCounter.svelte";
+    import { onMount, createEventDispatcher } from 'svelte';
+    // import WpmCounter from "./wpmCounter.svelte";
 
-    let wordsSize = 5;
-    let wordList = "";
-    let currentPosition = 0;
-    let startedTyping = false;
-    let correctCharCount = 0;
-    let backspaceMinPosition = -1;
-    let hasMistaken = false;
+    let wordsSize :number = 5;
+    let wordList :string = "";
+    let currentPosition :number = 0;
+    let startedTyping :boolean = false;
+    let correctCharCount :number = 0;
+    let backspaceMinPosition :number = -1;
+    let hasMistaken :boolean = false;
+    let typingTestWpm :number;
+    const dispatch = createEventDispatcher();
+    export const resetTypingProp = resetTyping;
+
 
     function generateWords(){
         let letters = document.getElementById("main-text")?.getElementsByClassName("letter");
@@ -66,11 +70,11 @@
         if(currentPosition==wordList.length-1 && !hasMistaken){
             console.log(`Correct chars: ${correctCharCount}`)
             console.log(`time: ${msTime}`)
-            const wpmSpeed = ((correctCharCount / 5 ) * (60/(msTime/100))).toFixed(2);
+            typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/100))).toFixed(2));
             stopTime();
-            resetTime()
-            console.log(wpmSpeed)
+            resetTime();
             resetTyping();
+            dispatch("typingEnded",typingTestWpm);
         }
     }
 
@@ -129,25 +133,14 @@
         hasMistaken = false;
     }
 
-    function handleKeyDown(event) {
-        if (event.key === 'Tab') {
-            event.preventDefault();
-            resetTyping();
-        }
-    }
-
-    function resetLetterToDefaultColor(letter){
-        console.log("value changed")
-        letter.style.color = rgb(127, 106, 106);
-    }
-
     onMount(()=>{
         generateWords();
     })
 
+
 </script>
 
-<WpmCounter/>
+<!-- <WpmCounter/> -->
 <div id=""></div>
 <div id="main-text" on:mount>
     <span id="cursor"></span>
@@ -155,7 +148,7 @@
         <span class="letter">{letter}</span>
     {/each}
 </div>
-<input id="wordsInput" on:input={handleTiping} on:keydown={handleKeyDown}>
+<input id="wordsInput" on:input={handleTiping}>
 
 <style>
     #main-text{
