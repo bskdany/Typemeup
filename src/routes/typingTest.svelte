@@ -15,7 +15,7 @@
     let typingTestWpm :number;
     const dispatch = createEventDispatcher();
     export const resetTypingProp = resetTyping;
-
+    let inputReference;
 
     function generateWords(){
         let letters = document.getElementById("main-text")?.getElementsByClassName("letter");
@@ -135,6 +135,7 @@
 
     onMount(()=>{
         generateWords();
+        inputReference.focus();
     })
 
 
@@ -148,7 +149,7 @@
         <span class="letter">{letter}</span>
     {/each}
 </div>
-<input id="wordsInput" on:input={handleTiping}>
+<input bind:this={inputReference} id="wordsInput" on:input={handleTiping} >
 
 <style>
     #main-text{
