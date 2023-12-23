@@ -143,15 +143,15 @@
 
 </script>
 
-<!-- <WpmCounter/> -->
-<div id=""></div>
-<div id="main-text" on:mount>
-    <span id="cursor"></span>
-    {#each wordList as letter}
-        <span class="letter">{letter}</span>
-    {/each}
+<div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
+    <div id="main-text" on:mount>
+        <span id="cursor"></span>
+        {#each wordList as letter}
+            <span class="letter">{letter}</span>
+        {/each}
+    </div>
+    <input bind:this={inputReference} id="wordsInput" on:input={handleTiping}>    
 </div>
-<input bind:this={inputReference} id="wordsInput" on:input={handleTiping} >
 
 <style>
     #main-text{
@@ -159,10 +159,10 @@
         font-size: 2rem;
         width: 80%;
         user-select: none;
+        padding: 50px;
     }
     #wordsInput{
-        width: 80%;
-        height: 100px;
+        width: 10%;
         position:absolute;
         background: transparent;
         border: none;
@@ -171,6 +171,7 @@
         color: transparent;
         user-select: none;
         cursor: default;
+        margin-top: 0%;
     }
     #cursor{
         position:absolute;

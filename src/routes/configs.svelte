@@ -57,7 +57,6 @@
         color: transparent;
         border-radius: 10px;
         background-color: #2c2e31;
-        margin-bottom: 100px;
     }
     #separator{
         width: 2px;
