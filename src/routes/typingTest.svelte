@@ -4,6 +4,7 @@
     import {msTime, resetTime, startTime, stopTime} from "./stopwatch";
     import { onMount, createEventDispatcher } from 'svelte';
     import { wordSize } from "./stores";
+    import Configs from "./configs.svelte";
 
     // let wordsSize :number = 5;
     let wordList :string = "";
@@ -143,6 +144,7 @@
 
 </script>
 
+<Configs/>
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
     <div id="main-text" on:mount>
         <span id="cursor"></span>
@@ -154,10 +156,15 @@
 </div>
 
 <style>
+    #typingTest{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
     #main-text{
         color: rgb(127, 106, 106);
         font-size: 2rem;
-        width: 80%;
+        width: 70%;
         user-select: none;
         padding: 50px;
     }
@@ -177,7 +184,7 @@
         position:absolute;
         width: 2px;
         height: 2rem;
-        background-color: rgb(172, 209, 79);
+        background-color: #a8b9e4;
     }
     .letter{
         margin-left: 2px;

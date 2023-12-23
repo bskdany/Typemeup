@@ -8,8 +8,8 @@
 
 <style>
     div{
-        color: rgb(235, 226, 226);
+        color: rgb(127, 106, 106);
         font-size: 1.5rem;
-        margin-top: 1rem;
+        margin-top: 50px;
     }
 </style>
