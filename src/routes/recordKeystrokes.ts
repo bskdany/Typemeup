@@ -1,5 +1,5 @@
 let recordingStarted = false;
-let keystrokeData = {};
+let keystrokeData :any = {};
 let msTime = 0;
 let interval :any;
 function startTimer(){
@@ -8,14 +8,15 @@ function startTimer(){
 function handleTime(){
     msTime+=1;
 }
-function stopTimer(){
-    clearInterval(interval)
+export function stopRecordKeystroke(){
+    console.log(keystrokeData);
+    clearInterval(interval);
 }
 
-export function recordKeystroke(keystroke :string){
+export function recordKeystroke(pressedKey :string){
     if(recordingStarted==false){
         startTimer();
         recordingStarted = true;
     }
-    // console.log(keystroke + " " + msTime)
+    keystrokeData[msTime] = pressedKey;
 }

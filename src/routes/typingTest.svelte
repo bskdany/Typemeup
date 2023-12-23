@@ -1,9 +1,9 @@
 <script lang="ts">
     import words from "../words/words.json";
-    import {recordKeystroke} from "./recordKeystrokes";
+    import {recordKeystroke, stopRecordKeystroke} from "./recordKeystrokes";
     import {msTime, resetTime, startTime, stopTime} from "./stopwatch";
     import { onMount, createEventDispatcher } from 'svelte';
-    import { wordSize } from "./stores";
+    import { wordSize, pressedKeyStore } from "./stores";
     import Configs from "./configs.svelte";
 
     // let wordsSize :number = 5;
@@ -101,13 +101,15 @@
         }
 
         if(keydown.inputType=="deleteContentBackward" && currentPosition > backspaceMinPosition+1){
-            recordKeystroke("backspace")
+            recordKeystroke("backspace");
+            saveKeyStore("backspace")
             backspace()
         }
         else if(pressedKey){
             const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition];
             const expectedKey = wordList[currentPosition];
             if(letter){
+                saveKeyStore(pressedKey);
                 if(pressedKey == expectedKey && !hasMistaken){
                     recordKeystroke(pressedKey);
                     letter.style.color= "white";
@@ -142,11 +144,17 @@
         stopTime();
         resetTime();
         resetCursor();
+        stopRecordKeystroke();
+        pressedKeyStore.set("");
         currentPosition = 0;
         startedTyping = false;
         correctCharCount = 0;
         backspaceMinPosition = -1;
         hasMistaken = false;
+    }
+
+    function saveKeyStore(key:string){
+        pressedKeyStore.set(key);
     }
 
     onMount(()=>{

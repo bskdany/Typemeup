@@ -2,6 +2,7 @@
     import "./global.css"
     import TypingTest from "./typingTest.svelte";
     import TypingResult from "./typingResult.svelte";
+    import Keyboard from "./keyboard.svelte";
     import { mode } from './stores.js';
     import { onMount } from 'svelte';
 
@@ -35,8 +36,10 @@
     });
 </script>
 
+
 {#if currentMode === 'typingTest'}
     <TypingTest bind:resetTypingProp={resetTyping} on:typingEnded={getTypingTestWpm}/>   
+    <Keyboard/>
 {:else if currentMode === 'typingResult'}
     <TypingResult typingTestWpm={typingTestWpm} />
 {/if}
