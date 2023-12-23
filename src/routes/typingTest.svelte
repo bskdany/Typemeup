@@ -16,17 +16,19 @@
     let typingTestWpm :number;
     const dispatch = createEventDispatcher();
     export const resetTypingProp = resetTyping;
-    let inputReference;
+    let inputReference :any;
     let configWordSize :number = 10;
 
     function generateWords(){
-        let letters = document.getElementById("main-text")?.getElementsByClassName("letter");
-        for(var letter of letters){
-            letter.style.color = "rgb(127, 106, 106)";
-        }
-        wordList = "";
-        for(let i = 0; i<configWordSize; i+=1){
-            wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
+        let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
+        if(letters){
+            for(var letter of letters){
+                letter.style.color = "rgb(127, 106, 106)";
+            }
+            wordList = "";
+            for(let i = 0; i<configWordSize; i+=1){
+                wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
+            }
         }
     }
 
@@ -34,14 +36,24 @@
         const parentDiv = document.getElementById('main-text');
         const cursor = document.getElementById("cursor");
         const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition+movingDirection];
-        parentDiv.insertBefore(cursor, newPosition);
+        if(parentDiv && cursor && newPosition){
+            parentDiv.insertBefore(cursor, newPosition);
+        }
+        else{
+            console.error("Stop fucking with html")
+        }
     }
 
     function resetCursor(){
         const parentDiv = document.getElementById('main-text');
         const cursor = document.getElementById("cursor");
         const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[0];
-        parentDiv.insertBefore(cursor, newPosition);
+        if(parentDiv && cursor && newPosition){
+            parentDiv.insertBefore(cursor, newPosition);
+        }
+        else{
+            console.error("Stop fucking with html")
+        }
     }
 
     function backspace(){
@@ -114,7 +126,9 @@
                     newLetter.classList.add("removable");
                     newLetter.style.color = "red";
                     const parent = document.getElementById("main-text")
-                    parent.insertBefore(newLetter, letter);
+                    if(parent){
+                        parent.insertBefore(newLetter, letter);
+                    }
                     handleCursor(1)
                 }
             }
@@ -140,8 +154,6 @@
         inputReference.focus();
         wordSize.subscribe(value => { configWordSize=value;resetTyping();});
     })
-
-
 </script>
 
 <Configs/>
@@ -191,6 +203,3 @@
     }
 
 </style>
-
-
-
