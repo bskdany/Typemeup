@@ -3,9 +3,9 @@
     import {recordKeystroke} from "./recordKeystrokes";
     import {msTime, resetTime, startTime, stopTime} from "./stopwatch";
     import { onMount, createEventDispatcher } from 'svelte';
-    // import WpmCounter from "./wpmCounter.svelte";
+    import { wordSize } from "./stores";
 
-    let wordsSize :number = 5;
+    // let wordsSize :number = 5;
     let wordList :string = "";
     let currentPosition :number = 0;
     let startedTyping :boolean = false;
@@ -16,6 +16,7 @@
     const dispatch = createEventDispatcher();
     export const resetTypingProp = resetTyping;
     let inputReference;
+    let configWordSize :number = 10;
 
     function generateWords(){
         let letters = document.getElementById("main-text")?.getElementsByClassName("letter");
@@ -23,7 +24,7 @@
             letter.style.color = "rgb(127, 106, 106)";
         }
         wordList = "";
-        for(let i = 0; i<wordsSize; i+=1){
+        for(let i = 0; i<configWordSize; i+=1){
             wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
         }
     }
@@ -136,6 +137,7 @@
     onMount(()=>{
         generateWords();
         inputReference.focus();
+        wordSize.subscribe(value => { configWordSize=value;resetTyping();});
     })
 
 
