@@ -18,8 +18,14 @@
     export const resetTypingProp = resetTyping;
     let inputReference :any;
     let configWordSize :number = 10;
+    let removableLetters :any= [];
 
     function generateWords(){
+
+        for(var letter of removableLetters){
+            letter.remove();
+        }
+        removableLetters = [];
         let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
         if(letters){
             for(var letter of letters){
@@ -131,7 +137,8 @@
                     if(parent){
                         parent.insertBefore(newLetter, letter);
                     }
-                    handleCursor(1)
+                    handleCursor(1);
+                    removableLetters = [...removableLetters, newLetter]
                 }
             }
             currentPosition+=1;
