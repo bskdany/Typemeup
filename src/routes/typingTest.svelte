@@ -16,7 +16,7 @@
     const dispatch = createEventDispatcher();
     export const resetTypingProp = resetTyping;
     let inputReference :any;
-    let configWordSize :number = 10;
+    let configWordSize :number;
     let removableLetters :any = [];
     let cursorYPositionNew :number = 0;
     let cursorYPositionOld :number = 0;

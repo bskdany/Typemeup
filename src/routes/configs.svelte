@@ -9,9 +9,11 @@
     }
 
     onMount( () => {
-        wordSize.set(15);
         wordSize.subscribe( value => {configWordSize = value});
-        configWordSize = 10;
+        if(configWordSize===0){
+            configWordSize = 10;
+            setWordSize(10)
+        }
     })
 </script>
 
