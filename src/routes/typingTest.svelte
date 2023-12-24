@@ -88,8 +88,6 @@
 
     function checkIfEnd(){
         if(currentPosition==wordList.length-1 && !hasMistaken){
-            console.log(`Correct chars: ${correctCharCount}`)
-            console.log(`time: ${msTime}`)
             typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/100))).toFixed(2));
             stopTime();
             resetTime();
@@ -115,9 +113,15 @@
             const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition];
             const expectedKey = wordList[currentPosition];
             if(letter){
-                saveKeyStore(pressedKey);
+                if(pressedKey == " "){
+                    saveKeyStore("space");
+                    recordKeystroke("space");
+                }
+                else{
+                    saveKeyStore(pressedKey);
+                    recordKeystroke(pressedKey);    
+                }
                 if(pressedKey == expectedKey && !hasMistaken){
-                    recordKeystroke(pressedKey);
                     letter.style.color= "white";
                     handleCursor(1);
                     correctCharCount+=1;
