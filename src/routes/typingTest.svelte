@@ -147,11 +147,15 @@
     }
 
     function resetTyping(){
-        generateWords();
+        // reset keystroke recording stuff
+        stopRecordKeystroke()
+        // reset stopwatch for wpm
         stopTime();
         resetTime();
+
+        generateWords();
         resetCursor();
-        stopRecordKeystroke();
+        // resets the pressed key on keyboard to none
         pressedKeyStore.set("");
         currentPosition = 0;
         startedTyping = false;

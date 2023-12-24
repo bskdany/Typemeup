@@ -11,6 +11,9 @@ function handleTime(){
 export function stopRecordKeystroke(){
     console.log(keystrokeData);
     clearInterval(interval);
+    keystrokeData = {};
+    recordingStarted = false;
+    msTime = 0;
 }
 
 export function recordKeystroke(pressedKey :string){
