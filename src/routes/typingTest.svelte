@@ -6,7 +6,6 @@
     import { wordSize, pressedKeyStore } from "./stores";
     import Configs from "./configs.svelte";
 
-    // let wordsSize :number = 5;
     let wordList :string = "";
     let currentPosition :number = 0;
     let startedTyping :boolean = false;
@@ -18,7 +17,9 @@
     export const resetTypingProp = resetTyping;
     let inputReference :any;
     let configWordSize :number = 10;
-    let removableLetters :any= [];
+    let removableLetters :any = [];
+    let cursorYPositionNew :number = 0;
+    let cursorYPositionOld :number = 0;
 
     function generateWords(){
 
@@ -44,6 +45,9 @@
         const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition+movingDirection];
         if(parentDiv && cursor && newPosition){
             parentDiv.insertBefore(cursor, newPosition);
+            cursorYPositionOld = cursorYPositionNew;
+            cursorYPositionNew = cursor.getBoundingClientRect().top;
+            checkIfRotateText()
         }
         else{
             console.error("Stop fucking with html")
@@ -166,10 +170,24 @@
         correctCharCount = 0;
         backspaceMinPosition = -1;
         hasMistaken = false;
+
+        var mainText = document.getElementById("main-text");
+        mainText.style.marginTop = '0px';
+
+        cursorYPositionNew = 0;
+        cursorYPositionOld = 0;
     }
 
     function saveKeyStore(key:string){
         pressedKeyStore.set(key);
+    }
+
+    function checkIfRotateText(){
+        if(cursorYPositionNew > cursorYPositionOld && !hasMistaken && currentPosition>0){
+            var mainText = document.getElementById("main-text");
+            const cursorYDifference = Math.abs(cursorYPositionNew - cursorYPositionOld);
+            mainText.style.marginTop = ((parseFloat(mainText.style.marginTop.slice(0,-2))) - cursorYDifference).toString() + "px"
+        }
     }
 
     onMount(()=>{
@@ -181,11 +199,13 @@
 
 <Configs/>
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
-    <div id="main-text" on:mount>
-        <span id="cursor"></span>
-        {#each wordList as letter}
-            <span class="letter">{letter}</span>
-        {/each}
+    <div id="overflow-placeholder">
+        <div id="main-text" on:mount>
+            <span id="cursor"></span>
+            {#each wordList as letter}
+                <span class="letter">{letter}</span>
+            {/each}
+        </div>
     </div>
     <input bind:this={inputReference} id="wordsInput" on:input={handleTiping}>    
 </div>
@@ -195,13 +215,18 @@
         width: 100%;
         display: flex;
         justify-content: center;
+        height: 110px;
     }
-    #main-text{
-        color: rgb(127, 106, 106);
-        font-size: 2rem;
+    #overflow-placeholder{
         width: 70%;
+        height: 100%;
+        overflow: hidden;
+    }
+    #main-text{     
+        color: rgb(127, 106, 106);
+        width: 100%;
+        font-size: 2rem;
         user-select: none;
-        padding: 50px;
     }
     #wordsInput{
         width: 10%;
@@ -224,5 +249,4 @@
     .letter{
         margin-left: 2px;
     }
-
 </style>

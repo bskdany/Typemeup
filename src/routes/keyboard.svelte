@@ -27,6 +27,7 @@
 
 <style>
     #keyboardWrapper{
+        margin: 50px;
         display: flex;
         flex-direction: column;
         justify-content: center;
