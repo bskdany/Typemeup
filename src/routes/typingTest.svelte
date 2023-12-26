@@ -3,8 +3,13 @@
     import {recordKeystroke, stopRecordKeystroke} from "./recordKeystrokes";
     import {msTime, resetTime, startTime, stopTime} from "./stopwatch";
     import { onMount, createEventDispatcher } from 'svelte';
-    import { wordSize, pressedKeyStore } from "./stores";
+    import { wordSize, pressedKeyStore, typingTestModeStore, typingTestTimeStore} from "./stores";
     import Configs from "./configs.svelte";
+
+    // from stores
+    let configWordSize :number;
+    let configTestMode :string;
+    let configTestTime :number;
 
     let wordList :string = "";
     let currentPosition :number = 0;
@@ -16,7 +21,6 @@
     const dispatch = createEventDispatcher();
     export const resetTypingProp = resetTyping;
     export let inputReference :any;
-    let configWordSize :number;
     let removableLetters :any = [];
     let cursorYPositionNew :number = 0;
     let cursorYPositionOld :number = 0;
@@ -201,7 +205,9 @@
     onMount(()=>{
         generateWords();
         inputReference.focus();
-        wordSize.subscribe(value => { configWordSize=value;resetTyping();});
+        typingTestModeStore.subscribe(value => { configTestMode=value; resetTyping()});
+        wordSize.subscribe(value => { configWordSize=value;resetTyping()});
+        typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
     })
 </script>
 
