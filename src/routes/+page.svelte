@@ -9,6 +9,7 @@
     let typingTestWpm :number;
     let resetTyping :any;
     let currentMode :string;
+    let typingTestInput :any;
 
     function getTypingTestWpm(newValue:any){
         typingTestWpm = newValue.detail;
@@ -25,6 +26,9 @@
                 mode.set(currentMode = 'typingTest');
             } 
         }
+        if(typingTestInput){
+            typingTestInput.focus();
+        }
     }
     
     onMount(() => {
@@ -36,9 +40,8 @@
     });
 </script>
 
-
 {#if currentMode === 'typingTest'}
-    <TypingTest bind:resetTypingProp={resetTyping} on:typingEnded={getTypingTestWpm}/>   
+    <TypingTest bind:resetTypingProp={resetTyping} bind:inputReference={typingTestInput} on:typingEnded={getTypingTestWpm}/>   
     <Keyboard/>
 {:else if currentMode === 'typingResult'}
     <TypingResult typingTestWpm={typingTestWpm} />

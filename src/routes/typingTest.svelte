@@ -15,7 +15,7 @@
     let typingTestWpm :number;
     const dispatch = createEventDispatcher();
     export const resetTypingProp = resetTyping;
-    let inputReference :any;
+    export let inputReference :any;
     let configWordSize :number;
     let removableLetters :any = [];
     let cursorYPositionNew :number = 0;
