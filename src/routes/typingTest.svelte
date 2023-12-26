@@ -252,10 +252,10 @@
     #cursor{
         position:absolute;
         width: 2px;
-        margin-top: 3px;
-        height: 1em;
+        /* margin-top: 3px; */
+        height: 2rem;
         background-color: #a8b9e4;
-        transition: transform 0.15s ease-in-out;
+        transition: transform 0.1s ease-in-out;
     }
     .letter{
         margin-left: 2px;

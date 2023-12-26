@@ -1,43 +1,70 @@
 <script lang="ts">
-    import { wordSize } from "./stores";
+    import { wordSize, typingTestModeStore, typingTestTimeStore } from "./stores";
     import { onMount } from "svelte";
 
     let configWordSize :number;
+    let typingTestMode :string;
+    let typingTestTime :number;
+    const typingModes = ["time", "words"];
+    const modeWordAmount = [10, 25, 50, 100];
+    const timeAmount = [15,30,60, 120];
 
     function setWordSize(value:number){
+        configWordSize = value;
         wordSize.set(value);
+    }
+
+    function setTypingTestTime(value: number){
+        typingTestTime = value;
+        typingTestTimeStore.set(value);
+    }
+
+    function setTypingTestMode(value: string){
+        typingTestMode = value;
+        typingTestModeStore.set(value);
     }
 
     onMount( () => {
         wordSize.subscribe( value => {configWordSize = value});
+        typingTestModeStore.subscribe( value => {typingTestMode = value});
+        typingTestTimeStore.subscribe( value => {typingTestTime = value});
         if(configWordSize===0){
-            configWordSize = 10;
-            setWordSize(10)
+            setWordSize(10);
+        }
+        if(typingTestMode===""){
+            setTypingTestMode("time");
+        }
+        if(typingTestTime===0){
+            setTypingTestTime(15);
         }
     })
 </script>
 
 <div id="configWrapper">
-    <button id="wordSizeSelector">
-        words
-    </button> 
+    {#each typingModes as mode}
+        <button 
+            class={ mode === typingTestMode ? "selected" : "" } 
+            id={mode + "selector"}; 
+            on:click={() => setTypingTestMode(mode)}>
+            {mode}
+        </button>
+    {/each}
+    
     <div id="separator"></div>
-    <button class={configWordSize === 10 ? "selected" : "" } on:click={() => setWordSize(10)}>
-        10
-    </button>
-    <button class={configWordSize === 25 ? "selected" : "" } on:click={() => setWordSize(25)}>
-        25
-    </button>
-    <button class={configWordSize === 50 ? "selected" : "" } on:click={() => setWordSize(50)}>
-        50
-    </button>
-    <button class={configWordSize === 100 ? "selected" : "" } on:click={() => setWordSize(100)}>
-        100
-    </button>
 
-    <!-- <button on:click={() => configWordSize=50}>
-        custom
-    </button> -->
+    {#if typingTestMode==="words"}
+        {#each modeWordAmount as wordAmount}
+            <button class={configWordSize === wordAmount ? "selected" : "" } on:click={() => setWordSize(wordAmount)}>
+                {wordAmount}
+            </button>
+        {/each}
+    {:else if typingTestMode==="time"}
+        {#each timeAmount as time}
+            <button class={typingTestTime === time ? "selected" : "" } on:click={() => setTypingTestTime(time)}>
+                {time}
+            </button>
+        {/each}
+    {/if}
 </div>
 
 
