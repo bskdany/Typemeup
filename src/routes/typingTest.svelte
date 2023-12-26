@@ -252,7 +252,7 @@
     #cursor{
         position:absolute;
         width: 2px;
-        height: 2rem;
+        height: 1em;
         background-color: #a8b9e4;
         transition: transform 0.15s ease-in-out;
     }
