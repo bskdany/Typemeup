@@ -27,7 +27,9 @@
             } 
         }
         if(typingTestInput){
-            typingTestInput.focus();
+            if(typingTestInput != document.activeElement){
+                typingTestInput.focus();
+            }
         }
     }
     
