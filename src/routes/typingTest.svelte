@@ -49,7 +49,7 @@
             const yOffset = targetDiv.top - parentDiv.top;
             cursor.style.transform = `translate(${xOffset-2}px, ${yOffset}px)`;
             cursorYPositionOld = cursorYPositionNew;
-            cursorYPositionNew = cursor.getBoundingClientRect().top;
+            cursorYPositionNew = cursor.getBoundingClientRect().top+yOffset;
             checkIfMoveText()
         }
         else{
