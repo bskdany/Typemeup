@@ -43,9 +43,3 @@
 {:else if currentMode === 'typingResult'}
     <TypingResult typingTestWpm={typingTestWpm} />
 {/if}
-
-<style>
-    Keyboard{
-        margin-top: 100px;
-    }
-</style>

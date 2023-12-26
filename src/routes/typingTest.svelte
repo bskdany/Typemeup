@@ -20,6 +20,7 @@
     let removableLetters :any = [];
     let cursorYPositionNew :number = 0;
     let cursorYPositionOld :number = 0;
+    let mainTextTranslateDistance :number = 0;
 
     function generateWords(){
 
@@ -47,7 +48,7 @@
             parentDiv.insertBefore(cursor, newPosition);
             cursorYPositionOld = cursorYPositionNew;
             cursorYPositionNew = cursor.getBoundingClientRect().top;
-            checkIfRotateText()
+            checkIfMoveText()
         }
         else{
             console.error("Stop fucking with html")
@@ -176,17 +177,27 @@
 
         cursorYPositionNew = 0;
         cursorYPositionOld = 0;
+        mainTextTranslateDistance = 0;
     }
 
     function saveKeyStore(key:string){
         pressedKeyStore.set(key);
     }
 
-    function checkIfRotateText(){
+    function checkIfMoveText(){
         if(cursorYPositionNew > cursorYPositionOld && !hasMistaken && currentPosition>0){
+            const cursorDelta = Math.abs(cursorYPositionNew - cursorYPositionOld);
             var mainText = document.getElementById("main-text");
-            const cursorYDifference = Math.abs(cursorYPositionNew - cursorYPositionOld);
-            mainText.style.marginTop = ((parseFloat(mainText.style.marginTop.slice(0,-2))) - cursorYDifference).toString() + "px"
+
+            const transformArg = mainText?.style.transform;
+            const startIndex = transformArg?.indexOf("(");
+            const endIndex = transformArg?.indexOf(")");
+            if(startIndex && endIndex){
+               var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
+            }
+            if(valueSubstring){
+                mainTextTranslateDistance = parseInt(valueSubstring) - cursorDelta;
+            }
         }
     }
 
@@ -200,7 +211,7 @@
 <Configs/>
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
     <div id="overflow-placeholder">
-        <div id="main-text" on:mount>
+        <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px">
             <span id="cursor"></span>
             {#each wordList as letter}
                 <span class="letter">{letter}</span>
@@ -227,6 +238,7 @@
         width: 100%;
         font-size: 2rem;
         user-select: none;
+        transition: transform 0.3s ease-in-out;
     }
     #wordsInput{
         width: 10%;
