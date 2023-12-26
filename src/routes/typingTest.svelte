@@ -41,11 +41,13 @@
     }
 
     function handleCursor(movingDirection:number){
-        const parentDiv = document.getElementById('main-text');
+        const parentDiv = document.getElementById('main-text').getBoundingClientRect();
         const cursor = document.getElementById("cursor");
-        const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition+movingDirection];
-        if(parentDiv && cursor && newPosition){
-            parentDiv.insertBefore(cursor, newPosition);
+        const targetDiv = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition+movingDirection].getBoundingClientRect();
+        if(parentDiv && cursor && targetDiv){
+            const xOffset = targetDiv.left - parentDiv.left;
+            const yOffset = targetDiv.top - parentDiv.top;
+            cursor.style.transform = `translate(${xOffset-2}px, ${yOffset}px)`;
             cursorYPositionOld = cursorYPositionNew;
             cursorYPositionNew = cursor.getBoundingClientRect().top;
             checkIfMoveText()
@@ -56,14 +58,9 @@
     }
 
     function resetCursor(){
-        const parentDiv = document.getElementById('main-text');
         const cursor = document.getElementById("cursor");
-        const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[0];
-        if(parentDiv && cursor && newPosition){
-            parentDiv.insertBefore(cursor, newPosition);
-        }
-        else{
-            console.error("Stop fucking with html")
+        if(cursor){
+            cursor.style.transform = `translate(${0}px, ${0}px)`;
         }
     }
 
@@ -238,7 +235,7 @@
         width: 100%;
         font-size: 2rem;
         user-select: none;
-        transition: transform 0.3s ease-in-out;
+        transition: transform 0.25s ease-in-out;
     }
     #wordsInput{
         width: 10%;
@@ -257,6 +254,7 @@
         width: 2px;
         height: 2rem;
         background-color: #a8b9e4;
+        transition: transform 0.15s ease-in-out;
     }
     .letter{
         margin-left: 2px;
