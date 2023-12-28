@@ -18,16 +18,17 @@
     let currentPosition :number = 0;
     let startedTyping :boolean = false;
     let correctCharCount :number = 0;
-    let backspaceMinPosition :number = -1;
+    let backspaceMinPosition :number = -1; // the minimin position in the array to which the user can backspace
     let hasMistaken :boolean = false;
     let typingTestWpm :number;
-    const dispatch = createEventDispatcher();
-    export const resetTypingProp = resetTyping;
-    export let inputReference :any;
     let removableLetters :any = [];
     let cursorYPositionNew :number = 0;
     let cursorYPositionOld :number = 0;
     let mainTextTranslateDistance :number = 0;
+
+    const dispatch = createEventDispatcher();
+    export const resetTypingProp = resetTyping;
+    export let inputReference :any;
 
     function generateWords(){
 
@@ -192,25 +193,35 @@
 
     function checkIfMoveText(){
         if(cursorYPositionNew > cursorYPositionOld && !hasMistaken && currentPosition>0){
-            const cursorDelta = Math.abs(cursorYPositionNew - cursorYPositionOld);
-            var mainText = document.getElementById("main-text");
+            wordList = wordList.slice(currentPosition);
+            resetCursor();
+            let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
+            if(letters){
+                for(var letter of letters){
+                    letter.style.color = "rgb(127, 106, 106)";
+                }
+            }
 
-            const transformArg = mainText?.style.transform;
-            const startIndex = transformArg?.indexOf("(");
-            const endIndex = transformArg?.indexOf(")");
-            if(startIndex && endIndex){
-               var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
-            }
-            if(valueSubstring){
-                mainTextTranslateDistance = parseInt(valueSubstring) - cursorDelta;
-            }
+            currentPosition = 0;
+            // const cursorDelta = Math.abs(cursorYPositionNew - cursorYPositionOld);
+            // var mainText = document.getElementById("main-text");
+
+            // const transformArg = mainText?.style.transform;
+            // const startIndex = transformArg?.indexOf("(");
+            // const endIndex = transformArg?.indexOf(")");
+            // if(startIndex && endIndex){
+            //    var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
+            // }
+            // if(valueSubstring){
+            //     mainTextTranslateDistance = parseInt(valueSubstring) - cursorDelta;
+            // }
         }
     }
 
     // part that handles time
     function handleTime(){
         msTime+=10;
-        if(msTime > configTestTime*1000){
+        if(configTestMode === "time" && msTime > configTestTime*1000){
             typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
             clearInterval(timeInterval);
             msTime = 0;
