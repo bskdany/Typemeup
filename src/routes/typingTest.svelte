@@ -1,7 +1,6 @@
 <script lang="ts">
     import words from "../words/words.json";
     import {recordKeystroke, stopRecordKeystroke} from "./recordKeystrokes";
-    import {msTime, resetTime, startTime, stopTime} from "./stopwatch";
     import { onMount, createEventDispatcher } from 'svelte';
     import { wordSize, pressedKeyStore, typingTestModeStore, typingTestTimeStore} from "./stores";
     import Configs from "./configs.svelte";
@@ -10,6 +9,10 @@
     let configWordSize :number;
     let configTestMode :string;
     let configTestTime :number;
+
+    // for handling time
+    let msTime :number = 0; 
+    let timeInterval :any; // to record the time 
 
     let wordList :string = "";
     let currentPosition :number = 0;
@@ -93,21 +96,21 @@
     }
 
     function checkIfEnd(){
-        if(currentPosition==wordList.length-1 && !hasMistaken){
-            typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/100))).toFixed(2));
-            stopTime();
-            resetTime();
-            resetTyping();
-            dispatch("typingEnded",typingTestWpm);
-        }
+        if(configTestMode==="words"){
+            if(currentPosition==wordList.length-1 && !hasMistaken){
+                typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
+                dispatch("typingEnded",typingTestWpm);
+                resetTyping();
+            }
+        }     
     }
 
     function handleTiping(keydown:any){
         const pressedKey = keydown.data;
         if(!startedTyping){
             startedTyping = true;
-            resetTime()
-            startTime()
+            msTime = 0;
+            timeInterval = setInterval(handleTime, 10);
         }
 
         if(keydown.inputType=="deleteContentBackward" && currentPosition > backspaceMinPosition+1){
@@ -157,11 +160,12 @@
     }
 
     function resetTyping(){
+
         // reset keystroke recording stuff
-        stopRecordKeystroke()
+        stopRecordKeystroke();
         // reset stopwatch for wpm
-        stopTime();
-        resetTime();
+        msTime = 0;
+        clearInterval(timeInterval)
 
         generateWords();
         resetCursor();
@@ -173,9 +177,10 @@
         backspaceMinPosition = -1;
         hasMistaken = false;
 
-        var mainText = document.getElementById("main-text");
-        mainText.style.marginTop = '0px';
-
+        const mainText = document.getElementById("main-text");
+        if(mainText){
+            mainText.style.marginTop = '0px';
+        }
         cursorYPositionNew = 0;
         cursorYPositionOld = 0;
         mainTextTranslateDistance = 0;
@@ -202,14 +207,28 @@
         }
     }
 
+    // part that handles time
+    function handleTime(){
+        msTime+=10;
+        if(msTime > configTestTime*1000){
+            typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
+            clearInterval(timeInterval);
+            msTime = 0;
+            dispatch("typingEnded",typingTestWpm);
+            resetTyping();
+        }
+    }
+
     onMount(()=>{
         generateWords();
         inputReference.focus();
         typingTestModeStore.subscribe(value => { configTestMode=value; resetTyping()});
-        wordSize.subscribe(value => { configWordSize=value;resetTyping()});
+        wordSize.subscribe(value => { configWordSize=value; resetTyping()});
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
-    })
+        generateWords();
+    })    
 </script>
+
 
 <Configs/>
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">

@@ -9,9 +9,11 @@ function handleTime(){
     msTime+=1;
 }
 export function stopRecordKeystroke(){
-    console.log(keystrokeData);
-    clearInterval(interval);
-    keystrokeData = {};
+    if(Object.keys(keystrokeData).length > 0){
+        console.log(keystrokeData)
+        clearInterval(interval);
+        keystrokeData = {};
+    }
     recordingStarted = false;
     msTime = 0;
 }
