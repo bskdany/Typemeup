@@ -36,6 +36,9 @@
         if(typingTestTime===0){
             setTypingTestTime(15);
         }
+        if(configWordSize===0){
+            setWordSize(10);
+        }
     })
 </script>
 

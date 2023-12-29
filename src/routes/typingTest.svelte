@@ -211,8 +211,8 @@
 
             // currentPosition = 0;
             const cursorDelta = Math.abs(cursorYPositionNew - cursorYPositionOld);
-            var mainText = document.getElementById("main-text");
 
+            var mainText = document.getElementById("main-text");
             const transformArg = mainText?.style.transform;
             const startIndex = transformArg?.indexOf("(");
             const endIndex = transformArg?.indexOf(")");
