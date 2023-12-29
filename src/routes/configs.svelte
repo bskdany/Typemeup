@@ -28,17 +28,21 @@
         typingTestModeStore.subscribe( value => {
             typingTestMode = value;
             if(value==="words"){
-                setWordSize(10);
+                if(!configWordSize){
+                    setWordSize(10);
+                }
+                else{
+                    setWordSize(configWordSize);
+                }
             }
-            else if(value==="time"){
-                setWordSize(100);
-            }
+            // else if(value==="time"){
+            //     setWordSize(100);
+            // }
         });
         wordSizeStore.subscribe( value => {configWordSize = value});
         typingTestTimeStore.subscribe( value => {typingTestTime = value});
-        if(configWordSize===0){
-            setWordSize(10);
-        }
+        
+        // default mode is time 15 seconds
         if(typingTestMode===""){
             setTypingTestMode("time");
         }

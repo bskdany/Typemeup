@@ -170,11 +170,13 @@
         stopRecordKeystroke();
         // reset stopwatch for wpm
         msTime = 0;
+        secondsTime = 0;
         clearInterval(timeInterval)
 
         generateWords();
         resetCursor();
         // resets the pressed key on keyboard to none
+        removableLetters = [];
         pressedKeyStore.set("");
         currentPosition = 0;
         startedTyping = false;
@@ -182,7 +184,6 @@
         backspaceMinPosition = -1;
         hasMistaken = false;
         wordsTyped = 0;
-        secondsTime = 0;
 
         const mainText = document.getElementById("main-text");
         if(mainText){
@@ -243,8 +244,19 @@
     onMount(()=>{
         generateWords();
         inputReference.focus();
-        typingTestModeStore.subscribe(value => { configTestMode=value; resetTyping()});
-        wordSizeStore.subscribe(value => { configWordSize=value; resetTyping()});
+        typingTestModeStore.subscribe(value => {
+            configTestMode=value;
+            resetTyping();
+        });
+        wordSizeStore.subscribe(value => { 
+            if(configTestMode==="time"){
+                configWordSize = 100;
+            }
+            else{
+                configWordSize=value;
+            }
+            resetTyping()
+        });
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
         generateWords();
     })    
