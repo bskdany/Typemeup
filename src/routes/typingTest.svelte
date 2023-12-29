@@ -200,28 +200,28 @@
 
     function checkIfMoveText(){
         if(cursorYPositionNew > cursorYPositionOld && !hasMistaken && currentPosition>0){
-            wordList = wordList.slice(currentPosition);
-            resetCursor();
-            let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
-            if(letters){
-                for(var letter of letters){
-                    letter.style.color = "rgb(127, 106, 106)";
-                }
+            // wordList = wordList.slice(currentPosition);
+            // resetCursor();
+            // let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
+            // if(letters){
+            //     for(var letter of letters){
+            //         letter.style.color = "rgb(127, 106, 106)";
+            //     }
+            // }
+
+            // currentPosition = 0;
+            const cursorDelta = Math.abs(cursorYPositionNew - cursorYPositionOld);
+            var mainText = document.getElementById("main-text");
+
+            const transformArg = mainText?.style.transform;
+            const startIndex = transformArg?.indexOf("(");
+            const endIndex = transformArg?.indexOf(")");
+            if(startIndex && endIndex){
+               var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
             }
-
-            currentPosition = 0;
-            // const cursorDelta = Math.abs(cursorYPositionNew - cursorYPositionOld);
-            // var mainText = document.getElementById("main-text");
-
-            // const transformArg = mainText?.style.transform;
-            // const startIndex = transformArg?.indexOf("(");
-            // const endIndex = transformArg?.indexOf(")");
-            // if(startIndex && endIndex){
-            //    var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
-            // }
-            // if(valueSubstring){
-            //     mainTextTranslateDistance = parseInt(valueSubstring) - cursorDelta;
-            // }
+            if(valueSubstring){
+                mainTextTranslateDistance = parseInt(valueSubstring) - cursorDelta;
+            }
         }
     }
 

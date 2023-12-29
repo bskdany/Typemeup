@@ -25,20 +25,7 @@
     }
 
     onMount( () => {
-        typingTestModeStore.subscribe( value => {
-            typingTestMode = value;
-            if(value==="words"){
-                if(!configWordSize){
-                    setWordSize(10);
-                }
-                else{
-                    setWordSize(configWordSize);
-                }
-            }
-            // else if(value==="time"){
-            //     setWordSize(100);
-            // }
-        });
+        typingTestModeStore.subscribe( value => {typingTestMode = value;});
         wordSizeStore.subscribe( value => {configWordSize = value});
         typingTestTimeStore.subscribe( value => {typingTestTime = value});
         
