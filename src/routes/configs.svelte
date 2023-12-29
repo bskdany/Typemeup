@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { wordSize, typingTestModeStore, typingTestTimeStore } from "./stores";
+    import { wordSizeStore, typingTestModeStore, typingTestTimeStore } from "./stores";
     import { onMount } from "svelte";
 
     let configWordSize :number;
@@ -11,7 +11,7 @@
 
     function setWordSize(value:number){
         configWordSize = value;
-        wordSize.set(value);
+        wordSizeStore.set(value);
     }
 
     function setTypingTestTime(value: number){
@@ -34,7 +34,7 @@
                 setWordSize(100);
             }
         });
-        wordSize.subscribe( value => {configWordSize = value});
+        wordSizeStore.subscribe( value => {configWordSize = value});
         typingTestTimeStore.subscribe( value => {typingTestTime = value});
         if(configWordSize===0){
             setWordSize(10);
@@ -95,6 +95,7 @@
         color: transparent;
         border-radius: 10px;
         background-color: #2c2e31;
+        width: min-content;
     }
     #separator{
         width: 2px;

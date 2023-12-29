@@ -2,8 +2,9 @@
     import words from "../words/words.json";
     import {recordKeystroke, stopRecordKeystroke} from "./recordKeystrokes";
     import { onMount, createEventDispatcher } from 'svelte';
-    import { wordSize, pressedKeyStore, typingTestModeStore, typingTestTimeStore} from "./stores";
+    import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore} from "./stores";
     import Configs from "./configs.svelte";
+    import TypingProgress from "./typingProgress.svelte";
 
     // from stores
     let configWordSize :number;
@@ -12,6 +13,7 @@
 
     // for handling time
     let msTime :number = 0; 
+    let secondsTime :number = 0;
     let timeInterval :any; // to record the time 
 
     let wordList :string = "";
@@ -25,6 +27,7 @@
     let cursorYPositionNew :number = 0;
     let cursorYPositionOld :number = 0;
     let mainTextTranslateDistance :number = 0;
+    let wordsTyped = 0;
 
     const dispatch = createEventDispatcher();
     export const resetTypingProp = resetTyping;
@@ -138,6 +141,7 @@
 
                     if(pressedKey==" "){
                         backspaceMinPosition = currentPosition;
+                        wordsTyped += 1;
                     }
                 }
 
@@ -177,6 +181,8 @@
         correctCharCount = 0;
         backspaceMinPosition = -1;
         hasMistaken = false;
+        wordsTyped = 0;
+        secondsTime = 0;
 
         const mainText = document.getElementById("main-text");
         if(mainText){
@@ -221,6 +227,10 @@
     // part that handles time
     function handleTime(){
         msTime+=10;
+        if(msTime%1000==0){
+            secondsTime +=1;
+        }
+
         if(configTestMode === "time" && msTime > configTestTime*1000){
             typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
             clearInterval(timeInterval);
@@ -234,14 +244,24 @@
         generateWords();
         inputReference.focus();
         typingTestModeStore.subscribe(value => { configTestMode=value; resetTyping()});
-        wordSize.subscribe(value => { configWordSize=value; resetTyping()});
+        wordSizeStore.subscribe(value => { configWordSize=value; resetTyping()});
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
         generateWords();
     })    
 </script>
 
+<div id="statusBar">
+    {#if startedTyping}
+    <div id="typingProgress">  
+        <TypingProgress wordsTyped={wordsTyped} timeTyped={secondsTime}/>
+    </div>
+    {/if}
+    <div id="configs"> 
+        <Configs/>
+    </div>
+</div>
 
-<Configs/>
+
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
     <div id="overflow-placeholder">
         <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px">
@@ -295,5 +315,18 @@
     }
     .letter{
         margin-left: 2px;
+    }
+    #statusBar{
+        width: 70%;
+        display: grid;
+    }
+    #typingProgress{
+        position: absolute;
+        align-self: end;
+        margin-bottom: 10px;
+    }
+    #configs{
+       margin: auto;
+       align-items: center;
     }
 </style>
