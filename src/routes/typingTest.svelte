@@ -64,21 +64,21 @@
             cursorYPositionOld = cursorYPositionNew;
             cursorYPositionNew = ghostCursorClientRect.top;
 
-            const cursor = document.getElementById("cursor");
-            if(cursor){
-                const xOffset = ghostCursorClientRect.left - mainTextClientRect.left;
-                const yOffset = ghostCursorClientRect.top - mainTextClientRect.top;
-                cursor.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-            }
+            // const cursor = document.getElementById("cursor");
+            // if(cursor){
+            //     const xOffset = ghostCursorClientRect.left - mainTextClientRect.left;
+            //     const yOffset = ghostCursorClientRect.top - mainTextClientRect.top;
+            //     cursor.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            // }
             checkIfMoveText();
         }
     }
 
     function resetCursor(){
-        const cursor = document.getElementById("cursor");
-        if(cursor){
-            cursor.style.transform = `translate(${0}px, ${0}px)`;
-        }
+        const parentDiv = document.getElementById('main-text');
+        const cursor = document.getElementById("ghost-cursor");
+        const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[0];
+        parentDiv.insertBefore(cursor, newPosition);
     }
 
     function backspace(){
@@ -340,12 +340,20 @@
         margin-top: 0%;
     }
     #cursor{
+        display: none;
         position:absolute;
         width: 2px;
         /* margin-top: 3px; */
         height: 2rem;
         background-color: #a8b9e4;
         transition: transform 0.1s ease-in-out;
+    }
+    #ghost-cursor{
+        position: absolute;
+        width: 2px;
+        height: 2rem;
+        /* background-color: transparent; */
+        background-color: #a8b9e4;
     }
     .letter{
         margin-left: 2px;
