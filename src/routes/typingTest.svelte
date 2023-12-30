@@ -45,8 +45,15 @@
                 letter.style.color = "rgb(127, 106, 106)";
             }
             wordList = "";
-            for(let i = 0; i<configWordSize; i+=1){
-                wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
+            if(configTestMode==="time"){
+                for(let i = 0; i<100; i+=1){
+                    wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
+                }
+            }
+            else{
+                for(let i = 0; i<configWordSize; i+=1){
+                    wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
+                }
             }
         }
     }
@@ -270,13 +277,8 @@
             resetTyping();
         });
         wordSizeStore.subscribe(value => { 
-            if(configTestMode==="time"){
-                configWordSize = 100;
-            }
-            else{
-                configWordSize=value;
-            }
-            resetTyping()
+            configWordSize=value;
+            resetTyping();
         });
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
         generateWords();
