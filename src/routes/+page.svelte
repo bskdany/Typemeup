@@ -48,7 +48,7 @@
     <TypingTest bind:resetTypingProp={resetTyping} bind:inputReference={typingTestInput} on:typingEnded={getTypingTestWpm}/>   
     <div id="keyboardWrapper"><Keyboard/></div>
 {:else if currentMode === 'typingResult'}
-    <TypingResult typingTestWpm={typingTestWpm} />
+    <TypingResult typingTestWpm={typingTestWpm} on:restartTrigger={() => mode.set(currentMode = 'typingTest')}/>
 {/if}
 
 <style>
