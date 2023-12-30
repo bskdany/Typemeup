@@ -44,7 +44,15 @@
 
 {#if currentMode === 'typingTest'}
     <TypingTest bind:resetTypingProp={resetTyping} bind:inputReference={typingTestInput} on:typingEnded={getTypingTestWpm}/>   
-    <Keyboard/>
+    <div id="keyboardWrapper"><Keyboard/></div>
 {:else if currentMode === 'typingResult'}
     <TypingResult typingTestWpm={typingTestWpm} />
 {/if}
+
+<style>
+    @media only screen and (max-width: 767px) {
+        #keyboardWrapper{
+            display: none;
+        }
+    }
+</style>

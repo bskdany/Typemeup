@@ -84,7 +84,7 @@
         display: flex;
         flex-direction: row;
         padding: 10px;
-        margin: 50px;
+        margin-bottom: 50px;
         border: solid;
         color: transparent;
         border-radius: 10px;

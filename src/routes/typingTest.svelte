@@ -371,4 +371,12 @@
        margin: auto;
        align-items: center;
     }
+    @media only screen and (max-width: 767px) {
+        #statusBar{
+            width: 90%;
+        }
+        #overflow-placeholder{
+            width: 90%;
+        }
+    }
 </style>
