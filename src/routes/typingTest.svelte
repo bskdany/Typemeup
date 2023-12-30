@@ -330,6 +330,7 @@
         transition: transform 0.25s ease-in-out;
     }
     #wordsInput{
+        pointer-events: none;
         width: 10%;
         position:absolute;
         background: transparent;
