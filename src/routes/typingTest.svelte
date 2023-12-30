@@ -125,14 +125,15 @@
 
         if(keydown.inputType=="deleteContentBackward" && currentPosition > backspaceMinPosition+1){
             recordKeystroke("backspace");
-            saveKeyStore("backspace")
-            backspace()
+            saveKeyStore("backspace");
+            backspace();
         }
+
         else if(pressedKey){
             const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition];
             const expectedKey = wordList[currentPosition];
             if(letter){
-                if(pressedKey == " "){
+                if(pressedKey === " "){
                     saveKeyStore("space");
                     recordKeystroke("space");
                 }
@@ -140,7 +141,8 @@
                     saveKeyStore(pressedKey);
                     recordKeystroke(pressedKey);    
                 }
-                if(pressedKey == expectedKey && !hasMistaken){
+
+                if(pressedKey === expectedKey && !hasMistaken){
                     letter.style.color= "white";
                     handleCursor(1);
                     correctCharCount+=1;
@@ -153,9 +155,15 @@
 
                 else{
                     hasMistaken = true;
-                    let newLetter = letter.cloneNode()
-                    newLetter.textContent=pressedKey;
+                    let newLetter = document.createElement('span');
+                    if(pressedKey !== " "){
+                        newLetter.textContent = pressedKey;
+                    }
+                    else{
+                        newLetter.textContent = "_";
+                    }
                     newLetter.classList.add("removable");
+                    newLetter.classList.add("letter");
                     newLetter.style.color = "red";
                     const parent = document.getElementById("main-text")
                     if(parent){
