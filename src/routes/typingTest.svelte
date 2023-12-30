@@ -52,19 +52,25 @@
     }
 
     function handleCursor(movingDirection:number){
-        const parentDiv = document.getElementById('main-text').getBoundingClientRect();
-        const cursor = document.getElementById("cursor");
-        const targetDiv = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition+movingDirection].getBoundingClientRect();
-        if(parentDiv && cursor && targetDiv){
-            const xOffset = targetDiv.left - parentDiv.left;
-            const yOffset = targetDiv.top - parentDiv.top;
-            cursor.style.transform = `translate(${xOffset-2}px, ${yOffset}px)`;
+        const mainText = document.getElementById('main-text');
+        const ghostCursor = document.getElementById("ghost-cursor");
+        const newPosition = mainText?.getElementsByClassName("letter")[currentPosition+movingDirection];
+        if(mainText && ghostCursor && newPosition){
+            mainText.insertBefore(ghostCursor, newPosition);
+
+            const ghostCursorClientRect = ghostCursor.getBoundingClientRect();
+            const mainTextClientRect = mainText.getBoundingClientRect();
+
             cursorYPositionOld = cursorYPositionNew;
-            cursorYPositionNew = cursor.getBoundingClientRect().top+yOffset;
-            checkIfMoveText()
-        }
-        else{
-            console.error("Stop fucking with html")
+            cursorYPositionNew = ghostCursorClientRect.top;
+
+            const cursor = document.getElementById("cursor");
+            if(cursor){
+                const xOffset = ghostCursorClientRect.left - mainTextClientRect.left;
+                const yOffset = ghostCursorClientRect.top - mainTextClientRect.top;
+                cursor.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            }
+            checkIfMoveText();
         }
     }
 
@@ -199,7 +205,8 @@
     }
 
     function checkIfMoveText(){
-        if(cursorYPositionNew > cursorYPositionOld && !hasMistaken && currentPosition>0){
+        const cursorDelta = cursorYPositionNew - cursorYPositionOld;
+        if(cursorDelta > 16 && !hasMistaken && currentPosition>0){
             // wordList = wordList.slice(currentPosition);
             // resetCursor();
             // let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
@@ -210,7 +217,12 @@
             // }
 
             // currentPosition = 0;
-            const cursorDelta = Math.abs(cursorYPositionNew - cursorYPositionOld);
+
+            // console.log(cursorYPositionOld + " " + cursorYPositionNew)
+
+            const overflowPlaceholder = document.getElementById("overflow-placeholder");
+            const overFlowPlaceholderHeight = overflowPlaceholder.getBoundingClientRect().top - overflowPlaceholder.getBoundingClientRect().bottom;
+            console.log(overFlowPlaceholderHeight / 3)
 
             var mainText = document.getElementById("main-text");
             const transformArg = mainText?.style.transform;
@@ -219,8 +231,9 @@
             if(startIndex && endIndex){
                var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
             }
+            console.log(valueSubstring)
             if(valueSubstring){
-                mainTextTranslateDistance = parseInt(valueSubstring) - cursorDelta;
+                mainTextTranslateDistance = parseFloat(valueSubstring) -36;
             }
         }
     }
@@ -277,6 +290,7 @@
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
     <div id="overflow-placeholder">
         <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px">
+            <span id="ghost-cursor"></span>
             <span id="cursor"></span>
             {#each wordList as letter}
                 <span class="letter">{letter}</span>
@@ -291,7 +305,7 @@
         width: 100%;
         display: flex;
         justify-content: center;
-        height: 110px;
+        height: 112px; 
     }
     #overflow-placeholder{
         width: 70%;
