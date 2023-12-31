@@ -16,8 +16,13 @@
     let secondsTime :number = 0;
     let timeInterval :any; // to record the time 
 
-    let wordList :string = "";
-    let currentPosition :number = 0;
+    let generatedWords :string[];
+    let mainText :object[][] = [];
+    
+    let globalLetterIndex :number = 0;
+    let currentWordIndex :number = 0;
+    let letterIndexInWord :number = 0;
+
     let startedTyping :boolean = false;
     let correctCharCount :number = 0;
     let backspaceMinPosition :number = -1; // the minimin position in the array to which the user can backspace
@@ -33,34 +38,44 @@
     export const resetTypingProp = resetTyping;
     export let inputReference :any;
 
-    function generateWords(){
-
-        for(var letter of removableLetters){
-            letter.remove();
-        }
-        removableLetters = [];
-        let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
-        if(letters){
-            for(var letter of letters){
-                letter.style.color = "rgb(127, 106, 106)";
-            }
-            wordList = "";
-            if(configTestMode==="time"){
-                for(let i = 0; i<100; i+=1){
-                    wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
-                }
-            }
-            else{
-                for(let i = 0; i<configWordSize; i+=1){
-                    wordList +=(words.words[Math.floor(Math.random()*words.length)]) + " ";
-                }
+    function setLetterProperty(wordIndex :number, letterIndex :number, property :string, value :any){
+        if(mainText && mainText.length > 0){
+            if(Object.keys(mainText[wordIndex][letterIndex]).includes(property)){
+                mainText[wordIndex][letterIndex][property] = value;                
             }
         }
     }
 
+
+    function createMainText(){
+        generatedWords = [];
+        for(let i = 0; i < (configTestMode === "time" ? 100 : configWordSize); i+=1){
+            generatedWords.push(words.words[Math.floor(Math.random()*words.length)]);
+        }
+
+        mainText = [];
+        let letterIdCounter = 0;
+        for(const word of generatedWords){
+            let letterElements = [];
+            for(let i = 0; i < word.length; i++){
+                const letterElement = {
+                    id: letterIdCounter,
+                    value: word.charAt(i),
+                    typed: false,
+                    removable: false,
+                }
+                letterElements.push(letterElement);
+                letterIdCounter += 1;
+            }
+            // mainText = [...mainText, letterElements];
+            mainText.push(letterElements);
+        }
+        setLetterProperty(0,0,"typed",true);
+    }
+
     function handleCursor(movingDirection:number){
         const mainText = document.getElementById('main-text');
-        const ghostCursor = document.getElementById("ghost-cursor");
+        const ghostCursor = document.getElementById("cursor");
         const newPosition = mainText?.getElementsByClassName("letter")[currentPosition+movingDirection];
         if(mainText && ghostCursor && newPosition){
             mainText.insertBefore(ghostCursor, newPosition);
@@ -83,7 +98,7 @@
 
     function resetCursor(){
         const parentDiv = document.getElementById('main-text');
-        const cursor = document.getElementById("ghost-cursor");
+        const cursor = document.getElementById("cursor");
         const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[0];
         parentDiv.insertBefore(cursor, newPosition);
     }
@@ -114,7 +129,7 @@
 
     function checkIfEnd(){
         if(configTestMode==="words"){
-            if(currentPosition==wordList.length-1 && !hasMistaken){
+            if(currentPosition==generatedWords.length-1 && !hasMistaken){
                 typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
                 dispatch("typingEnded",typingTestWpm);
                 resetTyping();
@@ -137,49 +152,48 @@
         }
 
         else if(pressedKey){
-            const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition];
-            const expectedKey = wordList[currentPosition];
-            if(letter){
-                if(pressedKey === " "){
-                    saveKeyStore("space");
-                    recordKeystroke("space");
-                }
-                else{
-                    saveKeyStore(pressedKey);
-                    recordKeystroke(pressedKey);    
-                }
+            const expectedKey = generatedWords[currentPosition];
+            
+            if(pressedKey === " "){
+                saveKeyStore("space");
+                recordKeystroke("space");
+            }
+            else{
+                saveKeyStore(pressedKey);
+                recordKeystroke(pressedKey);    
+            }
 
-                if(pressedKey === expectedKey && !hasMistaken){
-                    letter.style.color= "white";
-                    handleCursor(1);
-                    correctCharCount+=1;
+            if(pressedKey === expectedKey && !hasMistaken){
+                letter.style.color= "white";
+                handleCursor(1);
+                correctCharCount+=1;
 
-                    if(pressedKey==" "){
-                        backspaceMinPosition = currentPosition;
-                        wordsTyped += 1;
-                    }
-                }
-
-                else{
-                    hasMistaken = true;
-                    let newLetter = document.createElement('span');
-                    if(pressedKey !== " "){
-                        newLetter.textContent = pressedKey;
-                    }
-                    else{
-                        newLetter.textContent = "_";
-                    }
-                    newLetter.classList.add("removable");
-                    newLetter.classList.add("letter");
-                    newLetter.style.color = "red";
-                    const parent = document.getElementById("main-text")
-                    if(parent){
-                        parent.insertBefore(newLetter, letter);
-                    }
-                    handleCursor(1);
-                    removableLetters = [...removableLetters, newLetter]
+                if(pressedKey==" "){
+                    backspaceMinPosition = currentPosition;
+                    wordsTyped += 1;
                 }
             }
+
+            else{
+                hasMistaken = true;
+                let newLetter = document.createElement('span');
+                if(pressedKey !== " "){
+                    newLetter.textContent = pressedKey;
+                }
+                else{
+                    newLetter.textContent = "_";
+                }
+                newLetter.classList.add("removable");
+                newLetter.classList.add("letter");
+                newLetter.style.color = "red";
+                const parent = document.getElementById("main-text")
+                if(parent){
+                    parent.insertBefore(newLetter, letter);
+                }
+                handleCursor(1);
+                removableLetters = [...removableLetters, newLetter]
+            }
+            
             currentPosition+=1;
             checkIfEnd()
         }
@@ -194,7 +208,7 @@
         secondsTime = 0;
         clearInterval(timeInterval)
 
-        generateWords();
+        createMainText();
         resetCursor();
         // resets the pressed key on keyboard to none
         removableLetters = [];
@@ -222,7 +236,7 @@
     function checkIfMoveText(){
         const cursorDelta = cursorYPositionNew - cursorYPositionOld;
         if(cursorDelta > 16 && !hasMistaken && currentPosition>0){
-            // wordList = wordList.slice(currentPosition);
+            // generatedWords = generatedWords.slice(currentPosition);
             // resetCursor();
             // let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
             // if(letters){
@@ -270,7 +284,7 @@
     }
 
     onMount(()=>{
-        generateWords();
+       createMainText();
         inputReference.focus();
         typingTestModeStore.subscribe(value => {
             configTestMode=value;
@@ -281,7 +295,7 @@
             resetTyping();
         });
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
-        generateWords();
+       createMainText();
     })    
 </script>
 
@@ -300,11 +314,20 @@
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
     <div id="overflow-placeholder">
         <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px">
-            <span id="ghost-cursor"></span>
-            <span id="cursor"></span>
-            {#each wordList as letter}
-                <span class="letter">{letter}</span>
-            {/each}
+            <div id="cursor"></div>
+            {#each mainText as word}
+                <div class="word">
+                    {#each word as {id, value, typed, removable}}
+                        <span 
+                            class="letter 
+                                {typed === true ? "typed" : ""} 
+                                {removable === true ? "removable" : ""}"
+                            id="letter{id}">
+                            {value}
+                        </span>
+                    {/each}
+                </div>
+            {/each}    
         </div>
     </div>
     <input bind:this={inputReference} id="wordsInput" on:input={handleTiping}>    
@@ -322,12 +345,22 @@
         height: 100%;
         overflow: hidden;
     }
-    #main-text{     
+    #main-text{    
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
         color: rgb(127, 106, 106);
         width: 100%;
         font-size: 2rem;
         user-select: none;
         transition: transform 0.25s ease-in-out;
+    }
+    #cursor{
+        position: absolute;
+        height: 2rem;
+        width: 2px;
+        /* background-color: transparent; */
+        background-color: #a8b9e4;
     }
     #wordsInput{
         pointer-events: none;
@@ -341,22 +374,6 @@
         user-select: none;
         cursor: default;
         margin-top: 0%;
-    }
-    #cursor{
-        display: none;
-        position:absolute;
-        width: 2px;
-        /* margin-top: 3px; */
-        height: 2rem;
-        background-color: #a8b9e4;
-        transition: transform 0.1s ease-in-out;
-    }
-    #ghost-cursor{
-        position: absolute;
-        width: 2px;
-        height: 2rem;
-        /* background-color: transparent; */
-        background-color: #a8b9e4;
     }
     .letter{
         margin-left: 2px;
@@ -374,6 +391,7 @@
        margin: auto;
        align-items: center;
     }
+    
     @media only screen and (max-width: 767px) {
         #statusBar{
             width: 90%;

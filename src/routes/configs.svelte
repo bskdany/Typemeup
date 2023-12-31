@@ -31,7 +31,7 @@
         
         // default mode is time 15 seconds
         if(typingTestMode===""){
-            setTypingTestMode("time");
+            setTypingTestMode("words");
         }
         if(typingTestTime===0){
             setTypingTestTime(15);
