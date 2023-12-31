@@ -16,12 +16,12 @@
     let secondsTime :number = 0;
     let timeInterval :any; // to record the time 
 
-    let generatedWords :string[];
+    let generatedWords :string = "";
     let mainText :object[][] = [];
     
     let globalLetterIndex :number = 0;
     let currentWordIndex :number = 0;
-    let letterIndexInWord :number = 0;
+    let currentLetterIndex :number = 0;
 
     let startedTyping :boolean = false;
     let correctCharCount :number = 0;
@@ -46,16 +46,14 @@
         }
     }
 
-
     function createMainText(){
-        generatedWords = [];
+        generatedWords = "";
         for(let i = 0; i < (configTestMode === "time" ? 100 : configWordSize); i+=1){
-            generatedWords.push(words.words[Math.floor(Math.random()*words.length)]);
+            generatedWords += words.words[Math.floor(Math.random()*words.length)] + " ";
         }
-
         mainText = [];
         let letterIdCounter = 0;
-        for(const word of generatedWords){
+        for(const word of generatedWords.split(" ")){
             let letterElements = [];
             for(let i = 0; i < word.length; i++){
                 const letterElement = {
@@ -67,16 +65,14 @@
                 letterElements.push(letterElement);
                 letterIdCounter += 1;
             }
-            // mainText = [...mainText, letterElements];
             mainText.push(letterElements);
         }
-        setLetterProperty(0,0,"typed",true);
     }
 
     function handleCursor(movingDirection:number){
         const mainText = document.getElementById('main-text');
         const ghostCursor = document.getElementById("cursor");
-        const newPosition = mainText?.getElementsByClassName("letter")[currentPosition+movingDirection];
+        const newPosition = mainText?.getElementsByClassName("letter")[globalLetterIndex+movingDirection];
         if(mainText && ghostCursor && newPosition){
             mainText.insertBefore(ghostCursor, newPosition);
 
@@ -104,18 +100,18 @@
     }
 
     function backspace(){
-        if(currentPosition == 0){
+        if(globalLetterIndex === 0){
             return
         }
-        const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition-1];
+        const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[globalLetterIndex-1];
 
         handleCursor(-1)
         if(letter){
             if(letter.classList.contains("removable")){
                 letter.remove();
 
-                const previousLetter = document.getElementById("main-text")?.getElementsByClassName("letter")[currentPosition-2];
-                if(currentPosition==1 || previousLetter?.style?.color == "white"){
+                const previousLetter = document.getElementById("main-text")?.getElementsByClassName("letter")[globalLetterIndex-2];
+                if(globalLetterIndex==1 || previousLetter?.style?.color == "white"){
                     hasMistaken=false;
                 }
             }
@@ -124,12 +120,12 @@
                 letter.style.color= "rgb(127, 106, 106)";
             }
         }
-        currentPosition -=1;
+        globalLetterIndex -=1;
     }
 
     function checkIfEnd(){
         if(configTestMode==="words"){
-            if(currentPosition==generatedWords.length-1 && !hasMistaken){
+            if(globalLetterIndex==generatedWords.length-1 && !hasMistaken){
                 typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
                 dispatch("typingEnded",typingTestWpm);
                 resetTyping();
@@ -145,58 +141,84 @@
             timeInterval = setInterval(handleTime, 10);
         }
 
-        if(keydown.inputType=="deleteContentBackward" && currentPosition > backspaceMinPosition+1){
-            recordKeystroke("backspace");
-            saveKeyStore("backspace");
+        if(keydown.inputType === "deleteContentBackward" && globalLetterIndex > backspaceMinPosition+1){
+            // recordKeystroke("backspace");
+            // saveKeyStore("backspace");
             backspace();
         }
 
-        else if(pressedKey){
-            const expectedKey = generatedWords[currentPosition];
-            
-            if(pressedKey === " "){
-                saveKeyStore("space");
-                recordKeystroke("space");
-            }
-            else{
-                saveKeyStore(pressedKey);
-                recordKeystroke(pressedKey);    
-            }
-
+        if(pressedKey){
+            const expectedKey = generatedWords.charAt(globalLetterIndex);
             if(pressedKey === expectedKey && !hasMistaken){
-                letter.style.color= "white";
-                handleCursor(1);
-                correctCharCount+=1;
-
-                if(pressedKey==" "){
-                    backspaceMinPosition = currentPosition;
-                    wordsTyped += 1;
-                }
-            }
-
-            else{
-                hasMistaken = true;
-                let newLetter = document.createElement('span');
-                if(pressedKey !== " "){
-                    newLetter.textContent = pressedKey;
+                setLetterProperty(currentWordIndex, currentLetterIndex, "typed", true);
+                if(pressedKey === " "){
+                    backspaceMinPosition = globalLetterIndex;
+                    currentWordIndex += 1;
+                    currentLetterIndex = 0;
                 }
                 else{
-                    newLetter.textContent = "_";
+                    setLetterProperty(currentWordIndex, currentLetterIndex, "typed", true);
+                    currentLetterIndex += 1;
                 }
-                newLetter.classList.add("removable");
-                newLetter.classList.add("letter");
-                newLetter.style.color = "red";
-                const parent = document.getElementById("main-text")
-                if(parent){
-                    parent.insertBefore(newLetter, letter);
-                }
-                handleCursor(1);
-                removableLetters = [...removableLetters, newLetter]
+                globalLetterIndex += 1;
             }
-            
-            currentPosition+=1;
-            checkIfEnd()
+            else{
+                hasMistaken = true;
+                const newLetterElement = {
+                    // id: letterIdCounter,
+                    value: pressedKey,
+                    typed: false,
+                    removable: true,
+                }
+                mainText[currentWordIndex][currentLetterIndex] = newLetterElement;
+                currentLetterIndex +=1 ;
+            }
         }
+
+
+
+            // if(pressedKey === " "){
+            //     saveKeyStore("space");
+            // }
+            // else{
+            //     saveKeyStore(pressedKey);
+            // }
+
+            // if(pressedKey === expectedKey && !hasMistaken){
+            //     letter.style.color= "white";
+            //     handleCursor(1);
+            //     correctCharCount+=1;
+
+            //     if(pressedKey==" "){
+            //         backspaceMinPosition = globalLetterIndex;
+            //         currentWordIndex += 1;
+            //         currentLetterIndex = 0;
+            //         wordsTyped += 1;
+            //     }
+            // }
+
+            // else{
+            //     hasMistaken = true;
+            //     let newLetter = document.createElement('span');
+            //     if(pressedKey !== " "){
+            //         newLetter.textContent = pressedKey;
+            //     }
+            //     else{
+            //         newLetter.textContent = "_";
+            //     }
+            //     newLetter.classList.add("removable");
+            //     newLetter.classList.add("letter");
+            //     newLetter.style.color = "red";
+            //     const parent = document.getElementById("main-text")
+            //     if(parent){
+            //         parent.insertBefore(newLetter, letter);
+            //     }
+            //     handleCursor(1);
+            // }
+            
+            // globalLetterIndex+=1;
+            // checkIfEnd()
+        
     }
 
     function resetTyping(){
@@ -213,7 +235,7 @@
         // resets the pressed key on keyboard to none
         removableLetters = [];
         pressedKeyStore.set("");
-        currentPosition = 0;
+        globalLetterIndex = 0;
         startedTyping = false;
         correctCharCount = 0;
         backspaceMinPosition = -1;
@@ -231,12 +253,13 @@
 
     function saveKeyStore(key:string){
         pressedKeyStore.set(key);
+        recordKeystroke(key);
     }
 
     function checkIfMoveText(){
         const cursorDelta = cursorYPositionNew - cursorYPositionOld;
-        if(cursorDelta > 16 && !hasMistaken && currentPosition>0){
-            // generatedWords = generatedWords.slice(currentPosition);
+        if(cursorDelta > 16 && !hasMistaken && globalLetterIndex>0){
+            // generatedWords = generatedWords.slice(globalLetterIndex);
             // resetCursor();
             // let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
             // if(letters){
@@ -245,7 +268,7 @@
             //     }
             // }
 
-            // currentPosition = 0;
+            // globalLetterIndex = 0;
 
             // console.log(cursorYPositionOld + " " + cursorYPositionNew)
 
@@ -392,6 +415,14 @@
        align-items: center;
     }
     
+
+    .typed{
+        color: white;
+    }
+    .removable{
+        color: red;
+    }
+
     @media only screen and (max-width: 767px) {
         #statusBar{
             width: 90%;
