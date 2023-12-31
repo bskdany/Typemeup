@@ -100,27 +100,30 @@
     }
 
     function backspace(){
-        if(globalLetterIndex === 0){
+        // if at the beginning of the text or if at the beginning of the word
+        if(globalLetterIndex === 0 || currentLetterIndex === 0){
             return
         }
-        const letter = document.getElementById("main-text")?.getElementsByClassName("letter")[globalLetterIndex-1];
 
-        handleCursor(-1)
-        if(letter){
-            if(letter.classList.contains("removable")){
-                letter.remove();
+        const previousLetter = mainText[currentWordIndex][currentLetterIndex-1];
+        console.log(previousLetter)
+        if(previousLetter && previousLetter.removable === true){
+            
+            mainText[currentWordIndex].splice(currentLetterIndex-1, 1);
+            mainText[currentWordIndex] = mainText[currentWordIndex];
 
-                const previousLetter = document.getElementById("main-text")?.getElementsByClassName("letter")[globalLetterIndex-2];
-                if(globalLetterIndex==1 || previousLetter?.style?.color == "white"){
-                    hasMistaken=false;
-                }
-            }
-            else{
-                correctCharCount-=1;
-                letter.style.color= "rgb(127, 106, 106)";
+            const previousPreviousLetter = mainText[currentWordIndex][currentLetterIndex-2];
+            console.log(previousPreviousLetter)
+            if(previousPreviousLetter && previousPreviousLetter.removable === false || currentLetterIndex === 1){
+                hasMistaken = false;
             }
         }
-        globalLetterIndex -=1;
+        else{
+            setLetterProperty(currentWordIndex, currentLetterIndex-1, "typed", false);
+            
+        }
+        globalLetterIndex -= 1;
+        currentLetterIndex -= 1;
     }
 
     function checkIfEnd(){
@@ -137,11 +140,11 @@
         const pressedKey = keydown.data;
         if(!startedTyping){
             startedTyping = true;
-            msTime = 0;
-            timeInterval = setInterval(handleTime, 10);
+            // msTime = 0;
+            // timeInterval = setInterval(handleTime, 10);
         }
 
-        if(keydown.inputType === "deleteContentBackward" && globalLetterIndex > backspaceMinPosition+1){
+        if(keydown.inputType === "deleteContentBackward" && globalLetterIndex > backspaceMinPosition){
             // recordKeystroke("backspace");
             // saveKeyStore("backspace");
             backspace();
@@ -150,8 +153,7 @@
         if(pressedKey){
             const expectedKey = generatedWords.charAt(globalLetterIndex);
             if(pressedKey === expectedKey && !hasMistaken){
-                setLetterProperty(currentWordIndex, currentLetterIndex, "typed", true);
-                if(pressedKey === " "){
+                if(pressedKey === " " && hasMistaken === false){
                     backspaceMinPosition = globalLetterIndex;
                     currentWordIndex += 1;
                     currentLetterIndex = 0;
@@ -164,61 +166,19 @@
             }
             else{
                 hasMistaken = true;
+                // const newValue = pressedKey !== " " ? pressedKey : 
                 const newLetterElement = {
                     // id: letterIdCounter,
                     value: pressedKey,
-                    typed: false,
+                    typed: true,
                     removable: true,
                 }
-                mainText[currentWordIndex][currentLetterIndex] = newLetterElement;
-                currentLetterIndex +=1 ;
+                mainText[currentWordIndex].splice(currentLetterIndex,0,newLetterElement);
+                mainText[currentWordIndex] = mainText[currentWordIndex];
+                currentLetterIndex +=1;
+                globalLetterIndex +=1;
             }
         }
-
-
-
-            // if(pressedKey === " "){
-            //     saveKeyStore("space");
-            // }
-            // else{
-            //     saveKeyStore(pressedKey);
-            // }
-
-            // if(pressedKey === expectedKey && !hasMistaken){
-            //     letter.style.color= "white";
-            //     handleCursor(1);
-            //     correctCharCount+=1;
-
-            //     if(pressedKey==" "){
-            //         backspaceMinPosition = globalLetterIndex;
-            //         currentWordIndex += 1;
-            //         currentLetterIndex = 0;
-            //         wordsTyped += 1;
-            //     }
-            // }
-
-            // else{
-            //     hasMistaken = true;
-            //     let newLetter = document.createElement('span');
-            //     if(pressedKey !== " "){
-            //         newLetter.textContent = pressedKey;
-            //     }
-            //     else{
-            //         newLetter.textContent = "_";
-            //     }
-            //     newLetter.classList.add("removable");
-            //     newLetter.classList.add("letter");
-            //     newLetter.style.color = "red";
-            //     const parent = document.getElementById("main-text")
-            //     if(parent){
-            //         parent.insertBefore(newLetter, letter);
-            //     }
-            //     handleCursor(1);
-            // }
-            
-            // globalLetterIndex+=1;
-            // checkIfEnd()
-        
     }
 
     function resetTyping(){
@@ -231,9 +191,8 @@
         clearInterval(timeInterval)
 
         createMainText();
-        resetCursor();
+        // resetCursor();
         // resets the pressed key on keyboard to none
-        removableLetters = [];
         pressedKeyStore.set("");
         globalLetterIndex = 0;
         startedTyping = false;
@@ -242,13 +201,18 @@
         hasMistaken = false;
         wordsTyped = 0;
 
-        const mainText = document.getElementById("main-text");
-        if(mainText){
-            mainText.style.marginTop = '0px';
-        }
+        // const mainText = document.getElementById("main-text");
+        // if(mainText){
+        //     mainText.style.marginTop = '0px';
+        // }
         cursorYPositionNew = 0;
         cursorYPositionOld = 0;
         mainTextTranslateDistance = 0;
+
+
+        globalLetterIndex = 0;
+        currentWordIndex = 0;
+        currentLetterIndex = 0;
     }
 
     function saveKeyStore(key:string){
@@ -322,6 +286,14 @@
     })    
 </script>
 
+<div id="debugging">
+    <div>Global letter index: {globalLetterIndex}</div>
+    <div>Current word index: {currentWordIndex}</div>
+    <div>Current letter index: {currentLetterIndex}</div>
+    <div>Backspace min position: {backspaceMinPosition}</div>
+    <div>Expected letter: {generatedWords[globalLetterIndex]}</div>
+</div>
+
 <div id="statusBar">
     {#if startedTyping}
     <div id="typingProgress">  
@@ -353,10 +325,30 @@
             {/each}    
         </div>
     </div>
-    <input bind:this={inputReference} id="wordsInput" on:input={handleTiping}>    
+    <input 
+        bind:this={inputReference} 
+        id="wordsInput" 
+        on:input={handleTiping}
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+    >    
 </div>
 
 <style>
+    #debugging{
+        position: absolute;
+        width: fit-content;
+        height: min-content;
+        left: 0%;
+        top: 0%;
+    }
+    #word{
+        margin: none;
+        padding: none;
+    }
+
     #typingTest{
         width: 100%;
         display: flex;
@@ -371,11 +363,12 @@
     #main-text{    
         display: flex;
         flex-wrap: wrap;
-        gap: 9px;
+        /* gap: 9px; */
         color: rgb(127, 106, 106);
         width: 100%;
         font-size: 2rem;
         user-select: none;
+        white-space: pre-wrap;
         transition: transform 0.25s ease-in-out;
     }
     #cursor{
