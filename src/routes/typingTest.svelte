@@ -18,10 +18,14 @@
 
     let generatedWords :string = "";
     let mainText :object[][] = [];
+    let wordElements :HTMLElement[] = [];
+    let cursorElement :HTMLElement;
     
     let globalLetterIndex :number = 0;
     let currentWordIndex :number = 0;
     let currentLetterIndex :number = 0;
+
+    let cursorElementPosition = {x: 0, y: 0};
 
     let startedTyping :boolean = false;
     let correctCharCount :number = 0;
@@ -61,6 +65,7 @@
                     value: word.charAt(i),
                     typed: false,
                     removable: false,
+                    active: false,
                 }
                 letterElements.push(letterElement);
                 letterIdCounter += 1;
@@ -69,74 +74,7 @@
         }
     }
 
-    function handleCursor(movingDirection:number){
-        const mainText = document.getElementById('main-text');
-        const ghostCursor = document.getElementById("cursor");
-        const newPosition = mainText?.getElementsByClassName("letter")[globalLetterIndex+movingDirection];
-        if(mainText && ghostCursor && newPosition){
-            mainText.insertBefore(ghostCursor, newPosition);
-
-            const ghostCursorClientRect = ghostCursor.getBoundingClientRect();
-            const mainTextClientRect = mainText.getBoundingClientRect();
-
-            cursorYPositionOld = cursorYPositionNew;
-            cursorYPositionNew = ghostCursorClientRect.top;
-
-            // const cursor = document.getElementById("cursor");
-            // if(cursor){
-            //     const xOffset = ghostCursorClientRect.left - mainTextClientRect.left;
-            //     const yOffset = ghostCursorClientRect.top - mainTextClientRect.top;
-            //     cursor.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-            // }
-            checkIfMoveText();
-        }
-    }
-
-    function resetCursor(){
-        const parentDiv = document.getElementById('main-text');
-        const cursor = document.getElementById("cursor");
-        const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[0];
-        parentDiv.insertBefore(cursor, newPosition);
-    }
-
-    function backspace(){
-        // if at the beginning of the text or if at the beginning of the word
-        if(globalLetterIndex === 0 || currentLetterIndex === 0){
-            return
-        }
-
-        const previousLetter = mainText[currentWordIndex][currentLetterIndex-1];
-        console.log(previousLetter)
-        if(previousLetter && previousLetter.removable === true){
-            
-            mainText[currentWordIndex].splice(currentLetterIndex-1, 1);
-            mainText[currentWordIndex] = mainText[currentWordIndex];
-
-            const previousPreviousLetter = mainText[currentWordIndex][currentLetterIndex-2];
-            console.log(previousPreviousLetter)
-            if(previousPreviousLetter && previousPreviousLetter.removable === false || currentLetterIndex === 1){
-                hasMistaken = false;
-            }
-        }
-        else{
-            setLetterProperty(currentWordIndex, currentLetterIndex-1, "typed", false);
-            
-        }
-        globalLetterIndex -= 1;
-        currentLetterIndex -= 1;
-    }
-
-    function checkIfEnd(){
-        if(configTestMode==="words"){
-            if(globalLetterIndex==generatedWords.length-1 && !hasMistaken){
-                typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
-                dispatch("typingEnded",typingTestWpm);
-                resetTyping();
-            }
-        }     
-    }
-
-    function handleTiping(keydown:any){
+    function handleTiping(keydown :any){
         const pressedKey = keydown.data;
         if(!startedTyping){
             startedTyping = true;
@@ -178,7 +116,102 @@
                 currentLetterIndex +=1;
                 globalLetterIndex +=1;
             }
+
+            // if(lastCurrentActiveLetter.length !== 0){
+            //     setLetterProperty(lastCurrentActiveLetter[0], lastCurrentActiveLetter[1], "active", false);
+            // }
+            // lastCurrentActiveLetter[0] = currentWordIndex;
+            // lastCurrentActiveLetter[1] = currentLetterIndex;
+            // setLetterProperty(currentWordIndex, currentLetterIndex, "active", true);
+            // const activeLetter = document.getElementsByClassName("active")[0];
+            // console.log(activeLetter)
+            console.log(wordElements[currentWordIndex])
+            handleCursor(1)
         }
+    }
+
+    function handleCursor(movingDirection:number){
+        const currentPositionX = cursorElement.getBoundingClientRect().left;
+        const currentPositionY = cursorElement.getBoundingClientRect().top;
+        const newPositionX = wordElements[currentWordIndex].getBoundingClientRect().left;
+        const newPositionY = wordElements[currentWordIndex].getBoundingClientRect().top;
+        console.log(newPositionX + ' ' + newPositionY);
+
+        const xOffset = (newPositionX - currentPositionX) + currentLetterIndex * 21.27;
+        const yOffset = newPositionY - currentPositionY;
+        console.log(xOffset + " " + yOffset)
+
+        cursorElement.style.transform = `translate(${cursorElementPosition.x + xOffset}px, ${cursorElementPosition.y + yOffset}px)`;
+
+        cursorElementPosition.x += xOffset;
+        cursorElementPosition.y += yOffset;
+
+        // const mainText = document.getElementById('main-text');
+        // const ghostCursor = document.getElementById("cursor");
+        // const newPosition = mainText?.getElementsByClassName("letter")[globalLetterIndex+movingDirection];
+        // if(mainText && ghostCursor && newPosition){
+        //     mainText.insertBefore(ghostCursor, newPosition);
+
+        //     const ghostCursorClientRect = ghostCursor.getBoundingClientRect();
+        //     const mainTextClientRect = mainText.getBoundingClientRect();
+
+        //     cursorYPositionOld = cursorYPositionNew;
+        //     cursorYPositionNew = ghostCursorClientRect.top;
+
+            // const cursor = document.getElementById("cursor");
+            // if(cursor){
+            //     const xOffset = ghostCursorClientRect.left - mainTextClientRect.left;
+            //     const yOffset = ghostCursorClientRect.top - mainTextClientRect.top;
+            //     cursor.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            // }
+            // checkIfMoveText();
+        
+    }
+
+    function resetCursor(){
+        const parentDiv = document.getElementById('main-text');
+        const cursor = document.getElementById("cursor");
+        const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[0];
+        parentDiv.insertBefore(cursor, newPosition);
+    }
+
+    function backspace(){
+        // if at the beginning of the text or if at the beginning of the word
+        if(globalLetterIndex === 0 || currentLetterIndex === 0){
+            return
+        }
+
+        const previousLetter = mainText[currentWordIndex][currentLetterIndex-1];
+        console.log(previousLetter)
+        if(previousLetter && previousLetter.removable === true){
+            
+            mainText[currentWordIndex].splice(currentLetterIndex-1, 1);
+            mainText[currentWordIndex] = mainText[currentWordIndex];
+
+            const previousPreviousLetter = mainText[currentWordIndex][currentLetterIndex-2];
+            console.log(previousPreviousLetter)
+            if(previousPreviousLetter && previousPreviousLetter.removable === false || currentLetterIndex === 1){
+                hasMistaken = false;
+            }
+        }
+        else{
+            setLetterProperty(currentWordIndex, currentLetterIndex-1, "typed", false);
+            
+        }
+        globalLetterIndex -= 1;
+        currentLetterIndex -= 1;
+        handleCursor(-1);
+
+    }
+
+    function checkIfEnd(){
+        if(configTestMode==="words"){
+            if(globalLetterIndex==generatedWords.length-1 && !hasMistaken){
+                typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
+                dispatch("typingEnded",typingTestWpm);
+                resetTyping();
+            }
+        }     
     }
 
     function resetTyping(){
@@ -309,20 +342,16 @@
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
     <div id="overflow-placeholder">
         <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px">
-            <div id="cursor"></div>
-            {#each mainText as word}
-                <div class="word">
-                    {#each word as {id, value, typed, removable}}
-                        <span 
-                            class="letter 
-                                {typed === true ? "typed" : ""} 
-                                {removable === true ? "removable" : ""}"
-                            id="letter{id}">
-                            {value}
-                        </span>
-                    {/each}
-                </div>
-            {/each}    
+            <div id="cursor" bind:this={cursorElement}></div>
+            {#each mainText as word, index}
+                <div class="word" bind:this={wordElements[index]}>
+                    {#each word as {id, value, typed, removable, active}}
+                        <span class="letter 
+                        {typed === true ? "typed" : ""}
+                        {removable === true ? "removable" : ""}
+                        {active === true ? "active" : ""}"
+                        id="letter{id}">{value}</span>{/each}</div>
+            {/each}
         </div>
     </div>
     <input 
@@ -347,6 +376,7 @@
     #word{
         margin: none;
         padding: none;
+        width: fit-content;
     }
 
     #typingTest{
@@ -363,7 +393,7 @@
     #main-text{    
         display: flex;
         flex-wrap: wrap;
-        /* gap: 9px; */
+        gap: 12px;
         color: rgb(127, 106, 106);
         width: 100%;
         font-size: 2rem;
@@ -392,7 +422,7 @@
         margin-top: 0%;
     }
     .letter{
-        margin-left: 2px;
+        /* margin-left: 2px; */
     }
     #statusBar{
         width: 70%;
@@ -407,7 +437,6 @@
        margin: auto;
        align-items: center;
     }
-    
 
     .typed{
         color: white;
