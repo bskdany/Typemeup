@@ -34,10 +34,6 @@
     let correctCharCount :number = 0;
     let backspaceMinPosition :number = -1; // the minimin position in the array to which the user can backspace
     let hasMistaken :boolean = false;
-    let typingTestWpm :number;
-    let removableLetters :any = [];
-    let cursorYPositionNew :number = 0;
-    let cursorYPositionOld :number = 0;
     let mainTextTranslateDistance :number = 0;
     let wordsTyped = 0;
 
@@ -81,19 +77,20 @@
         const pressedKey = keydown.data;
         if(!startedTyping){
             startedTyping = true;
-            // msTime = 0;
-            // timeInterval = setInterval(handleTime, 10);
+            msTime = 0;
+            timeInterval = setInterval(handleTime, 10);
         }
 
         if(keydown.inputType === "deleteContentBackward" && globalLetterIndex > backspaceMinPosition){
-            // recordKeystroke("backspace");
-            // saveKeyStore("backspace");
+            saveKeyStore("backspace");
             backspace();
             handleCursor();
         }
 
-        if(pressedKey){
+        else if(pressedKey){
             const expectedKey = generatedWords.charAt(globalLetterIndex);
+            pressedKey === " " ? saveKeyStore("space") : saveKeyStore(pressedKey);
+
             if(pressedKey === expectedKey && !hasMistaken){
                 if(pressedKey === " " && hasMistaken === false){
                     backspaceMinPosition = globalLetterIndex;
@@ -105,6 +102,7 @@
                     currentLetterIndex += 1;
                 }
                 globalLetterIndex += 1;
+                correctCharCount += 1;
                 handleCursor();
             }
             else{
@@ -127,6 +125,7 @@
                 }, 1)
             }
         }
+        checkIfEnd();
     }
 
     function handleCursor(){
@@ -185,20 +184,11 @@
         // it not then just change the color of it
         else{
             setLetterProperty(currentWordIndex, currentLetterIndex-1, "typed", false);
+            correctCharCount -= 1;
             
         }
         globalLetterIndex -= 1;
         currentLetterIndex -= 1;
-    }
-
-    function checkIfEnd(){
-        if(configTestMode==="words"){
-            if(globalLetterIndex==generatedWords.length-1 && !hasMistaken){
-                typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
-                dispatch("typingEnded",typingTestWpm);
-                resetTyping();
-            }
-        }     
     }
 
     function resetTyping(){
@@ -219,16 +209,7 @@
         backspaceMinPosition = -1;
         hasMistaken = false;
         wordsTyped = 0;
-
-        // const mainText = document.getElementById("main-text");
-        // if(mainText){
-        //     mainText.style.marginTop = '0px';
-        // }
-        cursorYPositionNew = 0;
-        cursorYPositionOld = 0;
         mainTextTranslateDistance = 0;
-
-
         globalLetterIndex = 0;
         currentWordIndex = 0;
         currentLetterIndex = 0;
@@ -240,8 +221,8 @@
     }
 
     function checkIfMoveText(){
-        const cursorDelta = cursorYPositionNew - cursorYPositionOld;
-        if(cursorDelta > 16 && !hasMistaken && globalLetterIndex>0){
+        // const cursorDelta = cursorYPositionNew - cursorYPositionOld;
+        // if(cursorDelta > 16 && !hasMistaken && globalLetterIndex>0){
             // generatedWords = generatedWords.slice(globalLetterIndex);
             // resetCursor();
             // let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
@@ -255,38 +236,49 @@
 
             // console.log(cursorYPositionOld + " " + cursorYPositionNew)
 
-            const overflowPlaceholder = document.getElementById("overflow-placeholder");
-            const overFlowPlaceholderHeight = overflowPlaceholder.getBoundingClientRect().top - overflowPlaceholder.getBoundingClientRect().bottom;
-            console.log(overFlowPlaceholderHeight / 3)
+        //     const overflowPlaceholder = document.getElementById("overflow-placeholder");
+        //     const overFlowPlaceholderHeight = overflowPlaceholder.getBoundingClientRect().top - overflowPlaceholder.getBoundingClientRect().bottom;
+        //     console.log(overFlowPlaceholderHeight / 3)
 
-            var mainText = document.getElementById("main-text");
-            const transformArg = mainText?.style.transform;
-            const startIndex = transformArg?.indexOf("(");
-            const endIndex = transformArg?.indexOf(")");
-            if(startIndex && endIndex){
-               var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
-            }
-            console.log(valueSubstring)
-            if(valueSubstring){
-                mainTextTranslateDistance = parseFloat(valueSubstring) -36;
-            }
-        }
+        //     var mainText = document.getElementById("main-text");
+        //     const transformArg = mainText?.style.transform;
+        //     const startIndex = transformArg?.indexOf("(");
+        //     const endIndex = transformArg?.indexOf(")");
+        //     if(startIndex && endIndex){
+        //        var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
+        //     }
+        //     console.log(valueSubstring)
+        //     if(valueSubstring){
+        //         mainTextTranslateDistance = parseFloat(valueSubstring) -36;
+        //     }
+        // }
     }
 
     // part that handles time
     function handleTime(){
-        msTime+=10;
-        if(msTime%1000==0){
-            secondsTime +=1;
+        msTime += 10;
+        if(msTime % 1000 === 0){
+            secondsTime += 1;
         }
-
-        if(configTestMode === "time" && msTime > configTestTime*1000){
-            typingTestWpm = parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
-            clearInterval(timeInterval);
-            msTime = 0;
+        if(configTestMode === "time" && msTime > configTestTime * 1000){
+            const typingTestWpm = calculateWPM();
             dispatch("typingEnded",typingTestWpm);
             resetTyping();
         }
+    }
+
+    function checkIfEnd(){
+        if(configTestMode === "words"){
+            if(globalLetterIndex === generatedWords.length-1 && !hasMistaken){
+                const typingTestWpm = calculateWPM();
+                dispatch("typingEnded", typingTestWpm);
+                resetTyping();
+            }
+        }     
+    }
+
+    function calculateWPM(){
+        return parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
     }
 
     onMount(()=>{
@@ -312,7 +304,7 @@
 <div id="statusBar">
     {#if startedTyping}
     <div id="typingProgress">  
-        <TypingProgress wordsTyped={wordsTyped} timeTyped={secondsTime}/>
+        <TypingProgress wordsTyped={currentWordIndex} timeTyped={secondsTime}/>
     </div>
     {/if}
     <div id="configs"> 
