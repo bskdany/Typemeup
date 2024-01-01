@@ -18,8 +18,10 @@
 
     let generatedWords :string = "";
     let mainText :object[][] = [];
+    let mainTextElement :HTMLElement;
     let wordElements :HTMLElement[] = [];
     let cursorElement :HTMLElement;
+    let resizeObserver;
     
     let globalLetterIndex :number = 0;
     let currentWordIndex :number = 0;
@@ -130,42 +132,35 @@
         }
     }
 
-    function handleCursor(movingDirection:number){
+    function handleCursor(){
         const currentPositionX = cursorElement.getBoundingClientRect().left;
         const currentPositionY = cursorElement.getBoundingClientRect().top;
         const newPositionX = wordElements[currentWordIndex].getBoundingClientRect().left;
         const newPositionY = wordElements[currentWordIndex].getBoundingClientRect().top;
-        console.log(newPositionX + ' ' + newPositionY);
 
         const xOffset = (newPositionX - currentPositionX) + currentLetterIndex * 21.27;
         const yOffset = newPositionY - currentPositionY;
-        console.log(xOffset + " " + yOffset)
 
         cursorElement.style.transform = `translate(${cursorElementPosition.x + xOffset}px, ${cursorElementPosition.y + yOffset}px)`;
 
         cursorElementPosition.x += xOffset;
-        cursorElementPosition.y += yOffset;
+        cursorElementPosition.y += yOffset;        
+    }
 
-        // const mainText = document.getElementById('main-text');
-        // const ghostCursor = document.getElementById("cursor");
-        // const newPosition = mainText?.getElementsByClassName("letter")[globalLetterIndex+movingDirection];
-        // if(mainText && ghostCursor && newPosition){
-        //     mainText.insertBefore(ghostCursor, newPosition);
+    function recalculateCursorPosition(){
+        console.log("AAa")
+        const currentPositionX = cursorElement.getBoundingClientRect().left;
+        const currentPositionY = cursorElement.getBoundingClientRect().top;
+        const newPositionX = wordElements[currentWordIndex].getBoundingClientRect().left;
+        const newPositionY = wordElements[currentWordIndex].getBoundingClientRect().top;
 
-        //     const ghostCursorClientRect = ghostCursor.getBoundingClientRect();
-        //     const mainTextClientRect = mainText.getBoundingClientRect();
+        const xOffset = (newPositionX - currentPositionX) ;
+        const yOffset = newPositionY - currentPositionY;
 
-        //     cursorYPositionOld = cursorYPositionNew;
-        //     cursorYPositionNew = ghostCursorClientRect.top;
+        cursorElement.style.transform = `translate(${cursorElementPosition.x + xOffset}px, ${cursorElementPosition.y + yOffset}px)`;
 
-            // const cursor = document.getElementById("cursor");
-            // if(cursor){
-            //     const xOffset = ghostCursorClientRect.left - mainTextClientRect.left;
-            //     const yOffset = ghostCursorClientRect.top - mainTextClientRect.top;
-            //     cursor.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-            // }
-            // checkIfMoveText();
-        
+        cursorElementPosition.x += xOffset;
+        cursorElementPosition.y += yOffset;        
     }
 
     function resetCursor(){
@@ -306,16 +301,12 @@
     onMount(()=>{
        createMainText();
         inputReference.focus();
-        typingTestModeStore.subscribe(value => {
-            configTestMode=value;
-            resetTyping();
-        });
-        wordSizeStore.subscribe(value => { 
-            configWordSize=value;
-            resetTyping();
-        });
+        typingTestModeStore.subscribe(value => {configTestMode=value;resetTyping();});
+        wordSizeStore.subscribe(value => {configWordSize=value;resetTyping();});
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
-       createMainText();
+        // createMainText();
+        resizeObserver = new ResizeObserver(handleCursor);
+        resizeObserver.observe(mainTextElement);
     })    
 </script>
 
@@ -341,7 +332,7 @@
 
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
     <div id="overflow-placeholder">
-        <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px">
+        <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px" bind:this={mainTextElement}>
             <div id="cursor" bind:this={cursorElement}></div>
             {#each mainText as word, index}
                 <div class="word" bind:this={wordElements[index]}>
