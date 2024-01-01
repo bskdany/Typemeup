@@ -20,6 +20,7 @@
     let mainText :object[][] = [];
     let mainTextElement :HTMLElement;
     let wordElements :HTMLElement[] = [];
+    let letterElements :HTMLElement[] = [];
     let cursorElement :HTMLElement;
     let resizeObserver;
     
@@ -88,6 +89,7 @@
             // recordKeystroke("backspace");
             // saveKeyStore("backspace");
             backspace();
+            handleCursor();
         }
 
         if(pressedKey){
@@ -103,6 +105,7 @@
                     currentLetterIndex += 1;
                 }
                 globalLetterIndex += 1;
+                handleCursor();
             }
             else{
                 hasMistaken = true;
@@ -117,45 +120,33 @@
                 mainText[currentWordIndex] = mainText[currentWordIndex];
                 currentLetterIndex +=1;
                 globalLetterIndex +=1;
-            }
 
-            // if(lastCurrentActiveLetter.length !== 0){
-            //     setLetterProperty(lastCurrentActiveLetter[0], lastCurrentActiveLetter[1], "active", false);
-            // }
-            // lastCurrentActiveLetter[0] = currentWordIndex;
-            // lastCurrentActiveLetter[1] = currentLetterIndex;
-            // setLetterProperty(currentWordIndex, currentLetterIndex, "active", true);
-            // const activeLetter = document.getElementsByClassName("active")[0];
-            // console.log(activeLetter)
-            console.log(wordElements[currentWordIndex])
-            handleCursor(1)
+                // why am I doing this? because it does't work otherwise
+                setTimeout(() => {
+                    handleCursor();
+                }, 1)
+            }
         }
     }
 
     function handleCursor(){
-        const currentPositionX = cursorElement.getBoundingClientRect().left;
-        const currentPositionY = cursorElement.getBoundingClientRect().top;
-        const newPositionX = wordElements[currentWordIndex].getBoundingClientRect().left;
-        const newPositionY = wordElements[currentWordIndex].getBoundingClientRect().top;
+        const cursorPositionX = cursorElement.getBoundingClientRect().left;
+        const cursorPositionY = cursorElement.getBoundingClientRect().top;
 
-        const xOffset = (newPositionX - currentPositionX) + currentLetterIndex * 21.27;
-        const yOffset = newPositionY - currentPositionY;
+        let newCursorPositionX = 0;
+        let newCursorPositionY = 0;
 
-        cursorElement.style.transform = `translate(${cursorElementPosition.x + xOffset}px, ${cursorElementPosition.y + yOffset}px)`;
-
-        cursorElementPosition.x += xOffset;
-        cursorElementPosition.y += yOffset;        
-    }
-
-    function recalculateCursorPosition(){
-        console.log("AAa")
-        const currentPositionX = cursorElement.getBoundingClientRect().left;
-        const currentPositionY = cursorElement.getBoundingClientRect().top;
-        const newPositionX = wordElements[currentWordIndex].getBoundingClientRect().left;
-        const newPositionY = wordElements[currentWordIndex].getBoundingClientRect().top;
-
-        const xOffset = (newPositionX - currentPositionX) ;
-        const yOffset = newPositionY - currentPositionY;
+        if(currentLetterIndex === 0){
+            newCursorPositionX = wordElements[currentWordIndex].childNodes[currentLetterIndex].getBoundingClientRect().left;
+            newCursorPositionY = wordElements[currentWordIndex].childNodes[currentLetterIndex].getBoundingClientRect().top;
+        }
+        else{
+            newCursorPositionX = wordElements[currentWordIndex].childNodes[currentLetterIndex-1].getBoundingClientRect().right;
+            newCursorPositionY = wordElements[currentWordIndex].childNodes[currentLetterIndex-1].getBoundingClientRect().top;
+        }
+    
+        const xOffset = newCursorPositionX - cursorPositionX
+        const yOffset = newCursorPositionY - cursorPositionY;
 
         cursorElement.style.transform = `translate(${cursorElementPosition.x + xOffset}px, ${cursorElementPosition.y + yOffset}px)`;
 
@@ -177,26 +168,27 @@
         }
 
         const previousLetter = mainText[currentWordIndex][currentLetterIndex-1];
-        console.log(previousLetter)
+
+        // if previous letter can be removed then remove it
         if(previousLetter && previousLetter.removable === true){
             
             mainText[currentWordIndex].splice(currentLetterIndex-1, 1);
             mainText[currentWordIndex] = mainText[currentWordIndex];
 
             const previousPreviousLetter = mainText[currentWordIndex][currentLetterIndex-2];
-            console.log(previousPreviousLetter)
+            // it the letter before is previous letter is not wrong (removable) then the user has not mistaken
+            // anymore and the next letter he will type will be a right one
             if(previousPreviousLetter && previousPreviousLetter.removable === false || currentLetterIndex === 1){
                 hasMistaken = false;
             }
         }
+        // it not then just change the color of it
         else{
             setLetterProperty(currentWordIndex, currentLetterIndex-1, "typed", false);
             
         }
         globalLetterIndex -= 1;
         currentLetterIndex -= 1;
-        handleCursor(-1);
-
     }
 
     function checkIfEnd(){
@@ -210,7 +202,6 @@
     }
 
     function resetTyping(){
-
         // reset keystroke recording stuff
         stopRecordKeystroke();
         // reset stopwatch for wpm
@@ -341,7 +332,7 @@
                         {typed === true ? "typed" : ""}
                         {removable === true ? "removable" : ""}
                         {active === true ? "active" : ""}"
-                        id="letter{id}">{value}</span>{/each}</div>
+                        bind:this={letterElements[index/4]}>{value}</span>{/each}</div>
             {/each}
         </div>
     </div>
