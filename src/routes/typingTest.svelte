@@ -31,6 +31,7 @@
     let startedTyping :boolean = false;
     let showDebugging :boolean = false;
     let hasMistaken :boolean = false;
+    let cancelTransitionCursor :boolean = false;
     let correctCharCount :number = 0;
     let backspaceMinPosition :number = -1; // the minimin position in the letters array to which the user can backspace
     let mainTextTranslateDistance :number = 0;
@@ -149,6 +150,7 @@
         if(!cursorElement){
             return
         }
+        cancelTransitionCursor = true;
         const cursorPositionX = cursorElement.getBoundingClientRect().left;
         const cursorPositionY = cursorElement.getBoundingClientRect().top;
 
@@ -167,17 +169,17 @@
         const xOffset = newCursorPositionX - cursorPositionX
         const yOffset = newCursorPositionY - cursorPositionY;
 
-        cursorElement.style.transform = `translate(${cursorElementPosition.x + xOffset}px, ${cursorElementPosition.y + yOffset}px)`;
-
+        cancelTransitionCursor = false;
         cursorElementPosition.x += xOffset;
-        cursorElementPosition.y += yOffset;        
+        cursorElementPosition.y += yOffset;    
+        
+        checkIfMoveText();
     }
 
     function resetCursor(){
         if(!cursorElement){
             return
         }
-        cursorElement.style.transform = `translate(${0}px, ${0}px)`;
         cursorElementPosition = {x: 0, y: 0};
     }
 
@@ -240,41 +242,11 @@
         recordKeystroke(key);
     }
 
-    // function checkIfMoveText(){
-    //     const cursorDelta = cursorYPositionNew - cursorYPositionOld;
-    //     if(cursorDelta > 16 && !hasMistaken && globalLetterIndex>0){
-    //         generatedWords = generatedWords.slice(globalLetterIndex);
-    //         resetCursor();
-    //         let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
-    //         if(letters){
-    //             for(var letter of letters){
-    //                 letter.style.color = "rgb(127, 106, 106)";
-    //             }
-    //         }
-
-    //         globalLetterIndex = 0;
-
-    //         console.log(cursorYPositionOld + " " + cursorYPositionNew)
-
-    //         const overflowPlaceholder = document.getElementById("overflow-placeholder");
-    //         const overFlowPlaceholderHeight = overflowPlaceholder.getBoundingClientRect().top - overflowPlaceholder.getBoundingClientRect().bottom;
-    //         console.log(overFlowPlaceholderHeight / 3)
-
-    //         var mainText = document.getElementById("main-text");
-    //         const transformArg = mainText?.style.transform;
-    //         const startIndex = transformArg?.indexOf("(");
-    //         const endIndex = transformArg?.indexOf(")");
-    //         if(startIndex && endIndex){
-    //            var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
-    //         }
-    //         console.log(valueSubstring)
-    //         if(valueSubstring){
-    //             mainTextTranslateDistance = parseFloat(valueSubstring) -36;
-    //         }
-    //     }
-    // }
-
-    // part that handles time
+    function checkIfMoveText(){
+        if(currentLetterIndex === 0 && cursorElementPosition.y > 1 && hasMistaken === false){ // 10 is arbitrary
+            mainTextTranslateDistance = -cursorElementPosition.y;
+        }
+    }
     
     function checkIfEnd(){
         if(configTestMode === "words"){
@@ -293,7 +265,10 @@
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
 
         // this is needed if the user resized the screen
-        resizeObserver = new ResizeObserver(handleCursor);
+        resizeObserver = new ResizeObserver(() => {
+            handleCursor();
+            mainTextTranslateDistance = -cursorElementPosition.y;
+        });
         resizeObserver.observe(mainTextElement);
 
         resetTyping();
@@ -313,6 +288,8 @@
         <div>Time amount: {configTestTime}</div>
         <div>Correct chars typed: {correctCharCount}</div>
         <div>Mistake made: {hasMistaken}</div>
+        <br>
+        <div>Cursor Position x:{cursorElementPosition.x} y:{cursorElementPosition.y}</div>
     </div>
 {/if}
 
@@ -331,8 +308,8 @@
 
 <div role="button" id="typingTest" on:keydown={()=>{}} on:click={inputReference.focus()} tabindex="0">
     <div id="overflow-placeholder">
-        <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px" bind:this={mainTextElement}>
-            <div id="cursor" bind:this={cursorElement}></div>
+        <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
+            <div id="cursor" style={`transform: translate(${cursorElementPosition.x}px, ${cursorElementPosition.y}px)`} bind:this={cursorElement}></div>
             {#each mainText as word, index}
                 <div class="word" bind:this={wordElements[index]}>
                     {#each word as {id, value, typed, removable, active}}
@@ -382,7 +359,8 @@
         width: 100%;
         display: flex;
         justify-content: center;
-        height: 112px; 
+        height: calc(6rem + 13*3px); 
+        /* for some obscure reason the gap betwen vertical divs is 13px but the gap is set to be 12px... */
     }
     #overflow-placeholder{
         width: 70%;
@@ -404,8 +382,11 @@
         position: absolute;
         height: 2rem;
         width: 2px;
-        /* background-color: transparent; */
         background-color: #a8b9e4;
+        /* transition: transform 0.1s ease-in-out; */
+    }
+    .cancelTransitionCursor{
+        transition: none;
     }
     #wordsInput{
         pointer-events: none;
@@ -421,7 +402,7 @@
         margin-top: 0%;
     }
     .letter{
-        /* margin-left: 2px; */
+        margin-left: 2px;
     }
     #statusBar{
         width: 70%;
