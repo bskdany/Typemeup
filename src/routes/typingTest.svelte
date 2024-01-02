@@ -27,7 +27,6 @@
     let globalLetterIndex :number = 0;
     let currentWordIndex :number = 0;
     let currentLetterIndex :number = 0;
-
     let cursorElementPosition = {x: 0, y: 0};
 
     let startedTyping :boolean = false;
@@ -84,7 +83,10 @@
         if(keydown.inputType === "deleteContentBackward" && globalLetterIndex > backspaceMinPosition){
             saveKeyStore("backspace");
             backspace();
-            handleCursor();
+            // why am I doing this? because it does't work otherwise
+            setTimeout(() => {
+                handleCursor();
+            }, 1)
         }
 
         else if(pressedKey){
@@ -154,10 +156,8 @@
     }
 
     function resetCursor(){
-        const parentDiv = document.getElementById('main-text');
-        const cursor = document.getElementById("cursor");
-        const newPosition = document.getElementById("main-text")?.getElementsByClassName("letter")[0];
-        parentDiv.insertBefore(cursor, newPosition);
+        cursorElement.style.transform = `translate(${0}px, ${0}px)`;
+        cursorElementPosition = {x: 0, y: 0};
     }
 
     function backspace(){
@@ -185,7 +185,6 @@
         else{
             setLetterProperty(currentWordIndex, currentLetterIndex-1, "typed", false);
             correctCharCount -= 1;
-            
         }
         globalLetterIndex -= 1;
         currentLetterIndex -= 1;
@@ -200,7 +199,8 @@
         clearInterval(timeInterval)
 
         createMainText();
-        // resetCursor();
+        resetCursor();
+        
         // resets the pressed key on keyboard to none
         pressedKeyStore.set("");
         globalLetterIndex = 0;
@@ -282,12 +282,13 @@
     }
 
     onMount(()=>{
-       createMainText();
         inputReference.focus();
         typingTestModeStore.subscribe(value => {configTestMode=value;resetTyping();});
         wordSizeStore.subscribe(value => {configWordSize=value;resetTyping();});
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
-        // createMainText();
+        createMainText();
+
+        // this is needed if the user resized the screen
         resizeObserver = new ResizeObserver(handleCursor);
         resizeObserver.observe(mainTextElement);
     })    
@@ -347,7 +348,7 @@
         left: 0%;
         top: 0%;
     }
-    #word{
+    .word{
         margin: none;
         padding: none;
         width: fit-content;
