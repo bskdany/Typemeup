@@ -30,13 +30,13 @@
         typingTestTimeStore.subscribe( value => {typingTestTime = value});
         
         // default mode is time 15 seconds
-        if(typingTestMode===""){
+        if(typingTestMode === ""){
             setTypingTestMode("words");
         }
-        if(typingTestTime===0){
+        if(typingTestTime === 0){
             setTypingTestTime(15);
         }
-        if(configWordSize===0){
+        if(configWordSize === 0){
             setWordSize(10);
         }
     })

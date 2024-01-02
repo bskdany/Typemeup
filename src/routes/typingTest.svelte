@@ -16,29 +16,28 @@
     let secondsTime :number = 0;
     let timeInterval :any; // to record the time 
 
-    let generatedWords :string = "";
-    let mainText :object[][] = [];
-    let mainTextElement :HTMLElement;
+    // element binds
+    let mainText :object[][] = [];      
+    let mainTextElement :HTMLElement; 
     let wordElements :HTMLElement[] = [];
-    let letterElements :HTMLElement[] = [];
     let cursorElement :HTMLElement;
-    let resizeObserver;
-    
+    export let inputReference :HTMLElement;
+
+    let generatedWords :string = "";
     let globalLetterIndex :number = 0;
     let currentWordIndex :number = 0;
     let currentLetterIndex :number = 0;
     let cursorElementPosition = {x: 0, y: 0};
-
     let startedTyping :boolean = false;
-    let correctCharCount :number = 0;
-    let backspaceMinPosition :number = -1; // the minimin position in the array to which the user can backspace
+    let showDebugging :boolean = false;
     let hasMistaken :boolean = false;
+    let correctCharCount :number = 0;
+    let backspaceMinPosition :number = -1; // the minimin position in the letters array to which the user can backspace
     let mainTextTranslateDistance :number = 0;
-    let wordsTyped = 0;
-
+    
+    let resizeObserver;     // to handle mainText resizing
     const dispatch = createEventDispatcher();
     export const resetTypingProp = resetTyping;
-    export let inputReference :any;
 
     function setLetterProperty(wordIndex :number, letterIndex :number, property :string, value :any){
         if(mainText && mainText.length > 0){
@@ -46,6 +45,22 @@
                 mainText[wordIndex][letterIndex][property] = value;                
             }
         }
+    }
+
+    function handleTime(){
+        msTime += 10;
+        if(msTime % 1000 === 0){
+            secondsTime += 1;
+        }
+        if(configTestMode === "time" && msTime > configTestTime * 1000){
+            const typingTestWpm = calculateWPM();
+            dispatch("typingEnded",typingTestWpm);
+            resetTyping();
+        }
+    }
+    
+    function calculateWPM(){
+        return parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
     }
 
     function createMainText(){
@@ -131,6 +146,9 @@
     }
 
     function handleCursor(){
+        if(!cursorElement){
+            return
+        }
         const cursorPositionX = cursorElement.getBoundingClientRect().left;
         const cursorPositionY = cursorElement.getBoundingClientRect().top;
 
@@ -156,6 +174,9 @@
     }
 
     function resetCursor(){
+        if(!cursorElement){
+            return
+        }
         cursorElement.style.transform = `translate(${0}px, ${0}px)`;
         cursorElementPosition = {x: 0, y: 0};
     }
@@ -193,6 +214,7 @@
     function resetTyping(){
         // reset keystroke recording stuff
         stopRecordKeystroke();
+
         // reset stopwatch for wpm
         msTime = 0;
         secondsTime = 0;
@@ -203,13 +225,11 @@
         
         // resets the pressed key on keyboard to none
         pressedKeyStore.set("");
-        globalLetterIndex = 0;
         startedTyping = false;
         correctCharCount = 0;
         backspaceMinPosition = -1;
         hasMistaken = false;
-        wordsTyped = 0;
-        mainTextTranslateDistance = 0;
+
         globalLetterIndex = 0;
         currentWordIndex = 0;
         currentLetterIndex = 0;
@@ -220,53 +240,42 @@
         recordKeystroke(key);
     }
 
-    function checkIfMoveText(){
-        // const cursorDelta = cursorYPositionNew - cursorYPositionOld;
-        // if(cursorDelta > 16 && !hasMistaken && globalLetterIndex>0){
-            // generatedWords = generatedWords.slice(globalLetterIndex);
-            // resetCursor();
-            // let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
-            // if(letters){
-            //     for(var letter of letters){
-            //         letter.style.color = "rgb(127, 106, 106)";
-            //     }
-            // }
+    // function checkIfMoveText(){
+    //     const cursorDelta = cursorYPositionNew - cursorYPositionOld;
+    //     if(cursorDelta > 16 && !hasMistaken && globalLetterIndex>0){
+    //         generatedWords = generatedWords.slice(globalLetterIndex);
+    //         resetCursor();
+    //         let letters = document.getElementById("main-text")?.getElementsByClassName("letter") as HTMLCollectionOf<HTMLElement>;
+    //         if(letters){
+    //             for(var letter of letters){
+    //                 letter.style.color = "rgb(127, 106, 106)";
+    //             }
+    //         }
 
-            // globalLetterIndex = 0;
+    //         globalLetterIndex = 0;
 
-            // console.log(cursorYPositionOld + " " + cursorYPositionNew)
+    //         console.log(cursorYPositionOld + " " + cursorYPositionNew)
 
-        //     const overflowPlaceholder = document.getElementById("overflow-placeholder");
-        //     const overFlowPlaceholderHeight = overflowPlaceholder.getBoundingClientRect().top - overflowPlaceholder.getBoundingClientRect().bottom;
-        //     console.log(overFlowPlaceholderHeight / 3)
+    //         const overflowPlaceholder = document.getElementById("overflow-placeholder");
+    //         const overFlowPlaceholderHeight = overflowPlaceholder.getBoundingClientRect().top - overflowPlaceholder.getBoundingClientRect().bottom;
+    //         console.log(overFlowPlaceholderHeight / 3)
 
-        //     var mainText = document.getElementById("main-text");
-        //     const transformArg = mainText?.style.transform;
-        //     const startIndex = transformArg?.indexOf("(");
-        //     const endIndex = transformArg?.indexOf(")");
-        //     if(startIndex && endIndex){
-        //        var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
-        //     }
-        //     console.log(valueSubstring)
-        //     if(valueSubstring){
-        //         mainTextTranslateDistance = parseFloat(valueSubstring) -36;
-        //     }
-        // }
-    }
+    //         var mainText = document.getElementById("main-text");
+    //         const transformArg = mainText?.style.transform;
+    //         const startIndex = transformArg?.indexOf("(");
+    //         const endIndex = transformArg?.indexOf(")");
+    //         if(startIndex && endIndex){
+    //            var valueSubstring = transformArg?.substring(startIndex + 1, endIndex-2);
+    //         }
+    //         console.log(valueSubstring)
+    //         if(valueSubstring){
+    //             mainTextTranslateDistance = parseFloat(valueSubstring) -36;
+    //         }
+    //     }
+    // }
 
     // part that handles time
-    function handleTime(){
-        msTime += 10;
-        if(msTime % 1000 === 0){
-            secondsTime += 1;
-        }
-        if(configTestMode === "time" && msTime > configTestTime * 1000){
-            const typingTestWpm = calculateWPM();
-            dispatch("typingEnded",typingTestWpm);
-            resetTyping();
-        }
-    }
-
+    
     function checkIfEnd(){
         if(configTestMode === "words"){
             if(globalLetterIndex === generatedWords.length-1 && !hasMistaken){
@@ -277,30 +286,36 @@
         }     
     }
 
-    function calculateWPM(){
-        return parseFloat(((correctCharCount / 5 ) * (60/(msTime/1000))).toFixed(2));
-    }
-
     onMount(()=>{
         inputReference.focus();
-        typingTestModeStore.subscribe(value => {configTestMode=value;resetTyping();});
-        wordSizeStore.subscribe(value => {configWordSize=value;resetTyping();});
+        typingTestModeStore.subscribe(value => {configTestMode=value; resetTyping()});
+        wordSizeStore.subscribe(value => {configWordSize=value; resetTyping()});
         typingTestTimeStore.subscribe(value => { configTestTime=value; resetTyping()});
-        createMainText();
 
         // this is needed if the user resized the screen
         resizeObserver = new ResizeObserver(handleCursor);
         resizeObserver.observe(mainTextElement);
+
+        resetTyping();
     })    
 </script>
 
-<div id="debugging">
-    <div>Global letter index: {globalLetterIndex}</div>
-    <div>Current word index: {currentWordIndex}</div>
-    <div>Current letter index: {currentLetterIndex}</div>
-    <div>Backspace min position: {backspaceMinPosition}</div>
-    <div>Expected letter: {generatedWords[globalLetterIndex]}</div>
-</div>
+<button id="show-debugging" on:click={() => {showDebugging? showDebugging = false : showDebugging = true}}>debug</button>
+{#if showDebugging}
+    <div id="debugging">
+        <div>Global letter index: {globalLetterIndex}</div>
+        <div>Current word index: {currentWordIndex}</div>
+        <div>Current letter index: {currentLetterIndex}</div>
+        <div>Backspace min position: {backspaceMinPosition}</div>
+        <div>Expected letter: {generatedWords[globalLetterIndex]}</div>
+        <div>Current mode: {configTestMode}</div>
+        <div>Word Size: {configWordSize}</div>
+        <div>Time amount: {configTestTime}</div>
+        <div>Correct chars typed: {correctCharCount}</div>
+        <div>Mistake made: {hasMistaken}</div>
+    </div>
+{/if}
+
 
 <div id="statusBar">
     {#if startedTyping}
@@ -324,8 +339,8 @@
                         <span class="letter 
                         {typed === true ? "typed" : ""}
                         {removable === true ? "removable" : ""}
-                        {active === true ? "active" : ""}"
-                        bind:this={letterElements[index/4]}>{value}</span>{/each}</div>
+                        {active === true ? "active" : ""}">
+                        {value}</span>{/each}</div>
             {/each}
         </div>
     </div>
@@ -341,7 +356,16 @@
 </div>
 
 <style>
+    #show-debugging{
+        color:#506a7b;
+        position: absolute;
+        width: fit-content;
+        height: min-content;
+        right: 0%;
+        top: 0%; 
+    }
     #debugging{
+        color:#506a7b;
         position: absolute;
         width: fit-content;
         height: min-content;
