@@ -238,7 +238,7 @@
     }
 
     function saveKeyStore(key:string){
-        pressedKeyStore.set(key);
+        pressedKeyStore.set({value: key,timestamp: msTime});
         recordKeystroke(key);
     }
 

@@ -1,8 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import {fade} from 'svelte/transition';
     import {pressedKeyStore} from "./stores"
-    import { backOut, linear } from "svelte/easing";
 
     let pressedKey :string;
     const row0 = [" ","1","2","3","4","5","6","7","8","9","0","-","=","Backspace"];
@@ -14,7 +12,7 @@
 
     onMount(()=>{
         pressedKeyStore.subscribe(value => {
-            pressedKey = value;
+            pressedKey = value.value;
             setTimeout(()=> {
                 pressedKey = "";
             },1000)
@@ -26,7 +24,7 @@
     {#each rows as row, index}
         <div class="row" id="row{index}">
             {#each row as key}
-                <div class=" {pressedKey==key.toLowerCase() ? "activeKey" : "key"} {key==" " ? "invisible" : ""}" id=${key} transition:fade>{key}</div>
+                <div class=" {pressedKey==key.toLowerCase() ? "activeKey" : "key"} {key==" " ? "invisible" : ""}" id=${key}>{key}</div>
             {/each}
         </div>
     {/each}
@@ -76,7 +74,7 @@
         display: flex;
         justify-content: center;
         align-items: center; 
-        /* transition: border-color 0.5s linear; fun mode */
+        transition: border-color 0.5s linear;
         transition: background-color 0.5s linear;
     }
     .activeKey{
@@ -89,7 +87,8 @@
         border-width: 2px;
         border-radius: 5px;
         border-color: #2c2e31;
-        /* border-color: gold; fun mode pt2*/
+        /* uncommnet for fun mode */
+        /* border-color: gold; */
         display: flex;
         justify-content: center;
         align-items: center; 
