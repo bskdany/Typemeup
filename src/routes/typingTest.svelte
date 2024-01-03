@@ -275,7 +275,7 @@
     })    
 </script>
 
-<button id="show-debugging" on:click={() => {showDebugging? showDebugging = false : showDebugging = true}}>debug</button>
+<button hidden id="show-debugging" on:click={() => {showDebugging? showDebugging = false : showDebugging = true}}>debug</button>
 {#if showDebugging}
     <div id="debugging">
         <div>Global letter index: {globalLetterIndex}</div>
