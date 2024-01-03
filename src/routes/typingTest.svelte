@@ -226,12 +226,12 @@
         resetCursor();
         
         // resets the pressed key on keyboard to none
-        pressedKeyStore.set("");
+        pressedKeyStore.set({value: "", timestamp: 0});
         startedTyping = false;
         correctCharCount = 0;
         backspaceMinPosition = -1;
         hasMistaken = false;
-
+        mainTextTranslateDistance = 0;
         globalLetterIndex = 0;
         currentWordIndex = 0;
         currentLetterIndex = 0;
