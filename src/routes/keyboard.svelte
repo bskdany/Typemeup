@@ -1,6 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import {fade} from 'svelte/transition';
     import {pressedKeyStore} from "./stores"
+    import { backOut, linear } from "svelte/easing";
 
     let pressedKey :string;
     const row0 = [" ","1","2","3","4","5","6","7","8","9","0","-","=","Backspace"];
@@ -11,7 +13,12 @@
     const rows = [row0, row1, row2, row3, row4];
 
     onMount(()=>{
-        pressedKeyStore.subscribe(value => {pressedKey=value});
+        pressedKeyStore.subscribe(value => {
+            pressedKey = value;
+            setTimeout(()=> {
+                pressedKey = "";
+            },1000)
+        });
     })
 </script>
 
@@ -19,7 +26,7 @@
     {#each rows as row, index}
         <div class="row" id="row{index}">
             {#each row as key}
-            <div class=" key {pressedKey==key.toLowerCase() ? "active" : ""} {key==" " ? "invisible" : ""}" id=${key}>{key}</div>
+                <div class=" {pressedKey==key.toLowerCase() ? "activeKey" : "key"} {key==" " ? "invisible" : ""}" id=${key} transition:fade>{key}</div>
             {/each}
         </div>
     {/each}
@@ -32,10 +39,12 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        height: fit-content;
     }
     .row{
         display: grid;
         width: 100%;
+        height: 100%;
     }
     #row0{
         grid-template-columns: auto repeat(12, 1fr) 2fr ;
@@ -48,6 +57,7 @@
     }
     #row3{
         grid-template-columns: 2.5fr repeat(10, 1fr) 2.5fr;
+        height: 100%;
     }
     #row4{
         grid-template-columns: 1fr 2fr 1fr;
@@ -65,11 +75,26 @@
         border-color: #2c2e31;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: center; 
+        /* transition: border-color 0.5s linear; fun mode */
+        transition: background-color 0.5s linear;
     }
-    .active{
+    .activeKey{
+        color: rgb(127, 106, 106);
+        width: auto;
+        min-width: 40px;
+        height: 40px;
         background-color: #27282a;  
+        border: solid;
+        border-width: 2px;
+        border-radius: 5px;
+        border-color: #2c2e31;
+        /* border-color: gold; fun mode pt2*/
+        display: flex;
+        justify-content: center;
+        align-items: center; 
     }
+    
     .invisible{
         border: none;
     }

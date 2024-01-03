@@ -385,9 +385,6 @@
         background-color: #a8b9e4;
         /* transition: transform 0.1s ease-in-out; */
     }
-    .cancelTransitionCursor{
-        transition: none;
-    }
     #wordsInput{
         pointer-events: none;
         width: 10%;
