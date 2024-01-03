@@ -1,6 +1,6 @@
 # TypeMeUp
 
-A touch typing website
+A typing website and my svelte learning project
 
 ## Developing
 
