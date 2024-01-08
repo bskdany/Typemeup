@@ -1,5 +1,6 @@
 <script lang="ts">
     import "./global.css"
+    import { goto } from '$app/navigation';
     import TypingTest from "./typingTest.svelte";
     import TypingResult from "./typingResult.svelte";
     import Keyboard from "./keyboard.svelte";
@@ -35,6 +36,10 @@
         }
     }
     
+    function navigateToAccountPage() {
+        goto('/account');
+    }
+
     onMount(() => {
         const unsubscribe = mode.subscribe(value => {
             currentMode = value;
@@ -44,6 +49,11 @@
     });
 </script>
 
+<button id="accountPage" on:click={navigateToAccountPage}>
+    Account
+</button>
+
+
 {#if currentMode === 'typingTest'}
     <TypingTest bind:resetTypingProp={resetTyping} bind:inputReference={typingTestInput} on:typingEnded={getTypingTestWpm}/>   
     <div id="keyboardWrapper"><Keyboard/></div>
@@ -52,6 +62,12 @@
 {/if}
 
 <style>
+    #accountPage{
+        position: absolute;
+        right: 30px;
+        top: 30px;
+    }
+
     @media only screen and (max-width: 767px) {
         #keyboardWrapper{
             display: none;
