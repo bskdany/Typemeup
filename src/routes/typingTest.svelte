@@ -241,7 +241,7 @@
 
     function saveKeyStore(key:string){
         pressedKeyStore.set({value: key,timestamp: msTime});
-        recordKeystroke(key, hasMistaken);
+        recordKeystroke(key, hasMistaken, generatedWords.charAt(globalLetterIndex-1), globalLetterIndex-1);
     }
 
     function checkIfMoveText(){
