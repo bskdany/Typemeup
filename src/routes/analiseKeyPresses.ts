@@ -84,13 +84,22 @@ export function recordKeystroke(pressedKey :string, hasMistaken :boolean, expect
         averageSameFingerMsTimeDifference = parseFloat((sameFingerMsTimeDifference / sameFingerKeysPressedIndexDifference).toFixed(1));
     }
 
-    const isKeyExpected = expectedKey === pressedKey ? true : false;
+    var isKeyExpected = expectedKey === pressedKey ? true : false;
+
+    // accounting for the backspace, which for now is always expected
+    // in the future I can make so that it is only expected when the previous
+    // letter is mistaken
+    if(pressedKey === "backspace"){
+        isKeyExpected = true;
+        hasMistaken = false;
+    }
 
     const keyPressAnalisis = {
         "pressedKey" :pressedKey,
         "isCorrect" :!hasMistaken,
         "isKeyExpecterd" :isKeyExpected,
         "expectedKey" :expectedKey,
+        "fingerUsed" : fingerUsed,
         "averageSameFingerMsTimeDifference" :averageSameFingerMsTimeDifference,
         "sameFingerMsTimeDifference" :sameFingerMsTimeDifference,
         "sameFingerKeysPressedIndexDifference": sameFingerKeysPressedIndexDifference,
@@ -107,9 +116,12 @@ export function recordKeystroke(pressedKey :string, hasMistaken :boolean, expect
 export function stopRecordKeystroke(){
     if(msTime > 0){
         console.log(keyPressData);
-        analiseMistakes()
+        analiseMistakes();
+        console.log(keyPressErrors);
         keyPressData = [];
         fingerMovementData = initialiseFingers();
+        // you would want to keep this commented to carry the mistakes over to the next test
+        // keyPressErrors = initialiseFingers();
         clearInterval(interval);
         msTime = 0;
         keysPressedIndex = 0;
@@ -137,22 +149,25 @@ function analiseMistakes(){
                 console.log(firstPartOfGeneratedText + `%c${pressedKey}` + `%c${lastPartOfGenerateText}`, "color:red","")
 
                 // finger missed the key and clicked on another one
-                if(isNextKeyExpected){
-                    console.log("Typed wrong key with data: " , keyPress);
-                }            
+                // if(isNextKeyExpected){
+                //     console.log("Typed wrong key with data: " , keyPress);
+                // }        
     
                 // finger did not go down enough to press on the key
                 // the result is that the pressedkey is the expected key of the next letter
-                else if(keyPress["pressedKey"] === nextKeyPress["expectedKey"]){
-                    console.log("Mised key: ", keyPress);
+                if(keyPress["pressedKey"] === nextKeyPress["expectedKey"]){
+                    keyPress["errorType"] = "notPresssed";
+                    // console.log("Mised key: ", keyPress);
                 }
     
                 else{
-                    console.log("Fucking around mistake: ", keyPress);
+                    keyPress["errorType"] = "differentKeyPressed";
+                    // console.log("Typed wrong key with data: " , keyPress);
                 }
+
+                keyPressErrors[keyPress["fingerUsed"]].push(keyPress)
             }
         }
-    
     })
 }
 
