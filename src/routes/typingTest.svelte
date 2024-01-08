@@ -1,6 +1,6 @@
 <script lang="ts">
     import words from "../words/words.json";
-    import {recordKeystroke, stopRecordKeystroke} from "./recordKeystrokes";
+    import {initialiseRecording, recordKeystroke, stopRecordKeystroke} from "./analiseKeyPresses";
     import { onMount, createEventDispatcher } from 'svelte';
     import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore} from "./stores";
     import Configs from "./configs.svelte";
@@ -94,6 +94,8 @@
             startedTyping = true;
             msTime = 0;
             timeInterval = setInterval(handleTime, 10);
+
+            initialiseRecording(generatedWords);
         }
 
         if(keydown.inputType === "deleteContentBackward" && globalLetterIndex > backspaceMinPosition){
@@ -107,7 +109,6 @@
 
         else if(pressedKey){
             const expectedKey = generatedWords.charAt(globalLetterIndex);
-            pressedKey === " " ? saveKeyStore("space") : saveKeyStore(pressedKey);
 
             if(pressedKey === expectedKey && !hasMistaken){
                 if(pressedKey === " " && hasMistaken === false){
@@ -142,6 +143,7 @@
                     handleCursor();
                 }, 1)
             }
+            pressedKey === " " ? saveKeyStore("space") : saveKeyStore(pressedKey);
         }
         checkIfEnd();
     }
@@ -239,7 +241,7 @@
 
     function saveKeyStore(key:string){
         pressedKeyStore.set({value: key,timestamp: msTime});
-        recordKeystroke(key);
+        recordKeystroke(key, hasMistaken, generatedWords.charAt(globalLetterIndex-1), globalLetterIndex-1);
     }
 
     function checkIfMoveText(){
