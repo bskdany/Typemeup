@@ -1,21 +1,21 @@
 import express, { NextFunction, Request, Response } from 'express';
 const router = express.Router();
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 import * as db from '../db/database';
-import { RemoveUserOptions } from 'mongodb';
 
-// router.get('/get-users', async(req :Request, res: Response) => {
-//     try{
-//         const {rows} = await db.query('SELECT * FROM users')
-//         res.send(rows);
-//     }
-//     catch(error){
-//         console.log(error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
+router.get('/get-users', async(req :Request, res: Response) => {
+    try{
+        const {rows} = await db.query('SELECT * FROM users')
+        res.send(rows);
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
     
-// })
+})
 
 router.post('/register', async (req :Request, res :Response) => {
     try{
@@ -40,8 +40,9 @@ router.post('/login', async(req :Request, res :Response) => {
         const {username, password} = req.body;
         const result = await db.query("SELECT * FROM users WHERE username = $1",[username]);
         const user = result.rows[0];
-        if(user && bcrypt.compareSync(password, user.password)){            
-            res.send("Login OK")        
+        if(user && bcrypt.compareSync(password, user.password)){    
+            const token = jwt.sign({ userId: user.id },process.env.JWT_KEY);        
+            res.status(200).json({token})       
         }
         else{
             res.send("Login fail")

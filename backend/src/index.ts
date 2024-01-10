@@ -1,13 +1,14 @@
 const express = require("express")
 const authRoutes = require("./routes/auth")
+const restrictedRoute = require("./routes/protectedRoute")
 
 const app = express();
 app.use(express.json())
-const port = 3000;
+const PORT = 3000;
 
-app.use(authRoutes)
+app.use(authRoutes);
+app.use(restrictedRoute);
 
-
-app.listen(port, ()=>{
-    console.log(`Listening at port ${port}`)
+app.listen(PORT, ()=>{
+    console.log(`Listening at port ${PORT}`)
 })
