@@ -41,8 +41,12 @@ router.post('/login', async(req :Request, res :Response) => {
         const result = await db.query("SELECT * FROM users WHERE username = $1",[username]);
         const user = result.rows[0];
         if(user && bcrypt.compareSync(password, user.password)){    
-            const token = jwt.sign({ userId: user.id },process.env.JWT_KEY);        
-            res.status(200).json({token})       
+            //////// important part!
+            // there is no expiery date for now
+            const token = jwt.sign({ userId: user.id },process.env.JWT_KEY);       
+            res.cookie("jwt_token", token, {httpOnly: true, sameSite: "strict", secure: true})  
+            ///////////          
+            res.status(200).json({"success":true, "message":"Login succesful"})       
         }
         else{
             res.send("Login fail")

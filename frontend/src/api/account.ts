@@ -8,6 +8,18 @@ async function fetchData(endpoint :string, options = {}){
     return response.json()
 }
 
+async function accessRestriced(){
+    const fetchOptions = {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }
+    const result = await fetchData("/", fetchOptions);
+    console.log(result)
+}
+
 async function login(username :string, password :string){
     const data = {
         "username": username,
@@ -43,5 +55,6 @@ async function register(username :string, password :string){
 }
 
 (async() => {
-    await login("dany", "password");
+    // await login("dany", "password");
+    await accessRestriced();
 })()

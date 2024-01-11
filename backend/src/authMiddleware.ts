@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+const cookie = require("cookie")
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -7,8 +8,15 @@ interface AuthenticatedRequest extends Request {
 }
 
 function verifyToken(req :AuthenticatedRequest, res :Response, next :NextFunction) {
-    const token = req.header('Authorization');
-    if (!token) return res.status(401).json({ error: 'Access denied' });
+    // getting the token from the cookie 
+    const toParse = req.headers["cookie"];
+    if(!toParse){
+        return res.status(401).json({error: "No cookie provided"})
+    }
+    const cookies = cookie.parse(req.headers["cookie"]);
+    const token = cookies["jwt_token"]
+    if (!token) return res.status(401).json({ error: 'No token provided' });
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_KEY);
         req.userId = decoded.userId;

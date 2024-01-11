@@ -13,7 +13,7 @@ router.get('/', verifyToken, async (req :AuthenticatedRequest, res :Response) =>
     if(userId){
         const response = await db.query("SELECT username FROM users WHERE id = $1",[userId]);
         const username = response.rows[0].username;
-        res.status(200).json({ message: `Welcome back ${username}` });
+        res.status(200).json({success: true, message: `Welcome back ${username}` });
     }
     else{
         res.status(500).send("Internal server error")
