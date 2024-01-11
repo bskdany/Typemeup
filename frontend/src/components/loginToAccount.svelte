@@ -1,12 +1,32 @@
-<div id="loginWrapper">
-    <input placeholder="username">
-    <input type="password" placeholder="password">
-    <button>Login</button>
-</div>
+<script lang="ts">
+    import { goto } from "$app/navigation";
+    import { login } from "../api/account";
 
+    let username :string= "";
+    let password :string= "";
+    let errorMessage :any = "";
+
+    const loginToAccount = async() => {
+        try{
+            const result = await login(username, password);
+            console.log(result);
+            goto('/profile');
+        }
+        catch(error){
+            errorMessage = error;
+        }
+    }
+
+</script>
+
+<div id="loginWrapper">
+    <input placeholder="username" bind:value={username}>
+    <input type="password" placeholder="password" bind:value={password}>
+    <button on:click={loginToAccount}>Login</button>
+</div>
+<div id="errorMessage">{errorMessage}</div>
 
 <style>
-    
     #loginWrapper{
         display: flex;
         flex-direction: column;
@@ -19,5 +39,10 @@
         border-radius: 10px;
         background-color: #2c2e31;
         color: white;
+    }
+    #errorMessage{
+        margin-top: 10px;
+        color: rgb(215, 61, 61);
+        height: 1rem;
     }
 </style>

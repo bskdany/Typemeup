@@ -38,7 +38,14 @@ router.post('/register', async (req :Request, res :Response) => {
 router.post('/login', async(req :Request, res :Response) => {
     try{
         const {username, password} = req.body;
+        if(!username || !password){
+            return res.status(400).json({error: "Username or password are missing"})
+        }
+
         const result = await db.query("SELECT * FROM users WHERE username = $1",[username]);
+        if(!result){
+            return res.status(401).json({error: "Invalid username or password"})
+        }
         const user = result.rows[0];
         if(user && bcrypt.compareSync(password, user.password)){    
             //////// important part!
@@ -46,15 +53,15 @@ router.post('/login', async(req :Request, res :Response) => {
             const token = jwt.sign({ userId: user.id },process.env.JWT_KEY);       
             res.cookie("jwt_token", token, {httpOnly: true, sameSite: "strict", secure: true})  
             ///////////          
-            res.status(200).json({"success":true, "message":"Login succesful"})       
+            return res.status(200).json({success:true, message:"Login succesful"})       
         }
         else{
-            res.send("Login fail")
+            return res.status(401).json({error: "Invalid username or password"})
         }
     }
     catch(error){
-        console.error('Error creating user:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error loggin-in user:', error);
+        res.status(500).json({error: 'Internal Server Error' });
     }
 })
 

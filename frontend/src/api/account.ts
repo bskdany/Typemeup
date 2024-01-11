@@ -1,14 +1,21 @@
+
 const baseUrl = "http://localhost:3000";
 
 async function fetchData(endpoint :string, options = {}){
     const response = await fetch(`${baseUrl}${endpoint}`, options);
     if(!response.ok){
-        throw new Error("Internal server error")
+        const message = await response.json();
+        if(!message){
+            throw new Error(response.statusText);
+        }
+        else{
+            throw new Error(message.error)
+        }
     }
     return response.json()
 }
 
-async function accessRestriced(){
+export async function accessRestriced(){
     const fetchOptions = {
         method: "GET",
         credentials: "include",
@@ -17,10 +24,10 @@ async function accessRestriced(){
         },
     }
     const result = await fetchData("/", fetchOptions);
-    console.log(result)
+    return result;
 }
 
-async function login(username :string, password :string){
+export async function login(username :string, password :string){
     const data = {
         "username": username,
         "password": password
@@ -34,10 +41,10 @@ async function login(username :string, password :string){
         body: JSON.stringify(data),
     }
     const result = await fetchData("/login", fetchOptions);
-    console.log(result)
+    return result;
 }
 
-async function register(username :string, password :string){
+export async function register(username :string, password :string){
     const data = {
         "username": username,
         "password": password
@@ -51,10 +58,5 @@ async function register(username :string, password :string){
         body: JSON.stringify(data),
     }
     const result = await fetchData("/register", fetchOptions);
-    console.log(result)
+    return result
 }
-
-(async() => {
-    // await login("dany", "password");
-    await accessRestriced();
-})()
