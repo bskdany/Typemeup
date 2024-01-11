@@ -22,12 +22,12 @@ router.post('/register', async (req :Request, res :Response) => {
         const {username, password} = req.body;
         const existingUser = await db.query("SELECT * FROM users WHERE username = $1", [username])
         if(existingUser.rows.length > 0){
-            return res.status(400).send("Username is already taken");
+            return res.status(409).json({error:"Username is already taken"});
         }
         
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.query("INSERT INTO users (username, password) VALUES ($1 ,$2)", [username, hashedPassword]);
-        res.send("Success")
+        return res.status(200).json({success:true, message:"Account registered"})
 
     } catch (error) {
         console.error('Error creating user:', error);

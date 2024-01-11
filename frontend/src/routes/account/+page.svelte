@@ -11,7 +11,7 @@
 </script>
 
 <button id="homepage" on:click={navigateToAHomePage}>
-    Back
+    Home
 </button>
 
 {#if loginOrRegister === "login"}
@@ -20,7 +20,7 @@
         Register account instead
     </button>
 {:else}
-    <RegisterAccount />
+    <RegisterAccount on:accountRegistered={() => {loginOrRegister = "login"}}/>
     <button class="switchLoginMode" on:click={() => loginOrRegister = "login"}>
         Login instead
     </button>
