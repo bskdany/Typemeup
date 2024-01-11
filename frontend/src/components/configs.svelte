@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { wordSizeStore, typingTestModeStore, typingTestTimeStore } from "./stores";
+    import { wordSizeStore, typingTestModeStore, typingTestTimeStore } from "../routes/stores";
     import { onMount } from "svelte";
 
     let configWordSize :number;

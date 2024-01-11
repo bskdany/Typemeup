@@ -5,7 +5,6 @@
     <button>Login</button>
 </div>
 
-
 <style>
     #loginWrapper{
         display: flex;

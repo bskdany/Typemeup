@@ -1,7 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import LoginToAccount from './loginToAccount.svelte';
-    import RegisterAccount from './registerAccount.svelte';
+    import LoginToAccount from '../../components/loginToAccount.svelte';
+    import RegisterAccount from '../../components/registerAccount.svelte';
     
     let loginOrRegister :string= "login";
 

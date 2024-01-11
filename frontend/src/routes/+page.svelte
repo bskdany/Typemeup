@@ -1,9 +1,9 @@
 <script lang="ts">
     import "./global.css"
     import { goto } from '$app/navigation';
-    import TypingTest from "./typingTest.svelte";
-    import TypingResult from "./typingResult.svelte";
-    import Keyboard from "./keyboard.svelte";
+    import TypingTest from "../components/typingTest.svelte";
+    import TypingResult from "../components/typingResult.svelte";
+    import Keyboard from "../components/keyboard.svelte";
     import { mode } from './stores.js';
     import { onMount } from 'svelte';
 

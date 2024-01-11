@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import {typingTestModeStore, wordSizeStore, typingTestTimeStore} from "./stores"
+    import {typingTestModeStore, wordSizeStore, typingTestTimeStore} from "../routes/stores"
     
     let typingTestMode :string;
     let typingTestTime :number;

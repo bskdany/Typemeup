@@ -1,8 +1,8 @@
 <script lang="ts">
     import words from "../words/words.json";
-    import {initialiseRecording, recordKeystroke, stopRecordKeystroke} from "./analiseKeyPresses";
+    import {initialiseRecording, recordKeystroke, stopRecordKeystroke} from "../routes/analiseKeyPresses";
     import { onMount, createEventDispatcher } from 'svelte';
-    import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore} from "./stores";
+    import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore} from "../routes/stores";
     import Configs from "./configs.svelte";
     import TypingProgress from "./typingProgress.svelte";
 
