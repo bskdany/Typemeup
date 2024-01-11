@@ -1,28 +1,12 @@
-<script lang="ts">
-    import { goto } from '$app/navigation';
-
-    function navigateToAHomePage() {
-        goto('/');
-    }
-</script>
-
-<button id="homepage" on:click={navigateToAHomePage}>
-    Back
-</button>
-
 <div id="loginWrapper">
     <input placeholder="username">
-    <input placeholder="password">
+    <input type="password" placeholder="password">
+    <input type="password" placeholder="repeat password">
     <button>Login</button>
 </div>
 
 
 <style>
-    #homepage{
-        position: absolute;
-        left: 30px;
-        top: 30px;
-    }
     #loginWrapper{
         display: flex;
         flex-direction: column;

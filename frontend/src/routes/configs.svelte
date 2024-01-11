@@ -77,9 +77,7 @@
         border: none;
         background-color: transparent;
     } 
-    button:hover{
-        color: #a8b9e4;
-    }
+    
     #configWrapper{
         display: flex;
         flex-direction: row;

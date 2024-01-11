@@ -7,8 +7,6 @@
     import { mode } from './stores.js';
     import { onMount } from 'svelte';
 
-    export const prerender = true;
-
     let typingTestWpm :number;
     let resetTyping :any;
     let currentMode :string;
