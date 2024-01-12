@@ -1,19 +1,20 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
-    import { accessRestriced } from '../../api/account';
+    import { accessRestriced, logout } from '../../api/account';
+    // import Cookies from 'js-cookie';
 
     function navigateToAHomePage() {
         goto('/');
     }
 
-    function logout(){
-        document.cookie = `jwt_token=; Path=/; HttpOnly; Secure; SameSite=Strict`;
+    async function logoutHandler(){
+        await logout()
         goto('/account');
     }
 
     onMount(async()=>{
-        console.log("account loaded")
+        // console.log("account loaded")
         try{
             const canAccess = await accessRestriced();
             console.log(canAccess)
@@ -32,7 +33,7 @@
 <div>
    Your amazing profile
 </div>
-<!-- <button on:click={logout}>Logout</button> -->
+<button on:click={logoutHandler}>Logout</button>
 
 <style>
     #homepage{

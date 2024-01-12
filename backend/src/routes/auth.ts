@@ -68,4 +68,21 @@ router.post('/login', async(req :Request, res :Response) => {
     }
 })
 
+router.post('/logout', async(req :Request, res :Response) => {
+    try{
+        // const token = jwt.sign({ userId: user.id },process.env.JWT_KEY);       
+
+        // const oneYearFromNow = new Date();
+        // oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+
+        res.cookie("jwt_token", "", {httpOnly: true, sameSite: "strict", secure: true})  
+        return res.status(200).json({success:true, message:"Login succesful"})       
+
+    }
+    catch(error){
+        console.error('Error loggin-in user:', error);
+        res.status(500).json({error: 'Internal Server Error' });
+    }
+})
+
 module.exports = router;
