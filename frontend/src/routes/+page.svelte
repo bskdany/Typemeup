@@ -5,7 +5,7 @@
     import TypingResult from "../components/typingResult.svelte";
     import Keyboard from "../components/keyboard.svelte";
     import { mode } from '../scripts/stores.js';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
 
     let typingTestWpm :number;
     let resetTyping :any;
@@ -43,8 +43,12 @@
             currentMode = value;
         });
         document.addEventListener('keydown', handleTabKeyDown);
-        return unsubscribe;
+        return () => {
+            unsubscribe;
+            document.removeEventListener('keydown', handleTabKeyDown)
+        }
     });
+
 </script>
 
 <button id="profilePage" on:click={navigateToProfile}>
