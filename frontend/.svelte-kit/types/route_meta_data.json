@@ -1,5 +1,7 @@
 {
 	"/": [],
 	"/account": [],
-	"/profile": []
+	"/profile": [
+		"src/routes/profile/+page.ts"
+	]
 }

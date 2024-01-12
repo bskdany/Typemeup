@@ -13,17 +13,17 @@
         goto('/account');
     }
 
-    onMount(async()=>{
-        // console.log("account loaded")
-        try{
-            const canAccess = await accessRestriced();
-            console.log(canAccess)
-        }
-        catch(error){
-            console.log(error)
-            goto('/account');
-        }
-    })
+    // onMount(async()=>{
+    //     // console.log("account loaded")
+    //     try{
+    //         const canAccess = await accessRestriced();
+    //         console.log(canAccess)
+    //     }
+    //     catch(error){
+    //         console.log(error)
+    //         goto('/account');
+    //     }
+    // })
 
 </script>
 
