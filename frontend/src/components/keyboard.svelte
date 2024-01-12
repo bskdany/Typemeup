@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import {pressedKeyStore} from "../routes/stores"
+    import {pressedKeyStore} from "../scripts/stores"
 
     let pressedKey :string;
     const row0 = [" ","1","2","3","4","5","6","7","8","9","0","-","=","Backspace"];

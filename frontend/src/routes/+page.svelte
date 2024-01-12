@@ -4,7 +4,7 @@
     import TypingTest from "../components/typingTest.svelte";
     import TypingResult from "../components/typingResult.svelte";
     import Keyboard from "../components/keyboard.svelte";
-    import { mode } from './stores.js';
+    import { mode } from '../scripts/stores.js';
     import { onMount } from 'svelte';
 
     let typingTestWpm :number;
@@ -34,8 +34,8 @@
         }
     }
     
-    function navigateToAccountPage() {
-        goto('/account');
+    function navigateToProfile() {
+        goto('/profile');
     }
 
     onMount(() => {
@@ -47,8 +47,8 @@
     });
 </script>
 
-<button id="accountPage" on:click={navigateToAccountPage}>
-    Account
+<button id="profilePage" on:click={navigateToProfile}>
+    Profile
 </button>
 
 
@@ -60,7 +60,7 @@
 {/if}
 
 <style>
-    #accountPage{
+    #profilePage{
         position: absolute;
         right: 30px;
         top: 30px;

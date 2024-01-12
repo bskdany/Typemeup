@@ -1,22 +1,18 @@
-
-const baseUrl = "http://localhost:3000";
-
-async function fetchData(endpoint :string, options = {}){
-    const response = await fetch(`${baseUrl}${endpoint}`, options);
-    console.log(response)
-    if(!response.ok){
-        const message = await response.json();
-        if(!message){
-            throw new Error(response.statusText);
-        }
-        else{
-            throw new Error(message.error)
-        }
-    }
-    return response.json()
-}
+import { fetchData } from "./fetch";
 
 export async function accessRestriced(){
+    const fetchOptions = {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }
+    const result = await fetchData("/", fetchOptions);
+    return result;
+}
+
+export async function checkJWT(){
     const fetchOptions = {
         method: "GET",
         credentials: "include",
@@ -36,6 +32,7 @@ export async function login(username :string, password :string){
 
     const fetchOptions = {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
         },
@@ -53,6 +50,7 @@ export async function register(username :string, password :string){
 
     const fetchOptions = {
         method: "POST",
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
         },

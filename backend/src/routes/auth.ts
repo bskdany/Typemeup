@@ -1,14 +1,15 @@
 import express, { NextFunction, Request, Response } from 'express';
 const router = express.Router();
+const verifyToken = require('../authMiddleware');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 import * as db from '../db/database';
 
-router.get('/get-users', async(req :Request, res: Response) => {
+
+router.get('/auth', verifyToken, async(req :Request, res: Response) => {
     try{
-        const {rows} = await db.query('SELECT * FROM users')
-        res.send(rows);
+        return res.status(200).json({success: true})
     }
     catch(error){
         console.log(error);
@@ -49,10 +50,12 @@ router.post('/login', async(req :Request, res :Response) => {
         const user = result.rows[0];
         if(user && bcrypt.compareSync(password, user.password)){    
             //////// important part!
-            // there is no expiery date for now
             const token = jwt.sign({ userId: user.id },process.env.JWT_KEY);       
-            res.cookie("jwt_token", token, {httpOnly: true, sameSite: "strict", secure: true})  
-            ///////////          
+
+            const oneYearFromNow = new Date();
+            oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+
+            res.cookie("jwt_token", token, {httpOnly: true, sameSite: "strict", secure: true, expires: oneYearFromNow})  
             return res.status(200).json({success:true, message:"Login succesful"})       
         }
         else{

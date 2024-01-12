@@ -3,7 +3,7 @@
     import LoginToAccount from '../../components/loginToAccount.svelte';
     import RegisterAccount from '../../components/registerAccount.svelte';
     
-    let loginOrRegister :string= "login";
+    let loginOrRegister :string = "login";
 
     function navigateToAHomePage() {
         goto('/');

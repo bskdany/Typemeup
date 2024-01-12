@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { login } from "../api/account";
+    import { accessRestriced, login } from "../api/account";
 
     let username :string= "";
     let password :string= "";
