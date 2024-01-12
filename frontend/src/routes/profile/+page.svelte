@@ -1,44 +1,41 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
     import { onMount } from 'svelte';
-    import { accessRestriced, logout } from '../../api/account';
-    // import Cookies from 'js-cookie';
+    import {logout } from '../../api/account';
 
     function navigateToAHomePage() {
         goto('/');
     }
 
     async function logoutHandler(){
-        await logout()
+        await logout();
         goto('/account');
     }
-
-    // onMount(async()=>{
-    //     // console.log("account loaded")
-    //     try{
-    //         const canAccess = await accessRestriced();
-    //         console.log(canAccess)
-    //     }
-    //     catch(error){
-    //         console.log(error)
-    //         goto('/account');
-    //     }
-    // })
-
+    $: result = $page.data.message;
+    onMount(() => {
+    // Log or use the result when the component is mounted
+    console.log(result);
+  });
 </script>
 
 <button id="homepage" on:click={navigateToAHomePage}>
     Home
 </button>
 <div>
-   Your amazing profile
+    {result}
 </div>
-<button on:click={logoutHandler}>Logout</button>
+<button on:click={logoutHandler} id="logout">Logout</button>
 
 <style>
     #homepage{
         position: absolute;
         left: 30px;
+        top: 30px;
+    }
+    #logout{
+        position: absolute;
+        right: 30px;
         top: 30px;
     }
 </style>
