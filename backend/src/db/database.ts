@@ -2,11 +2,11 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-    user: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    host: 'mustafar',
-    database: 'typemeup',
-    port: 5432
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST_ADDR,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
 });
 
 export const query = (text :string, params :string[] = []) => {
