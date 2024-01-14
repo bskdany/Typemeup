@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 import * as db from '../db/database';
-
+const { v4: uuidv4 } = require('uuid');
 
 router.get('/auth', verifyToken, async(req :Request, res: Response) => {
     try{
@@ -25,9 +25,9 @@ router.post('/register', async (req :Request, res :Response) => {
         if(existingUser.rows.length > 0){
             return res.status(409).json({error:"Username is already taken"});
         }
-        
+        const newUuid = uuidv4();
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.query("INSERT INTO users (username, password) VALUES ($1 ,$2)", [username, hashedPassword]);
+        await db.query("INSERT INTO users (id, username, password) VALUES ($1 ,$2, $3)", [newUuid, username, hashedPassword]);
         return res.status(200).json({success:true, message:"Account registered"})
 
     } catch (error) {
