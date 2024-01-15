@@ -1,5 +1,5 @@
-// const baseUrl = "mustafar:3000";
-const baseUrl = "https://api.typemeup.bskdany.com";
+// const baseUrl = "typemeup-backend:3000";
+const baseUrl = "https://api.bskdany.com";
 
 export async function fetchData(endpoint :string, options = {}){
     const response = await fetch(`${baseUrl}${endpoint}`, options);

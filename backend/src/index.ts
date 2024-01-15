@@ -4,8 +4,14 @@ const restrictedRoute = require("./routes/protectedRoute");
 const cors = require("cors");
 
 const app = express();
+
+app.use(cors({
+    origin: "https://typemeup.bskdany.com",
+    credentials: true,
+    optionsSuccessStatus: 200,
+}));
+
 app.use(express.json());
-app.use(cors());
 const PORT = 3000;
 
 app.use(authRoutes);

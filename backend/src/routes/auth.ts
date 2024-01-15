@@ -22,6 +22,7 @@ router.post('/register', async (req :Request, res :Response) => {
     try{
         const {username, password} = req.body;
         const existingUser = await db.query("SELECT * FROM users WHERE username = $1", [username])
+
         if(existingUser.rows.length > 0){
             return res.status(409).json({error:"Username is already taken"});
         }
