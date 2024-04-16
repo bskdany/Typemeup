@@ -1,4 +1,5 @@
 # TypeMeUp
+Made it to the [Svelte Community Showcase](https://svelte.dev/blog/whats-new-in-svelte-february-2024) !
 
 A typing website and my svelte learning project
 
