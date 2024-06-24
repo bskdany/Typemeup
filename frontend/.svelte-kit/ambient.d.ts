@@ -28,10 +28,8 @@
 declare module '$env/static/private' {
 	export const GJS_DEBUG_TOPICS: string;
 	export const LESSOPEN: string;
-	export const LANGUAGE: string;
 	export const USER: string;
 	export const npm_config_user_agent: string;
-	export const XDG_SEAT: string;
 	export const XDG_SESSION_TYPE: string;
 	export const GIT_ASKPASS: string;
 	export const npm_node_execpath: string;
@@ -41,19 +39,20 @@ declare module '$env/static/private' {
 	export const CHROME_DESKTOP: string;
 	export const OLDPWD: string;
 	export const TERM_PROGRAM_VERSION: string;
+	export const AWS_SECRET_KEY: string;
 	export const DESKTOP_SESSION: string;
 	export const NVM_BIN: string;
 	export const npm_package_json: string;
-	export const PYENV_SHELL: string;
 	export const NVM_INC: string;
 	export const GIO_LAUNCHED_DESKTOP_FILE: string;
+	export const GNOME_SHELL_SESSION_MODE: string;
 	export const GTK_MODULES: string;
-	export const XDG_SEAT_PATH: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
 	export const VSCODE_GIT_ASKPASS_NODE: string;
+	export const MANAGERPID: string;
 	export const npm_config_userconfig: string;
 	export const npm_config_local_prefix: string;
-	export const CINNAMON_VERSION: string;
+	export const SYSTEMD_EXEC_PID: string;
 	export const DBUS_SESSION_BUS_ADDRESS: string;
 	export const npm_config_engine_strict: string;
 	export const COLORTERM: string;
@@ -61,33 +60,30 @@ declare module '$env/static/private' {
 	export const GIO_LAUNCHED_DESKTOP_FILE_PID: string;
 	export const COLOR: string;
 	export const NVM_DIR: string;
-	export const MANDATORY_PATH: string;
-	export const QT_QPA_PLATFORMTHEME: string;
 	export const GTK_IM_MODULE: string;
 	export const LOGNAME: string;
+	export const JOURNAL_STREAM: string;
 	export const _: string;
 	export const npm_config_prefix: string;
 	export const npm_config_npm_version: string;
 	export const XDG_SESSION_CLASS: string;
-	export const DEFAULTS_PATH: string;
+	export const USERNAME: string;
 	export const TERM: string;
-	export const XDG_SESSION_ID: string;
 	export const npm_config_cache: string;
 	export const GNOME_DESKTOP_SESSION_ID: string;
+	export const WINDOWPATH: string;
 	export const npm_config_node_gyp: string;
 	export const PATH: string;
 	export const SESSION_MANAGER: string;
-	export const GDM_LANG: string;
-	export const GTK3_MODULES: string;
+	export const INVOCATION_ID: string;
 	export const NODE: string;
 	export const npm_package_name: string;
-	export const XDG_SESSION_PATH: string;
+	export const XDG_MENU_PREFIX: string;
 	export const XDG_RUNTIME_DIR: string;
 	export const GDK_BACKEND: string;
 	export const DISPLAY: string;
 	export const LANG: string;
 	export const XDG_CURRENT_DESKTOP: string;
-	export const DOTNET_BUNDLE_EXTRACT_BASE_DIR: string;
 	export const XMODIFIERS: string;
 	export const XDG_SESSION_DESKTOP: string;
 	export const XAUTHORITY: string;
@@ -95,8 +91,9 @@ declare module '$env/static/private' {
 	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const TERM_PROGRAM: string;
 	export const npm_lifecycle_script: string;
+	export const SSH_AGENT_LAUNCHER: string;
+	export const AWS_ACCESS_KEY: string;
 	export const SSH_AUTH_SOCK: string;
-	export const XDG_GREETER_DATA_DIR: string;
 	export const ORIGINAL_XDG_CURRENT_DESKTOP: string;
 	export const SHELL: string;
 	export const npm_package_version: string;
@@ -108,19 +105,15 @@ declare module '$env/static/private' {
 	export const GJS_DEBUG_OUTPUT: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 	export const QT_IM_MODULE: string;
-	export const XDG_VTNR: string;
 	export const npm_config_globalconfig: string;
 	export const npm_config_init_module: string;
 	export const PWD: string;
 	export const npm_execpath: string;
 	export const XDG_CONFIG_DIRS: string;
-	export const CLUTTER_IM_MODULE: string;
 	export const NVM_CD_FLAGS: string;
-	export const PYENV_ROOT: string;
 	export const XDG_DATA_DIRS: string;
 	export const npm_config_global_prefix: string;
 	export const npm_command: string;
-	export const PNPM_HOME: string;
 	export const INIT_CWD: string;
 	export const EDITOR: string;
 	export const NODE_ENV: string;
@@ -140,7 +133,7 @@ declare module '$env/static/public' {
 }
 
 /**
- * This module provides access to runtime environment variables, as defined by the platform you're running on. For example if you're using [`adapter-node`](https://github.com/sveltejs/kit/tree/master/packages/adapter-node) (or running [`vite preview`](https://kit.svelte.dev/docs/cli)), this is equivalent to `process.env`. This module only includes variables that _do not_ begin with [`config.kit.env.publicPrefix`](https://kit.svelte.dev/docs/configuration#env) _and do_ start with [`config.kit.env.privatePrefix`](https://kit.svelte.dev/docs/configuration#env) (if configured).
+ * This module provides access to runtime environment variables, as defined by the platform you're running on. For example if you're using [`adapter-node`](https://github.com/sveltejs/kit/tree/main/packages/adapter-node) (or running [`vite preview`](https://kit.svelte.dev/docs/cli)), this is equivalent to `process.env`. This module only includes variables that _do not_ begin with [`config.kit.env.publicPrefix`](https://kit.svelte.dev/docs/configuration#env) _and do_ start with [`config.kit.env.privatePrefix`](https://kit.svelte.dev/docs/configuration#env) (if configured).
  * 
  * This module cannot be imported into client-side code.
  * 
@@ -157,10 +150,8 @@ declare module '$env/dynamic/private' {
 	export const env: {
 		GJS_DEBUG_TOPICS: string;
 		LESSOPEN: string;
-		LANGUAGE: string;
 		USER: string;
 		npm_config_user_agent: string;
-		XDG_SEAT: string;
 		XDG_SESSION_TYPE: string;
 		GIT_ASKPASS: string;
 		npm_node_execpath: string;
@@ -170,19 +161,20 @@ declare module '$env/dynamic/private' {
 		CHROME_DESKTOP: string;
 		OLDPWD: string;
 		TERM_PROGRAM_VERSION: string;
+		AWS_SECRET_KEY: string;
 		DESKTOP_SESSION: string;
 		NVM_BIN: string;
 		npm_package_json: string;
-		PYENV_SHELL: string;
 		NVM_INC: string;
 		GIO_LAUNCHED_DESKTOP_FILE: string;
+		GNOME_SHELL_SESSION_MODE: string;
 		GTK_MODULES: string;
-		XDG_SEAT_PATH: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
 		VSCODE_GIT_ASKPASS_NODE: string;
+		MANAGERPID: string;
 		npm_config_userconfig: string;
 		npm_config_local_prefix: string;
-		CINNAMON_VERSION: string;
+		SYSTEMD_EXEC_PID: string;
 		DBUS_SESSION_BUS_ADDRESS: string;
 		npm_config_engine_strict: string;
 		COLORTERM: string;
@@ -190,33 +182,30 @@ declare module '$env/dynamic/private' {
 		GIO_LAUNCHED_DESKTOP_FILE_PID: string;
 		COLOR: string;
 		NVM_DIR: string;
-		MANDATORY_PATH: string;
-		QT_QPA_PLATFORMTHEME: string;
 		GTK_IM_MODULE: string;
 		LOGNAME: string;
+		JOURNAL_STREAM: string;
 		_: string;
 		npm_config_prefix: string;
 		npm_config_npm_version: string;
 		XDG_SESSION_CLASS: string;
-		DEFAULTS_PATH: string;
+		USERNAME: string;
 		TERM: string;
-		XDG_SESSION_ID: string;
 		npm_config_cache: string;
 		GNOME_DESKTOP_SESSION_ID: string;
+		WINDOWPATH: string;
 		npm_config_node_gyp: string;
 		PATH: string;
 		SESSION_MANAGER: string;
-		GDM_LANG: string;
-		GTK3_MODULES: string;
+		INVOCATION_ID: string;
 		NODE: string;
 		npm_package_name: string;
-		XDG_SESSION_PATH: string;
+		XDG_MENU_PREFIX: string;
 		XDG_RUNTIME_DIR: string;
 		GDK_BACKEND: string;
 		DISPLAY: string;
 		LANG: string;
 		XDG_CURRENT_DESKTOP: string;
-		DOTNET_BUNDLE_EXTRACT_BASE_DIR: string;
 		XMODIFIERS: string;
 		XDG_SESSION_DESKTOP: string;
 		XAUTHORITY: string;
@@ -224,8 +213,9 @@ declare module '$env/dynamic/private' {
 		VSCODE_GIT_IPC_HANDLE: string;
 		TERM_PROGRAM: string;
 		npm_lifecycle_script: string;
+		SSH_AGENT_LAUNCHER: string;
+		AWS_ACCESS_KEY: string;
 		SSH_AUTH_SOCK: string;
-		XDG_GREETER_DATA_DIR: string;
 		ORIGINAL_XDG_CURRENT_DESKTOP: string;
 		SHELL: string;
 		npm_package_version: string;
@@ -237,19 +227,15 @@ declare module '$env/dynamic/private' {
 		GJS_DEBUG_OUTPUT: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 		QT_IM_MODULE: string;
-		XDG_VTNR: string;
 		npm_config_globalconfig: string;
 		npm_config_init_module: string;
 		PWD: string;
 		npm_execpath: string;
 		XDG_CONFIG_DIRS: string;
-		CLUTTER_IM_MODULE: string;
 		NVM_CD_FLAGS: string;
-		PYENV_ROOT: string;
 		XDG_DATA_DIRS: string;
 		npm_config_global_prefix: string;
 		npm_command: string;
-		PNPM_HOME: string;
 		INIT_CWD: string;
 		EDITOR: string;
 		NODE_ENV: string;

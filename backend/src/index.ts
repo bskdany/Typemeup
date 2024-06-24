@@ -17,6 +17,6 @@ const PORT = 3000;
 app.use(authRoutes);
 app.use(restrictedRoute);
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
     console.log(`Listening at port ${PORT}`)
 })
