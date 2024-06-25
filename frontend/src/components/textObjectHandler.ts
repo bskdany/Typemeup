@@ -1,5 +1,5 @@
 import { splitArray } from "../algo/utils";
-import type { TextObject } from "../interfaces";
+import type { Letter, TextObject } from "../interfaces";
 
 export class TextObjectHandler {
 
@@ -67,22 +67,8 @@ export class TextObjectHandler {
     return textObject;
   }
 
-  isLastWordCompleted() {
-    if (this.wordIndex == 0) {
-      return false;
-    } else {
-      return this.textObject[this.wordIndex - 1].isCompleted;
-    }
-  }
-
-  setWordToCompleted() {
-    this.textObject[this.wordIndex].isCompleted = true;
-  }
-
   handleLetterAddition(keyPressed: string) {
     this.userTypedText.push(keyPressed);
-
-    this.textMoveSpeed += typingTestConfigs.letterWidth;
 
     if (!this.hasMistaken) {
       if (this.getLetter(0).text == keyPressed) {
@@ -145,43 +131,57 @@ export class TextObjectHandler {
     }
   }
 
-  setLetterStatus(offset: number, isTyped: boolean, isCorrect: boolean) {
-    this.getLetter(offset).isCorrect = isCorrect;
-    this.getLetter(offset).isTyped = isTyped;
-
+  setLetterStatus(offset: number, isTyped: boolean, isCorrect: boolean): boolean {
+    const letter = this.getLetter(offset);
+    if (letter != undefined) {
+      letter.isTyped = isTyped;
+      letter.isCorrect = isCorrect;
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
-  increaseActivePointer() {
-    if (this.isLastLetter()) {
-      if (!this.isLastWord()) {
+  gotoNextLetter(): boolean {
+    const currentWordLength = this.textObject[this.wordIndex].length;
+
+    if (this.letterIndex === currentWordLength - 1) {
+      if (this.wordIndex === this.textObject.length - 1) {
+        return false; // can't do
+      }
+      else {
         this.wordIndex += 1;
         this.letterIndex = 0;
-      } else {
-        console.error("END REACHED");
       }
-    } else {
+    }
+    else {
       this.letterIndex += 1;
     }
+
     this.globalletterIndex += 1;
+    return true;
   }
 
-  decreaseActivePointer() {
-    if (this.letterIndex == 0) {
-      if (this.wordIndex == 0) {
-        // nothing
-      } else {
+  gotoPreviousLetter(): boolean {
+    if (this.letterIndex === 0) {
+      if (this.wordIndex === 0) {
+        return false
+      }
+      else {
         this.wordIndex -= 1;
         this.letterIndex = this.textObject[this.wordIndex].length - 1;
       }
-    } else {
+    }
+    else {
       this.letterIndex -= 1;
     }
+
     this.globalletterIndex -= 1;
+    return true;
   }
 
-  getLetter(offset: number): (string | undefined) {
-    // lets make this function bulletproof goddamit
-
+  getLetter(offset: number): Letter | undefined {
     let offsettedWordIndex = this.wordIndex;
     let offsettedLetterIndex = this.letterIndex + offset;
     let currentWordLength = this.textObject[offsettedWordIndex].length;
@@ -207,11 +207,13 @@ export class TextObjectHandler {
     return this.textObject[offsettedWordIndex].letters[offsettedLetterIndex];
   }
 
-  isLastLetter() {
-    return this.textObject[this.wordIndex].length === this.letterIndex + 1;
-  }
-
-  isLastWord() {
-    return this.textObject.length == this.wordIndex + 1;
+  getWord(offset: number): TextObject | undefined {
+    const offsettedWordIndex = this.wordIndex + offset;
+    if (offsettedWordIndex < 0 || offsettedWordIndex >= this.textObject.length) {
+      return undefined;
+    }
+    else {
+      return this.textObject[offsettedWordIndex];
+    }
   }
 }
