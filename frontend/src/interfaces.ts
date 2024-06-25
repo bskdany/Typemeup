@@ -1,4 +1,4 @@
-export interface WordObject {
+export interface TextObject {
     letters: Letter[];
     id: number;
     isCompleted: boolean;
