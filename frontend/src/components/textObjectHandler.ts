@@ -17,7 +17,13 @@ export class TextObjectHandler {
   targetText: string[];
   userTypedText: string[];
 
-  constructor(targetText: string[]) {
+  // 0 -> need to remove all wrong letters before adding correct ones
+  // 1 -> wrong letters are ignored
+  // 2 -> spacebar skips the error and goes to the next word
+  // 3 -> automatic error detection mode
+  errorHandlingMode: number;
+
+  constructor(targetText: string[], errorHandlingMode: number) {
     this.wordIndex = 0;
     this.letterIndex = 0;
     this.globalletterIndex = 0;
@@ -27,6 +33,8 @@ export class TextObjectHandler {
 
     this.targetText = targetText;
     this.userTypedText = [];
+
+    this.errorHandlingMode = errorHandlingMode;
 
     this.textObject
     this.textObject = this.generateTextObject(this.targetText);
@@ -67,13 +75,31 @@ export class TextObjectHandler {
     return textObject;
   }
 
-  handleLetterAddition(keyPressed: string) {
+  addKeyPressed(keyPressed: string) {
     this.userTypedText.push(keyPressed);
 
+    switch (this.errorHandlingMode) {
+      case 0:
+        throw "Not implemented";
+        break;
+      case 1:
+        throw "Not implemented";
+        break;
+      case 2:
+        throw "Not implemented";
+        break;
+      case 3:
+        this.handleKeyPressedMode3(keyPressed);
+        break;
+      default:
+        throw "Wrong mode, 0 to 3 please";
+    }
+  }
+
+  handleKeyPressedMode3(keyPressed: string) {
     if (!this.hasMistaken) {
-      if (this.getLetter(0).text == keyPressed) {
+      if (this.getLetter(0)?.text === keyPressed) {
         this.setLetterStatus(0, true, true);
-        this.correctCharCountThisInterval += 1;
       } else {
         this.wrongInputBuffer.push(keyPressed);
         this.setLetterStatus(0, true, false);
@@ -84,37 +110,33 @@ export class TextObjectHandler {
       // handling mistake detection and correction logic
 
       // 1. Extra letter
-      if (keyPressed == this.getLetter(-1).text) {
-        if (this.wrongInputBuffer[0] == this.getLetter(0).text) {
+      if (keyPressed == this.getLetter(-1)?.text) {
+        if (this.wrongInputBuffer[0] == this.getLetter(0)?.text) {
           this.setLetterStatus(0, true, false);
-          this.addError(-1, 0)
           // console.log("Swapped order of last two keys");
         }
         else {
           this.setLetterStatus(-1, true, false);
           // this.setLetterStatus(0, true, true);
-          this.addError(-1, 1);
           // console.log("Extra key pressed. Pressed " + this.wrongInputBuffer[0] + " instead of " + this.getLetter(-1).text);
-          this.decreaseActivePointer();
+          this.gotoPreviousLetter();
         }
         this.hasMistaken = false;
         this.wrongInputBuffer = [];
       }
       // previous letter was miss-clicked
-      else if (keyPressed == this.getLetter(0).text) {
+      else if (keyPressed == this.getLetter(0)?.text) {
         this.setLetterStatus(0, true, true);
-        this.addError(-1, 2);
         // console.log("Miss click. Pressed " + this.wrongInputBuffer[0] + " instead of " + this.getLetter(-1).text);
         this.hasMistaken = false;
         this.wrongInputBuffer = [];
       }
       // 3. Missed a letter
-      else if (this.wrongInputBuffer[0] == this.getLetter(0).text) {
+      else if (this.wrongInputBuffer[0] == this.getLetter(0)?.text) {
         this.setLetterStatus(-1, true, false);
         this.setLetterStatus(0, true, true);
         this.setLetterStatus(1, true, true);
-        this.addError(-1, 3)
-        this.increaseActivePointer();
+        this.gotoNextLetter();
 
         // console.log("Missed a key");
         this.hasMistaken = false;
@@ -125,7 +147,6 @@ export class TextObjectHandler {
         // when this burts happens,
         this.setLetterStatus(0, true, false);
         // console.error("Text burst");
-        this.addError(-1, 2);
         // console.log(this.wrongInputBuffer);
       }
     }
