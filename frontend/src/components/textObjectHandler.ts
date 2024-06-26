@@ -236,4 +236,8 @@ export class TextObjectHandler {
       return this.textObject[offsettedWordIndex];
     }
   }
+
+  update() {
+    this.textObject = this.textObject;
+  }
 }

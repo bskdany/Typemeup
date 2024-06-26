@@ -17,8 +17,7 @@
   import { TextObjectHandler } from "./textObjectHandler";
   import type { TextObject } from "../interfaces";
 
-  let textObjectHandler: TextObjectHandler;
-  let textObject: TextObject[];
+  let textObject: TextObjectHandler;
 
   // from stores
   let configWordSize: number;
@@ -111,7 +110,8 @@
       initialiseRecording(generatedWords);
     }
 
-    textObjectHandler.addKeyPressed(pressedKey);
+    textObject.addKeyPressed(pressedKey);
+    textObject.update();
 
     // if (
     //   keydown.inputType === "deleteContentBackward" &&
@@ -267,8 +267,7 @@
     secondsTime = 0;
     clearInterval(timeInterval);
 
-    textObjectHandler = new TextObjectHandler(["hello", "world"], 3);
-    textObject = textObjectHandler.textObject;
+    textObject = new TextObjectHandler(["hello", "world"], 3);
     console.log(textObject);
     resetCursor();
 
@@ -382,7 +381,7 @@
   role="button"
   id="typingTest"
   on:keydown={() => {}}
-  on:click={inputReference.focus()}
+  on:click={() => inputReference.focus()}
   tabindex="0"
 ></div>
 
@@ -398,17 +397,17 @@
       bind:this={cursorElement}
     ></div>
 
-    {#if textObjectHandler?.textObject?.length > 0}
-      {#each textObjectHandler?.textObject as word, index}
+    {#if textObject?.textObject?.length > 0}
+      {#each textObject?.textObject as word, index}
         <div class="word" bind:this={wordElements[index]}>
-          {#each word.letters as letter, index}
+          {#each word.letters as { text, isCorrect, isSpace, isTyped }}
             <span
               class="letter
-                {letter.isSpace ? 'typed' : ''}
-                {letter.isSpace ? 'space' : ''}
-                {letter.isCorrect ? 'correct' : ''}"
+                {isTyped ? 'typed' : ''}
+                {isSpace ? 'space' : ''}
+                {isCorrect ? 'correct' : ''}"
             >
-              {letter.text}
+              {text}
             </span>
           {/each}
         </div>
@@ -464,7 +463,7 @@
   #main-text {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    /* gap: 12px; */
     color: rgb(127, 106, 106);
     width: 100%;
     font-size: 2rem;
