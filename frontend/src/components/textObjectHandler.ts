@@ -36,7 +36,6 @@ export class TextObjectHandler {
 
     this.errorHandlingMode = errorHandlingMode;
 
-    this.textObject
     this.textObject = this.generateTextObject(this.targetText);
   }
 
