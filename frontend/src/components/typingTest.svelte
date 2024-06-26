@@ -1,17 +1,21 @@
 <script lang="ts">
-  import words from "../words/words.json";
   import { initialiseRecording, recordKeystroke, stopRecordKeystroke } from "../scripts/analiseKeyPresses";
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount } from "svelte";
   import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore } from "../scripts/stores";
   import Configs from "./configs.svelte";
   import TypingProgress from "./typingProgress.svelte";
   import { TextObjectHandler } from "./textObjectHandler";
   import type { TextObject } from "../interfaces";
-  import { text } from "@sveltejs/kit";
 
-  let textObject: TextObjectHandler;
+  const {
+    targetText,
+    errorCorrectionMode,
+    onTypingTestEnd,
+  }: { targetText: string[]; errorCorrectionMode: number; onTypingTestEnd: (result: boolean) => void } = $props();
 
-  // from stores
+  const textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
+
+  // from stores3
   let configWordSize: number;
   let configTestMode: string;
   let configTestTime: number;
@@ -26,7 +30,7 @@
   let mainTextElement: HTMLElement;
   let textObjectBind: HTMLElement[] = [];
   let cursorElement: HTMLElement;
-  export let inputReference: HTMLElement;
+  let inputReference: HTMLElement;
 
   let generatedWords: string = "";
   let globalLetterIndex: number = 0;
@@ -42,7 +46,7 @@
   let mainTextTranslateDistance: number = 0;
 
   let resizeObserver; // to handle mainText resizing
-  const dispatch = createEventDispatcher();
+  // const dispatch = createEventDispatcher();
   export const resetTypingProp = resetTyping;
 
   function handleTime() {
@@ -252,7 +256,7 @@
 <input
   bind:this={inputReference}
   id="wordsInput"
-  on:input={processKeyPress}
+  oninput={processKeyPress}
   autocomplete="off"
   autocorrect="off"
   autocapitalize="off"

@@ -12,6 +12,8 @@
   let currentMode: string;
   let typingTestInput: any;
 
+  let targetText = ["hello", "world"];
+
   function getTypingTestWpm(newValue: any) {
     typingTestWpm = newValue.detail;
     mode.set((currentMode = "typingResult"));
@@ -53,16 +55,15 @@
 
 {#if currentMode === "typingTest"}
   <TypingTest
+    targetText={targetText}
+    errorCorrectionMode={1}
     bind:resetTypingProp={resetTyping}
     bind:inputReference={typingTestInput}
     on:typingEnded={getTypingTestWpm}
   />
   <div id="keyboardWrapper"><Keyboard /></div>
 {:else if currentMode === "typingResult"}
-  <TypingResult
-    {typingTestWpm}
-    on:restartTrigger={() => mode.set((currentMode = "typingTest"))}
-  />
+  <TypingResult {typingTestWpm} on:restartTrigger={() => mode.set((currentMode = "typingTest"))} />
 {/if}
 
 <style>
