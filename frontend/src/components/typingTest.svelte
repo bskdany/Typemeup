@@ -15,6 +15,8 @@
 
   let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
 
+  let cursorElementPosition: {x:number, y:number} = $state({ x: 0, y: 0 });
+
   // from stores3
   let configWordSize: number;
   let configTestMode: string;
@@ -36,7 +38,6 @@
   let globalLetterIndex: number = 0;
   let currentWordIndex: number = 0;
   let currentLetterIndex: number = 0;
-  let cursorElementPosition = { x: 0, y: 0 };
   let startedTyping: boolean = false;
   let showDebugging: boolean = false;
   let hasMistaken: boolean = false;
@@ -105,8 +106,12 @@
       throw "Error moving cursor, child node is not an alement";
     }
 
+
     const xOffset = newCursorPositionX - cursorPositionX;
     const yOffset = newCursorPositionY - cursorPositionY;
+
+    console.log(xOffset)
+    console.log(yOffset)
 
     cancelTransitionCursor = false;
     cursorElementPosition.x += xOffset;
