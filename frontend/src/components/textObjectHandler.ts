@@ -82,22 +82,28 @@ export class TextObjectHandler {
         throw "Not implemented";
         break;
       case 1:
-        throw "Not implemented";
+        this.handleKeyPressMode1(keyPressed);
         break;
       case 2:
         throw "Not implemented";
         break;
       case 3:
-        this.handleKeyPressedMode3(keyPressed);
+        this.handleKeyPressMode3(keyPressed);
+        this.gotoNextLetter();
         break;
       default:
         throw "Wrong mode, 0 to 3 please";
     }
-
-    this.gotoNextLetter();
   }
 
-  handleKeyPressedMode3(keyPressed: string) {
+  handleKeyPressMode1(keyPressed: string) {
+    if (this.getLetter(0)?.text === keyPressed) {
+      this.setLetterStatus(0, true, true);
+      this.gotoNextLetter();
+    }
+  }
+
+  handleKeyPressMode3(keyPressed: string) {
     if (!this.hasMistaken) {
       if (this.getLetter(0)?.text === keyPressed) {
         this.setLetterStatus(0, true, true);

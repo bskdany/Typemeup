@@ -126,7 +126,7 @@
     secondsTime = 0;
     clearInterval(timeInterval);
 
-    textObject = new TextObjectHandler(["hello", "world"], 3);
+    textObject = new TextObjectHandler(["hello", "world"], 1);
     console.log(textObject);
     resetCursor();
 
