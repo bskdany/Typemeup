@@ -16,6 +16,7 @@
   import TypingProgress from "./typingProgress.svelte";
   import { TextObjectHandler } from "./textObjectHandler";
   import type { TextObject } from "../interfaces";
+  import { text } from "@sveltejs/kit";
 
   let textObject: TextObjectHandler;
 
@@ -32,7 +33,7 @@
   // element binds
   // let mainText: object[][] = [];
   let mainTextElement: HTMLElement;
-  let wordElements: HTMLElement[] = [];
+  let textObjectBind: HTMLElement[] = [];
   let cursorElement: HTMLElement;
   export let inputReference: HTMLElement;
 
@@ -113,48 +114,38 @@
     textObject.addKeyPressed(pressedKey);
     console.log(textObject);
     textObject = textObject; // triggering update
+
+    handleCursor();
   }
 
-  // function handleCursor() {
-  //   if (!cursorElement) {
-  //     return;
-  //   }
-  //   cancelTransitionCursor = true;
-  //   const cursorPositionX = cursorElement.getBoundingClientRect().left;
-  //   const cursorPositionY = cursorElement.getBoundingClientRect().top;
+  function handleCursor() {
+    if (!cursorElement) {
+      return;
+    }
 
-  //   let newCursorPositionX = 0;
-  //   let newCursorPositionY = 0;
+    cancelTransitionCursor = true;
+    const cursorPositionX = cursorElement.getBoundingClientRect().left;
+    const cursorPositionY = cursorElement.getBoundingClientRect().top;
 
-  //   if (currentLetterIndex === 0) {
-  //     newCursorPositionX =
-  //       wordElements[currentWordIndex].childNodes[
-  //         currentLetterIndex
-  //       ].getBoundingClientRect().left;
-  //     newCursorPositionY =
-  //       wordElements[currentWordIndex].childNodes[
-  //         currentLetterIndex
-  //       ].getBoundingClientRect().top;
-  //   } else {
-  //     newCursorPositionX =
-  //       wordElements[currentWordIndex].childNodes[
-  //         currentLetterIndex - 1
-  //       ].getBoundingClientRect().right;
-  //     newCursorPositionY =
-  //       wordElements[currentWordIndex].childNodes[
-  //         currentLetterIndex - 1
-  //       ].getBoundingClientRect().top;
-  //   }
+    let newCursorPositionX = 0;
+    let newCursorPositionY = 0;
 
-  //   const xOffset = newCursorPositionX - cursorPositionX;
-  //   const yOffset = newCursorPositionY - cursorPositionY;
+    newCursorPositionX =
+      textObjectBind[textObject.wordIndex].childNodes[
+        textObject.letterIndex
+      ].getBoundingClientRect().left;
+    newCursorPositionY =
+      textObjectBind[textObject.wordIndex].childNodes[
+        textObject.letterIndex
+      ].getBoundingClientRect().top;
 
-  //   cancelTransitionCursor = false;
-  //   cursorElementPosition.x += xOffset;
-  //   cursorElementPosition.y += yOffset;
+    const xOffset = newCursorPositionX - cursorPositionX;
+    const yOffset = newCursorPositionY - cursorPositionY;
 
-  //   checkIfMoveText();
-  // }
+    cancelTransitionCursor = false;
+    cursorElementPosition.x += xOffset;
+    cursorElementPosition.y += yOffset;
+  }
 
   function resetCursor() {
     if (!cursorElement) {
@@ -162,45 +153,6 @@
     }
     cursorElementPosition = { x: 0, y: 0 };
   }
-
-  // function backspace() {
-  //   // if at the beginning of the text or if at the beginning of the word
-  //   if (globalLetterIndex === 0 || currentLetterIndex === 0) {
-  //     return;
-  //   }
-
-  //   const previousLetter = mainText[currentWordIndex][currentLetterIndex - 1];
-
-  //   // if previous letter can be removed then remove it
-  //   if (previousLetter && previousLetter.removable === true) {
-  //     mainText[currentWordIndex].splice(currentLetterIndex - 1, 1);
-  //     mainText[currentWordIndex] = mainText[currentWordIndex];
-
-  //     const previousPreviousLetter =
-  //       mainText[currentWordIndex][currentLetterIndex - 2];
-  //     // it the letter before is previous letter is not wrong (removable) then the user has not mistaken
-  //     // anymore and the next letter he will type will be a right one
-  //     if (
-  //       (previousPreviousLetter &&
-  //         previousPreviousLetter.removable === false) ||
-  //       currentLetterIndex === 1
-  //     ) {
-  //       hasMistaken = false;
-  //     }
-  //   }
-  //   // it not then just change the color of it
-  //   else {
-  //     setLetterProperty(
-  //       currentWordIndex,
-  //       currentLetterIndex - 1,
-  //       "typed",
-  //       false,
-  //     );
-  //     correctCharCount -= 1;
-  //   }
-  //   globalLetterIndex -= 1;
-  //   currentLetterIndex -= 1;
-  // }
 
   function resetTyping() {
     // reset keystroke recording stuff
@@ -225,16 +177,6 @@
     globalLetterIndex = 0;
     currentWordIndex = 0;
     currentLetterIndex = 0;
-  }
-
-  function saveKeyStore(key: string) {
-    pressedKeyStore.set({ value: key, timestamp: msTime });
-    recordKeystroke(
-      key,
-      hasMistaken,
-      generatedWords.charAt(globalLetterIndex - 1),
-      globalLetterIndex - 1,
-    );
   }
 
   function checkIfMoveText() {
@@ -343,7 +285,7 @@
 
     {#if textObject?.textObject?.length > 0}
       {#each textObject?.textObject as word, index}
-        <div class="word" bind:this={wordElements[index]}>
+        <div class="word" bind:this={textObjectBind[index]}>
           {#each word.letters as { text, isCorrect, isSpace, isTyped }}
             <span
               class="letter
