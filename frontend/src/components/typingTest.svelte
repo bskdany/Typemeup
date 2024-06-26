@@ -1,17 +1,8 @@
 <script lang="ts">
   import words from "../words/words.json";
-  import {
-    initialiseRecording,
-    recordKeystroke,
-    stopRecordKeystroke,
-  } from "../scripts/analiseKeyPresses";
+  import { initialiseRecording, recordKeystroke, stopRecordKeystroke } from "../scripts/analiseKeyPresses";
   import { onMount, createEventDispatcher } from "svelte";
-  import {
-    wordSizeStore,
-    pressedKeyStore,
-    typingTestModeStore,
-    typingTestTimeStore,
-  } from "../scripts/stores";
+  import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore } from "../scripts/stores";
   import Configs from "./configs.svelte";
   import TypingProgress from "./typingProgress.svelte";
   import { TextObjectHandler } from "./textObjectHandler";
@@ -67,9 +58,7 @@
   }
 
   function calculateWPM() {
-    return parseFloat(
-      ((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2),
-    );
+    return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2));
   }
 
   // function createMainText() {
@@ -130,14 +119,16 @@
     let newCursorPositionX = 0;
     let newCursorPositionY = 0;
 
-    newCursorPositionX =
-      textObjectBind[textObject.wordIndex].childNodes[
-        textObject.letterIndex
-      ].getBoundingClientRect().left;
-    newCursorPositionY =
-      textObjectBind[textObject.wordIndex].childNodes[
-        textObject.letterIndex
-      ].getBoundingClientRect().top;
+    const childNode = textObjectBind[textObject.wordIndex].childNodes[textObject.letterIndex];
+
+    if (childNode && childNode instanceof Element) {
+      const rect = childNode.getBoundingClientRect();
+      newCursorPositionX = rect.left;
+      newCursorPositionY = rect.top;
+    } else {
+      // Handle the case where the childNode is not an Element
+      throw "Error moving cursor, child node is not an alement";
+    }
 
     const xOffset = newCursorPositionX - cursorPositionX;
     const yOffset = newCursorPositionY - cursorPositionY;
@@ -180,11 +171,7 @@
   }
 
   function checkIfMoveText() {
-    if (
-      currentLetterIndex === 0 &&
-      cursorElementPosition.y > 1 &&
-      hasMistaken === false
-    ) {
+    if (currentLetterIndex === 0 && cursorElementPosition.y > 1 && hasMistaken === false) {
       // 10 is arbitrary
       mainTextTranslateDistance = -cursorElementPosition.y;
     }
@@ -263,20 +250,10 @@
   </div>
 </div>
 
-<div
-  role="button"
-  id="typingTest"
-  on:keydown={() => {}}
-  on:click={() => inputReference.focus()}
-  tabindex="0"
-></div>
+<div role="button" id="typingTest" on:keydown={() => {}} on:click={() => inputReference.focus()} tabindex="0"></div>
 
 <div id="overflow-placeholder">
-  <div
-    id="main-text"
-    style="transform: translateY({mainTextTranslateDistance}px)"
-    bind:this={mainTextElement}
-  >
+  <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
     <div
       id="cursor"
       style={`transform: translate(${cursorElementPosition.x}px, ${cursorElementPosition.y}px)`}
