@@ -1,12 +1,11 @@
-import { splitArray } from "../algo/utils";
 import type { Letter, TextObject } from "../interfaces";
 
 export class TextObjectHandler {
 
-  textObject: TextObject[] = [];
+  textObject: TextObject[] = $state([]);
 
   wordIndex: number;
-  letterIndex: number;
+  letterIndex: number = $state();
   loballetterIndex: number;
 
   hasMistaken: boolean;

@@ -11,8 +11,13 @@
   let resetTyping: any;
   let currentMode: string;
   let typingTestInput: any;
+  let typingTestRef: TypingTest;
 
   let targetText = ["hello", "world"];
+  
+  function processTypingTestData(data: {wpm: number}){
+    console.log(data.wpm)
+  }
 
   function getTypingTestWpm(newValue: any) {
     typingTestWpm = newValue.detail;
@@ -28,11 +33,8 @@
         mode.set((currentMode = "typingTest"));
       }
     }
-    if (typingTestInput) {
-      if (typingTestInput != document.activeElement) {
-        typingTestInput.focus();
-      }
-    }
+    
+    typingTestRef.focus();
   }
 
   function navigateToProfile() {
@@ -51,15 +53,14 @@
   });
 </script>
 
-<button id="profilePage" on:click={navigateToProfile}> Profile </button>
+<button id="profilePage" onclick={navigateToProfile}> Profile </button>
 
 {#if currentMode === "typingTest"}
   <TypingTest
     targetText={targetText}
     errorCorrectionMode={1}
-    bind:resetTypingProp={resetTyping}
-    bind:inputReference={typingTestInput}
-    on:typingEnded={getTypingTestWpm}
+    testEnded={getTypingTestWpm}
+    bind:this={typingTestRef}
   />
   <div id="keyboardWrapper"><Keyboard /></div>
 {:else if currentMode === "typingResult"}

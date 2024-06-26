@@ -4,16 +4,16 @@
   import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore } from "../scripts/stores";
   import Configs from "./configs.svelte";
   import TypingProgress from "./typingProgress.svelte";
-  import { TextObjectHandler } from "./textObjectHandler";
+  import { TextObjectHandler } from "./textObjectHandler.svelte";
   import type { TextObject } from "../interfaces";
 
   const {
     targetText,
     errorCorrectionMode,
-    onTypingTestEnd,
-  }: { targetText: string[]; errorCorrectionMode: number; onTypingTestEnd: (result: boolean) => void } = $props();
+    testEnded,
+  }: { targetText: string[]; errorCorrectionMode: number; testEnded: (data: {wpm: number}) => void } = $props();
 
-  const textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
+  let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
 
   // from stores3
   let configWordSize: number;
@@ -30,7 +30,7 @@
   let mainTextElement: HTMLElement;
   let textObjectBind: HTMLElement[] = [];
   let cursorElement: HTMLElement;
-  let inputReference: HTMLElement;
+  let typingTestInput: HTMLElement;
 
   let generatedWords: string = "";
   let globalLetterIndex: number = 0;
@@ -56,7 +56,7 @@
     }
     if (configTestMode === "time" && msTime > configTestTime * 1000) {
       const typingTestWpm = calculateWPM();
-      dispatch("typingEnded", typingTestWpm);
+      testEnded({wpm: typingTestWpm});
       resetTyping();
     }
   }
@@ -77,7 +77,6 @@
 
     textObject.addKeyPressed(pressedKey);
     console.log(textObject);
-    textObject = textObject; // triggering update
 
     handleCursor();
     checkIfEnd();
@@ -130,8 +129,6 @@
     secondsTime = 0;
     clearInterval(timeInterval);
 
-    textObject = new TextObjectHandler(["hello", "world"], 1);
-    console.log(textObject);
     resetCursor();
 
     // resets the pressed key on keyboard to none
@@ -153,17 +150,25 @@
     }
   }
 
+  export function focus(){
+    if (typingTestInput) {
+      if (typingTestInput != document.activeElement) {
+        typingTestInput.focus();
+      }
+    }
+  }
+
   function checkIfEnd() {
     if (configTestMode === "words") {
       if (textObject.isEnd()) {
         const typingTestWpm = calculateWPM();
-        dispatch("typingEnded", typingTestWpm);
+        testEnded({wpm: typingTestWpm})
       }
     }
   }
 
   onMount(() => {
-    inputReference.focus();
+    typingTestInput.focus();
     typingTestModeStore.subscribe((value) => {
       configTestMode = value;
       // resetTyping();
@@ -188,14 +193,15 @@
   });
 </script>
 
-<button
+<!-- <button
   hidden
   id="show-debugging"
   on:click={() => {
     showDebugging ? (showDebugging = false) : (showDebugging = true);
   }}>debug</button
->
-{#if showDebugging}
+> -->
+
+<!-- {#if showDebugging}
   <div id="debugging">
     <div>Global letter index: {globalLetterIndex}</div>
     <div>Current word index: {currentWordIndex}</div>
@@ -212,7 +218,7 @@
       Cursor Position x:{cursorElementPosition.x} y:{cursorElementPosition.y}
     </div>
   </div>
-{/if}
+{/if} -->
 
 <div id="statusBar">
   {#if startedTyping}
@@ -225,7 +231,7 @@
   </div>
 </div>
 
-<div role="button" id="typingTest" on:keydown={() => {}} on:click={() => inputReference.focus()} tabindex="0"></div>
+<div role="button" id="typingTest" onkeydown={() => {}} onclick={() => typingTestInput.focus()} tabindex="0"></div>
 
 <div id="overflow-placeholder">
   <div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
@@ -234,7 +240,6 @@
       style={`transform: translate(${cursorElementPosition.x}px, ${cursorElementPosition.y}px)`}
       bind:this={cursorElement}
     ></div>
-
     {#if textObject?.textObject?.length > 0}
       {#each textObject?.textObject as word, index}
         <div class="word" bind:this={textObjectBind[index]}>
@@ -253,8 +258,9 @@
     {/if}
   </div>
 </div>
+
 <input
-  bind:this={inputReference}
+  bind:this={typingTestInput}
   id="wordsInput"
   oninput={processKeyPress}
   autocomplete="off"
