@@ -7,7 +7,7 @@ export class TextObjectHandler {
 
   wordIndex: number;
   letterIndex: number;
-  globalletterIndex: number;
+  loballetterIndex: number;
 
   hasMistaken: boolean;
   wrongInputBuffer: string[];
@@ -26,7 +26,7 @@ export class TextObjectHandler {
   constructor(targetText: string[], errorHandlingMode: number) {
     this.wordIndex = 0;
     this.letterIndex = 0;
-    this.globalletterIndex = 0;
+    this.loballetterIndex = 0;
     this.hasMistaken = false;
     this.wrongInputBuffer = [];
     this.correctCharCount = 0;
@@ -93,6 +93,8 @@ export class TextObjectHandler {
       default:
         throw "Wrong mode, 0 to 3 please";
     }
+
+    this.gotoNextLetter();
   }
 
   handleKeyPressedMode3(keyPressed: string) {
@@ -179,7 +181,7 @@ export class TextObjectHandler {
       this.letterIndex += 1;
     }
 
-    this.globalletterIndex += 1;
+    this.loballetterIndex += 1;
     return true;
   }
 
@@ -197,7 +199,7 @@ export class TextObjectHandler {
       this.letterIndex -= 1;
     }
 
-    this.globalletterIndex -= 1;
+    this.loballetterIndex -= 1;
     return true;
   }
 
@@ -237,7 +239,4 @@ export class TextObjectHandler {
     }
   }
 
-  update() {
-    this.textObject = this.textObject;
-  }
 }

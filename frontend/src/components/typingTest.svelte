@@ -111,64 +111,8 @@
     }
 
     textObject.addKeyPressed(pressedKey);
-    textObject.update();
-
-    // if (
-    //   keydown.inputType === "deleteContentBackward" &&
-    //   globalLetterIndex > backspaceMinPosition
-    // ) {
-    //   saveKeyStore("backspace");
-    //   backspace();
-    //   // why am I doing this? because it does't work otherwise
-    //   setTimeout(() => {
-    //     handleCursor();
-    //   }, 1);
-    // } else if (pressedKey) {
-    //   const expectedKey = generatedWords.charAt(globalLetterIndex);
-
-    //   if (pressedKey === expectedKey && !hasMistaken) {
-    //     if (pressedKey === " " && hasMistaken === false) {
-    //       backspaceMinPosition = globalLetterIndex;
-    //       currentWordIndex += 1;
-    //       currentLetterIndex = 0;
-    //     } else {
-    //       setLetterProperty(
-    //         currentWordIndex,
-    //         currentLetterIndex,
-    //         "typed",
-    //         true,
-    //       );
-    //       currentLetterIndex += 1;
-    //     }
-    //     globalLetterIndex += 1;
-    //     correctCharCount += 1;
-    //     handleCursor();
-    //   } else {
-    //     hasMistaken = true;
-    //     // const newValue = pressedKey !== " " ? pressedKey :
-    //     const newLetterElement = {
-    //       // id: letterIdCounter,
-    //       value: pressedKey,
-    //       typed: true,
-    //       removable: true,
-    //     };
-    //     mainText[currentWordIndex].splice(
-    //       currentLetterIndex,
-    //       0,
-    //       newLetterElement,
-    //     );
-    //     mainText[currentWordIndex] = mainText[currentWordIndex];
-    //     currentLetterIndex += 1;
-    //     globalLetterIndex += 1;
-
-    //     // why am I doing this? because it does't work otherwise
-    //     setTimeout(() => {
-    //       handleCursor();
-    //     }, 1);
-    //   }
-    //   pressedKey === " " ? saveKeyStore("space") : saveKeyStore(pressedKey);
-    // }
-    // checkIfEnd();
+    console.log(textObject);
+    textObject = textObject; // triggering update
   }
 
   // function handleCursor() {
@@ -403,9 +347,9 @@
           {#each word.letters as { text, isCorrect, isSpace, isTyped }}
             <span
               class="letter
-                {isTyped ? 'typed' : ''}
                 {isSpace ? 'space' : ''}
-                {isCorrect ? 'correct' : ''}"
+                {isTyped && isCorrect ? 'correct' : ''}
+                {isTyped && !isCorrect ? 'incorrect' : ''}"
             >
               {text}
             </span>
@@ -508,12 +452,13 @@
     align-items: center;
   }
 
-  .typed {
+  .correct {
     color: white;
   }
-  /* .removable {
+
+  .incorrect {
     color: red;
-  } */
+  }
 
   @media only screen and (max-width: 767px) {
     #statusBar {
