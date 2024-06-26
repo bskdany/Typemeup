@@ -61,35 +61,6 @@
     return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2));
   }
 
-  // function createMainText() {
-  //   generatedWords = "";
-  //   for (
-  //     let i = 0;
-  //     i < (configTestMode === "time" ? 100 : configWordSize);
-  //     i += 1
-  //   ) {
-  //     generatedWords +=
-  //       words.words[Math.floor(Math.random() * words.length)] + " ";
-  //   }
-  //   mainText = [];
-  //   let letterIdCounter = 0;
-  //   for (const word of generatedWords.split(" ")) {
-  //     let letterElements = [];
-  //     for (let i = 0; i < word.length; i++) {
-  //       const letterElement = {
-  //         id: letterIdCounter,
-  //         value: word.charAt(i),
-  //         typed: false,
-  //         removable: false,
-  //         active: false,
-  //       };
-  //       letterElements.push(letterElement);
-  //       letterIdCounter += 1;
-  //     }
-  //     mainText.push(letterElements);
-  //   }
-  // }
-
   function processKeyPress(keydown: any) {
     const pressedKey = keydown.data;
     if (!startedTyping) {
@@ -105,6 +76,7 @@
     textObject = textObject; // triggering update
 
     handleCursor();
+    checkIfEnd();
   }
 
   function handleCursor() {
@@ -179,10 +151,9 @@
 
   function checkIfEnd() {
     if (configTestMode === "words") {
-      if (globalLetterIndex === generatedWords.length - 1 && !hasMistaken) {
+      if (textObject.isEnd()) {
         const typingTestWpm = calculateWPM();
         dispatch("typingEnded", typingTestWpm);
-        resetTyping();
       }
     }
   }

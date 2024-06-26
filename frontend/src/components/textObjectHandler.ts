@@ -239,4 +239,8 @@ export class TextObjectHandler {
     }
   }
 
+  isEnd() {
+    return !this.getLetter(1);
+  }
+
 }
