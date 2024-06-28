@@ -4,9 +4,9 @@ export class TextObjectHandler {
 
   textObject: TextObject[] = $state([]);
 
-  wordIndex: number;
-  letterIndex: number = $state();
-  loballetterIndex: number;
+  wordIndex: number = $state(0);
+  letterIndex: number = $state(0);
+  globalLetterIndex: number = $state(0);
 
   hasMistaken: boolean;
   wrongInputBuffer: string[];
@@ -23,9 +23,9 @@ export class TextObjectHandler {
   errorHandlingMode: number;
 
   constructor(targetText: string[], errorHandlingMode: number) {
-    this.wordIndex = 0;
-    this.letterIndex = 0;
-    this.loballetterIndex = 0;
+    // this.wordIndex = $state(0);
+    // this.letterIndex = $state(0);
+    // this.globalLetterIndex = $state(0);
     this.hasMistaken = false;
     this.wrongInputBuffer = [];
     this.correctCharCount = 0;
@@ -186,7 +186,7 @@ export class TextObjectHandler {
       this.letterIndex += 1;
     }
 
-    this.loballetterIndex += 1;
+    this.globalLetterIndex += 1;
     return true;
   }
 
@@ -204,7 +204,7 @@ export class TextObjectHandler {
       this.letterIndex -= 1;
     }
 
-    this.loballetterIndex -= 1;
+    this.globalLetterIndex -= 1;
     return true;
   }
 
