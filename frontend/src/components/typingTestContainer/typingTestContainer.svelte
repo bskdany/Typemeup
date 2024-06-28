@@ -3,9 +3,7 @@
 	import TypingTest from './typingTest.svelte';
 	import TypingResult from './typingResult.svelte';
 	import Keyboard from './keyboard.svelte';
-	import { onDestroy, onMount, setContext } from 'svelte';
-
-	import configs from './configs.svelte';
+	import { onMount, setContext } from 'svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,

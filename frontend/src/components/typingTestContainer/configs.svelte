@@ -12,9 +12,8 @@
 <div id="configWrapper">
 	{#each typingModes as mode}
 		<button
-			class={typingContextData.typingMode === mode ? 'selected' : ''}
-			id="{mode + 'selector'};"
-			onclick={() => (typingContextData.typingMode = mode)}
+			class={typingContextData.configTypingMode === mode ? 'selected' : ''}
+			onclick={() => (typingContextData.configTypingMode = mode)}
 		>
 			{mode}
 		</button>
@@ -22,7 +21,7 @@
 
 	<div id="separator"></div>
 
-	{#if typingContextData.typingMode === 'words'}
+	{#if typingContextData.configTypingMode === 'words'}
 		{#each numberOfWords as words}
 			<button
 				class={typingContextData.configWordAmount === words ? 'selected' : ''}
@@ -31,7 +30,7 @@
 				{words}
 			</button>
 		{/each}
-	{:else if typingContextData.typingMode === 'time'}
+	{:else if typingContextData.configTypingMode === 'time'}
 		{#each timeAmount as time}
 			<button
 				class={typingContextData.configTimeAmount === time ? 'selected' : ''}
