@@ -6,10 +6,11 @@
 	import { onMount, setContext } from 'svelte';
 	import TypingProgress from './typingProgress.svelte';
 	import Configs from './configs.svelte';
+	import type { TypingContextData } from '../../interfaces';
 
-	let typingContextData = $state({
+	let typingContextData: TypingContextData = $state({
 		displayTypingTest: true,
-		configTypingMode: 'time',
+		configTypingMode: 'words',
 		configWordAmount: 10,
 		configTimeAmount: 15,
 		typingTestStatus: 'ended'
@@ -31,6 +32,7 @@
 
 	function typingTestEnded(data: { wpm: number }) {
 		console.log(data.wpm);
+		typingContextData.displayTypingTest = false;
 	}
 
 	function handleTabKeyDown(event: any) {
@@ -41,9 +43,9 @@
 			} else {
 				typingContextData.displayTypingTest = true;
 			}
-		}
 
-		typingTestRef.focus();
+			typingTestRef.focus();
+		}
 	}
 
 	onMount(() => {
@@ -66,10 +68,12 @@
 	</div>
 </div>
 
-{#if typingContextData.displayTypingTest}
-	<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
-	<div id="keyboardWrapper"><Keyboard /></div>
-{/if}
+{#key [resetTrigger, typingContextData.configWordAmount, typingContextData.configTimeAmount, typingContextData.configTypingMode]}
+	{#if typingContextData.displayTypingTest}
+		<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
+		<div id="keyboardWrapper"><Keyboard /></div>
+	{/if}
+{/key}
 
 <style>
 	#profilePage {

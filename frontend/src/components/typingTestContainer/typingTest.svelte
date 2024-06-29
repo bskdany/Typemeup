@@ -5,9 +5,10 @@
 	import Configs from './configs.svelte';
 	import TypingProgress from './typingProgress.svelte';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
-	import type { TextObject } from '../../interfaces';
+	import type { TextObject, TypingContextData, TypingContext } from '../../interfaces';
 
-	const typingContextData = getContext('typingContext').typingContextData;
+	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
+	const typingContextData: TypingContextData = typingContext.typingContextData;
 
 	const {
 		targetText,
@@ -45,25 +46,32 @@
 			if (msTime % 1000 === 0) {
 				secondsTime += 1;
 			}
-			checkIfTestEnded();
-			// checkIfMoveText();
+
+			if (typingContextData.configTypingMode === 'time') {
+				checkIfTestEnded();
+			}
 		}, 10);
 	}
 
 	function checkIfTestEnded() {
-		if (typingContextData.configTestMode === 'words') {
+		console.log(typingContextData.configTypingMode);
+		console.log(textObject.isEnd());
+
+		if (typingContextData.configTypingMode === 'words') {
 			if (textObject.isEnd()) {
+				console.log('Typing test ended');
 				testEnded({ wpm: 0 });
 			}
 		} else if (typingContextData.configTypingMode === 'time' && msTime > typingContextData.configTimeAmount * 1000) {
+			console.log('Typing test ended');
 			testEnded({ wpm: 0 });
 		}
 	}
 
 	function processKeyPress(keydown: any) {
 		const pressedKey = keydown.data;
-		if (typingContextData.typingStatus != 'started') {
-			typingContextData.typingStatus = 'started';
+		if (typingContextData.typingTestStatus != 'started') {
+			typingContextData.typingTestStatus = 'started';
 			typingTestStarted();
 		}
 
@@ -137,10 +145,6 @@
 			mainTextTranslateDistance = -cursorElementPosition.y;
 		});
 		resizeObserver.observe(mainTextElement);
-	});
-
-	onDestroy(() => {
-		typingContextData.startedTyping = false;
 	});
 </script>
 
