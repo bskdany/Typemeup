@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import type { TypingContext, TypingContextData } from '../../interfaces';
 
-	const typingContextData = getContext('typingContext').typingContextData;
+	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
+	const typingContextData: TypingContextData = typingContext.typingContextData;
 
-	const typingModes = ['time', 'words'];
+	const typingModes: ('time' | 'words')[] = ['time', 'words'];
 
 	const numberOfWords = [10, 25, 50, 100];
 	const timeAmount = [15, 30, 60, 120];
