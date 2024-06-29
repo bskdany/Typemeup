@@ -60,27 +60,32 @@
 	});
 </script>
 
-<div id="configs">
-	<Configs />
-</div>
+{#if typingContextData.displayTypingTest}
+	<div id="configs">
+		<Configs />
+	</div>
 
-{#key [resetTrigger, typingContextData.configWordAmount, typingContextData.configTimeAmount, typingContextData.configTypingMode]}
-	{#if typingContextData.displayTypingTest}
-		<div id="typingProgress">
-			{#if typingContextData.typingTestStatus === 'started'}
-				<TypingProgress />
-			{:else}
-				<div style="visibility: hidden;"><TypingProgress /></div>
-			{/if}
-		</div>
+	<div id="statusBar">
+		{#if typingContextData.typingTestStatus === 'started'}
+			<TypingProgress />
+		{:else}
+			<div style="visibility: hidden;"><TypingProgress /></div>
+		{/if}
+	</div>
 
+	{#key [resetTrigger, typingContextData.configWordAmount, typingContextData.configTimeAmount, typingContextData.configTypingMode]}
 		<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
-		<div id="keyboardWrapper"><Keyboard /></div>
-	{/if}
-{/key}
+	{/key}
+	<div id="keyboardWrapper"><Keyboard /></div>
+{/if}
 
 <style>
-	#typingProgress {
+	#configs {
+		display: flex;
+		justify-content: center;
+	}
+
+	#statusBar {
 		width: 100%;
 	}
 

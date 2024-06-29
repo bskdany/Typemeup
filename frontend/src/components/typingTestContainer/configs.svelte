@@ -11,10 +11,7 @@
 
 <div id="configWrapper">
 	{#each typingModes as mode}
-		<button
-			class={typingContextData.configTypingMode === mode ? 'selected' : ''}
-			onclick={() => (typingContextData.configTypingMode = mode)}
-		>
+		<button class={typingContextData.configTypingMode === mode ? 'selected' : ''} onclick={() => (typingContextData.configTypingMode = mode)}>
 			{mode}
 		</button>
 	{/each}
@@ -23,19 +20,13 @@
 
 	{#if typingContextData.configTypingMode === 'words'}
 		{#each numberOfWords as words}
-			<button
-				class={typingContextData.configWordAmount === words ? 'selected' : ''}
-				onclick={() => (typingContextData.configWordAmount = words)}
-			>
+			<button class={typingContextData.configWordAmount === words ? 'selected' : ''} onclick={() => (typingContextData.configWordAmount = words)}>
 				{words}
 			</button>
 		{/each}
 	{:else if typingContextData.configTypingMode === 'time'}
 		{#each timeAmount as time}
-			<button
-				class={typingContextData.configTimeAmount === time ? 'selected' : ''}
-				onclick={() => (typingContextData.configTimeAmount = time)}
-			>
+			<button class={typingContextData.configTimeAmount === time ? 'selected' : ''} onclick={() => (typingContextData.configTimeAmount = time)}>
 				{time}
 			</button>
 		{/each}
@@ -54,7 +45,7 @@
 		display: flex;
 		flex-direction: row;
 		padding: 10px;
-		margin-bottom: 50px;
+		/* margin-bottom: 50px; */
 		border: solid;
 		color: transparent;
 		border-radius: 10px;

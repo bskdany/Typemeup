@@ -176,8 +176,8 @@
 	}
 
 	#overflow-placeholder {
-		width: 70%;
-		height: 100%;
+		width: 100%;
+		height: 40%;
 		overflow: hidden;
 	}
 	#main-text {
@@ -220,11 +220,5 @@
 
 	.incorrect {
 		color: red;
-	}
-
-	@media only screen and (max-width: 767px) {
-		#overflow-placeholder {
-			width: 90%;
-		}
 	}
 </style>

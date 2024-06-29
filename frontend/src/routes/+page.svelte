@@ -10,13 +10,25 @@
 </script>
 
 <button id="profilePage" onclick={navigateToProfile}> Profile </button>
-
-<TypingTestContainer />
+<div id="typingArea">
+	<TypingTestContainer />
+</div>
 
 <style>
+	#typingArea {
+		width: 90%;
+		height: 70%;
+	}
+
 	#profilePage {
 		position: absolute;
 		right: 30px;
 		top: 30px;
+	}
+
+	@media only screen and (max-width: 767px) {
+		#typingArea {
+			width: 90%;
+		}
 	}
 </style>
