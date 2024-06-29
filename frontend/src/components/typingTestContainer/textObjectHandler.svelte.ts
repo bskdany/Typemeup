@@ -4,9 +4,9 @@ export class TextObjectHandler {
 
   textObject: TextObject[] = $state([]);
 
-  wordIndex: number = $state(0);
-  letterIndex: number = $state(0);
-  globalLetterIndex: number = $state(0);
+  wordIndex: number = 0;
+  letterIndex: number = 0;
+  globalLetterIndex: number = 0;
 
   hasMistaken: boolean;
   wrongInputBuffer: string[];
