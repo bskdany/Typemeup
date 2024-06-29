@@ -24,12 +24,7 @@
 	{#each rows as row, index}
 		<div class="row" id="row{index}">
 			{#each row as key}
-				<div
-					class=" {pressedKey == key.toLowerCase() ? 'activeKey' : 'key'} {key == ' '
-						? 'invisible'
-						: ''}"
-					id="${key}"
-				>
+				<div class=" {pressedKey == key.toLowerCase() ? 'activeKey' : 'key'} {key == ' ' ? 'invisible' : ''}" id="${key}">
 					{key}
 				</div>
 			{/each}
@@ -45,6 +40,7 @@
 		justify-content: center;
 		align-items: center;
 		height: fit-content;
+		width: min-content;
 	}
 	.row {
 		display: grid;
@@ -71,7 +67,8 @@
 	.key {
 		color: rgb(127, 106, 106);
 		width: auto;
-		min-width: 40px;
+		width: 40px;
+		min-width: min-content;
 		height: 40px;
 		background-color: transparent;
 		border: solid;

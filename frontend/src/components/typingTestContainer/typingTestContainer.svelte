@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../../global.css';
 	import TypingTest from './typingTest.svelte';
-	import TypingResult from './typingResult.svelte';
+	import TypingResult from './result/typingResult.svelte';
 	import Keyboard from './keyboard.svelte';
 	import { onMount, setContext } from 'svelte';
 	import TypingProgress from './typingProgress.svelte';
@@ -77,6 +77,11 @@
 		<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
 	{/key}
 	<div id="keyboardWrapper"><Keyboard /></div>
+{:else}
+	<div id="typingTestReport">
+		<!-- <TypingResult /> -->
+		<div>press tab to restart</div>
+	</div>
 {/if}
 
 <style>
