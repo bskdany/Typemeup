@@ -34,13 +34,13 @@
 
 <style>
 	#keyboardWrapper {
-		margin: 50px;
+		/* margin: 50px; */
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		height: fit-content;
-		width: min-content;
+		/* width: min-content; */
 	}
 	.row {
 		display: grid;
@@ -67,8 +67,8 @@
 	.key {
 		color: rgb(127, 106, 106);
 		width: auto;
-		width: 40px;
-		min-width: min-content;
+		/* width: 40px; */
+		/* min-width: min-content; */
 		height: 40px;
 		background-color: transparent;
 		border: solid;

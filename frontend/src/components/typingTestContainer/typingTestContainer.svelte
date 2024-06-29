@@ -74,7 +74,9 @@
 	</div>
 
 	{#key [resetTrigger, typingContextData.configWordAmount, typingContextData.configTimeAmount, typingContextData.configTypingMode]}
-		<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
+		<div id="typingTestWrapper">
+			<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
+		</div>
 	{/key}
 	<div id="keyboardWrapper"><Keyboard /></div>
 {:else}
@@ -89,9 +91,19 @@
 		display: flex;
 		justify-content: center;
 	}
-
+	#keyboardWrapper {
+		display: flex;
+		justify-content: center;
+	}
 	#statusBar {
-		width: 100%;
+		display: flex;
+		justify-content: left;
+	}
+	#typingTestWrapper {
+		display: flex;
+		justify-content: center;
+		height: 30%;
+		/* width: 80%; */
 	}
 
 	@media only screen and (max-width: 767px) {
