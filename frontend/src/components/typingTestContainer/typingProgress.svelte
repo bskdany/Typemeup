@@ -1,31 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { typingTestModeStore, wordSizeStore, typingTestTimeStore } from '../../scripts/stores';
+	import type { TypingContext, TypingContextData } from '../../interfaces';
+	import { getContext } from 'svelte';
 
-	let typingTestMode: string;
-	let typingTestTime: number;
-	let wordSize: number;
-
-	export let timeTyped: number;
-	export let wordsTyped: number;
-
-	onMount(() => {
-		typingTestModeStore.subscribe((value) => {
-			typingTestMode = value;
-		});
-		wordSizeStore.subscribe((value) => {
-			wordSize = value;
-		});
-		typingTestTimeStore.subscribe((value) => {
-			typingTestTime = value;
-		});
-	});
+	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
+	const typingContextData: TypingContextData = typingContext.typingContextData;
 </script>
 
-{#if typingTestMode === 'time'}
-	<div>{typingTestTime - timeTyped}</div>
-{:else if typingTestMode === 'words'}
-	<div>{wordsTyped}|{wordSize}</div>
+{#if typingContextData.configTypingMode === 'time'}
+	<div>{typingContextData.configTimeAmount - typingContextData.progressTimeElapsed}</div>
+{:else if typingContextData.configTypingMode === 'words'}
+	<div>{typingContextData.progressWordsTyped}|{typingContextData.configWordAmount}</div>
 {/if}
 
 <style>

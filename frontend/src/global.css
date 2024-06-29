@@ -1,29 +1,30 @@
-body{
-    background-color: #323437;
-    /* font-family: 'Roboto Mono', monospace; */
-    font-family: Arial, Helvetica, sans-serif;
-    /* letter-spacing: 2px; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100dvh;
-    flex-direction: column;
-    overflow: hidden;
-    color: white;
-}
-footer{
-    display: none;
+body {
+  background-color: #323437;
+  /* font-family: 'Roboto Mono', monospace; */
+  font-family: Arial, Helvetica, sans-serif;
+  /* letter-spacing: 2px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  flex-direction: column;
+  overflow: hidden;
+  color: white;
 }
 
-button{
-    background-color: transparent;
-    padding: 10px;
-    border: solid transparent;
-    color: rgb(127, 106, 106);
-    border-radius: 10px;
-    background-color: #2c2e31;
+footer {
+  display: none;
 }
 
-button:hover{
-    color: #a8b9e4;
+button {
+  background-color: transparent;
+  padding: 10px;
+  border: solid transparent;
+  color: rgb(127, 106, 106);
+  border-radius: 10px;
+  background-color: #2c2e31;
+}
+
+button:hover {
+  color: #a8b9e4;
 }

@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { initialiseRecording, recordKeystroke, stopRecordKeystroke } from '../../scripts/analiseKeyPresses';
 	import { getContext, onDestroy, onMount } from 'svelte';
-	import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore } from '../../scripts/stores';
-	import Configs from './configs.svelte';
-	import TypingProgress from './typingProgress.svelte';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
 	import type { TextObject, TypingContextData, TypingContext } from '../../interfaces';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
+
+	typingContextData.progressWordsTyped = 0;
+	typingContextData.progressTimeElapsed = 0;
 
 	const {
 		targetText,
@@ -37,14 +36,14 @@
 	let resizeObserver; // to handle mainText resizing
 
 	let msTime = 0;
-	let secondsTime = 0;
+	let timeInterval: any = null;
 
 	function typingTestStarted() {
 		msTime = 0;
-		setInterval(() => {
+		timeInterval = setInterval(() => {
 			msTime += 10;
 			if (msTime % 1000 === 0) {
-				secondsTime += 1;
+				typingContextData.progressTimeElapsed += 1;
 			}
 
 			if (typingContextData.configTypingMode === 'time') {
@@ -71,6 +70,7 @@
 		}
 
 		textObject.addKeyPressed(pressedKey);
+		typingContextData.progressWordsTyped = textObject.wordIndex;
 		handleCursor();
 		checkIfTestEnded();
 	}
@@ -132,6 +132,10 @@
 	}
 
 	onMount(() => {
+		typingContextData.typingTestStatus = 'pending';
+
+		console.log('Typing test initialized');
+
 		focus();
 
 		// this is needed if the user resized the screen
@@ -140,6 +144,10 @@
 			mainTextTranslateDistance = -cursorElementPosition.y;
 		});
 		resizeObserver.observe(mainTextElement);
+	});
+
+	onDestroy(() => {
+		clearInterval(timeInterval);
 	});
 </script>
 

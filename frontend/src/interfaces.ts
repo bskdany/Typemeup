@@ -76,7 +76,9 @@ export interface TypingContextData {
   configTypingMode: "words" | "time";
   configWordAmount: number;
   configTimeAmount: number;
-  typingTestStatus: "started" | 'ended';
+  typingTestStatus: "started" | 'ended' | "pending";
+  progressTimeElapsed: number;
+  progressWordsTyped: number;
 }
 
 export interface TypingContext {

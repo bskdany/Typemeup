@@ -13,7 +13,9 @@
 		configTypingMode: 'words',
 		configWordAmount: 10,
 		configTimeAmount: 15,
-		typingTestStatus: 'ended'
+		typingTestStatus: 'ended',
+		progressTimeElapsed: 0,
+		progressWordsTyped: 0
 	});
 
 	setContext('typingContext', {
@@ -44,9 +46,9 @@
 			} else {
 				typingContextData.displayTypingTest = true;
 			}
-
-			typingTestRef?.focus();
 		}
+
+		typingTestRef?.focus();
 	}
 
 	onMount(() => {
@@ -58,29 +60,28 @@
 	});
 </script>
 
-<div id="statusBar">
-	{#if typingContextData.typingTestStatus === 'started'}
-		<div id="typingProgress">
-			<TypingProgress wordsTyped={0} timeTyped={0} />
-		</div>
-	{/if}
-	<div id="configs">
-		<Configs />
-	</div>
+<div id="configs">
+	<Configs />
 </div>
 
 {#key [resetTrigger, typingContextData.configWordAmount, typingContextData.configTimeAmount, typingContextData.configTypingMode]}
 	{#if typingContextData.displayTypingTest}
+		<div id="typingProgress">
+			{#if typingContextData.typingTestStatus === 'started'}
+				<TypingProgress />
+			{:else}
+				<div style="visibility: hidden;"><TypingProgress /></div>
+			{/if}
+		</div>
+
 		<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
 		<div id="keyboardWrapper"><Keyboard /></div>
 	{/if}
 {/key}
 
 <style>
-	#profilePage {
-		position: absolute;
-		right: 30px;
-		top: 30px;
+	#typingProgress {
+		width: 100%;
 	}
 
 	@media only screen and (max-width: 767px) {
