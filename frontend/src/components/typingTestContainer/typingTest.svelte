@@ -1,100 +1,75 @@
 <script lang="ts">
-	import {
-		initialiseRecording,
-		recordKeystroke,
-		stopRecordKeystroke
-	} from '../../scripts/analiseKeyPresses';
-	import { onMount } from 'svelte';
-	import {
-		wordSizeStore,
-		pressedKeyStore,
-		typingTestModeStore,
-		typingTestTimeStore
-	} from '../../scripts/stores';
+	import { initialiseRecording, recordKeystroke, stopRecordKeystroke } from '../../scripts/analiseKeyPresses';
+	import { getContext, onDestroy, onMount } from 'svelte';
+	import { wordSizeStore, pressedKeyStore, typingTestModeStore, typingTestTimeStore } from '../../scripts/stores';
 	import Configs from './configs.svelte';
 	import TypingProgress from './typingProgress.svelte';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
 	import type { TextObject } from '../../interfaces';
 
+	const typingContextData = getContext('typingContext').typingContextData;
+
 	const {
 		targetText,
 		errorCorrectionMode,
+		testStarted,
 		testEnded
 	}: {
 		targetText: string[];
 		errorCorrectionMode: number;
+		testStarted: () => void;
 		testEnded: (data: { wpm: number }) => void;
 	} = $props();
 
-	let textObject: TextObjectHandler = $state(
-		new TextObjectHandler(targetText, errorCorrectionMode)
-	);
+	let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
 
 	let cursorElementPosition: { x: number; y: number } = $state({ x: 0, y: 0 });
-	let mainTextTranslateDistance: number = $state(0);
-
-	let startedTyping: boolean = false;
-
-	// from stores3
-	// let configWordSize: number;
-	let configTestMode: string;
-	let configTestTime: number;
-
-	// for handling time
-	let msTime: number = 0;
-	let secondsTime: number = 0;
-	let timeInterval: any; // to record the time
+	let mainTextTranslateDistance: number = 0;
 
 	// element binds
 	// let mainText: object[][] = [];
 	let mainTextElement: HTMLElement;
 	let textObjectBind: HTMLElement[] = [];
 	let cursorElement: HTMLElement;
-	let typingTestInput: HTMLElement;
-
-	// let generatedWords: string = "";
-	// let globalLetterIndex: number = 0;
-	// let currentWordIndex: number = 0;
-	// let currentLetterIndex: number = 0;
-	// let startedTyping: boolean = false;
-	// let showDebugging: boolean = false;
-	// let hasMistaken: boolean = false;
-	// let cancelTransitionCursor: boolean = false;
-	// let correctCharCount: number = 0;
-	// let backspaceMinPosition: number = -1; // the minimin position in the letters array to which the user can backspace
+	let typingTestInputBind: HTMLElement;
 
 	let resizeObserver; // to handle mainText resizing
-	// const dispatch = createEventDispatcher();
 
-	function handleTime() {
-		msTime += 10;
-		if (msTime % 1000 === 0) {
-			secondsTime += 1;
-		}
-		if (configTestMode === 'time' && msTime > configTestTime * 1000) {
-			// const typingTestWpm = calculateWPM();
-			testEnded({ wpm: 10 });
-			// resetTyping();
+	let msTime = 0;
+	let secondsTime = 0;
+
+	function typingTestStarted() {
+		msTime = 0;
+		setInterval(() => {
+			msTime += 10;
+			if (msTime % 1000 === 0) {
+				secondsTime += 1;
+			}
+			checkIfTestEnded();
+			// checkIfMoveText();
+		}, 10);
+	}
+
+	function checkIfTestEnded() {
+		if (typingContextData.configTestMode === 'words') {
+			if (textObject.isEnd()) {
+				testEnded({ wpm: 0 });
+			}
+		} else if (typingContextData.configTypingMode === 'time' && msTime > typingContextData.configTimeAmount * 1000) {
+			testEnded({ wpm: 0 });
 		}
 	}
 
-	// function calculateWPM() {
-	// 	return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2));
-	// }
-
 	function processKeyPress(keydown: any) {
 		const pressedKey = keydown.data;
-		if (!startedTyping) {
-			startedTyping = true;
-			msTime = 0;
-			timeInterval = setInterval(() => handleTime(), 10);
+		if (typingContextData.typingStatus != 'started') {
+			typingContextData.typingStatus = 'started';
+			typingTestStarted();
 		}
 
 		textObject.addKeyPressed(pressedKey);
-		console.log(textObject);
-
 		handleCursor();
-		checkIfEnd();
+		checkIfTestEnded();
 	}
 
 	function handleCursor() {
@@ -108,15 +83,28 @@
 		let newCursorPositionX = 0;
 		let newCursorPositionY = 0;
 
-		const childNode = textObjectBind[textObject.wordIndex].childNodes[textObject.letterIndex];
+		// why me
+		const cleanedTextObjectBind: any = [];
+		for (let wordCounter = 0; wordCounter < textObjectBind.length; wordCounter++) {
+			if (textObjectBind[wordCounter].nodeType !== Node.COMMENT_NODE) {
+				cleanedTextObjectBind.push([]);
+				for (const letter of textObjectBind[wordCounter].childNodes) {
+					if (letter.nodeType !== Node.COMMENT_NODE) {
+						cleanedTextObjectBind[wordCounter].push(letter);
+					}
+				}
+			}
+		}
 
-		if (childNode && childNode instanceof Element) {
-			const rect = childNode.getBoundingClientRect();
+		const targetLetterNode = cleanedTextObjectBind[textObject.wordIndex][textObject.letterIndex];
+
+		if (targetLetterNode) {
+			const rect = targetLetterNode.getBoundingClientRect();
 			newCursorPositionX = rect.left;
 			newCursorPositionY = rect.top;
 		} else {
 			// Handle the case where the childNode is not an Element
-			throw 'Error moving cursor, child node is not an alement';
+			// throw 'Error moving cursor, child node is not an alement';
 		}
 
 		const xOffset = newCursorPositionX - cursorPositionX;
@@ -126,78 +114,22 @@
 		cursorElementPosition.y += yOffset;
 	}
 
-	function resetCursor() {
-		if (!cursorElement) {
-			return;
-		}
-		cursorElementPosition = { x: 0, y: 0 };
-	}
-
-	// function resetTyping() {
-	//   // reset keystroke recording stuff
-	//   stopRecordKeystroke();
-
-	//   // reset stopwatch for wpm
-	//   msTime = 0;
-	//   secondsTime = 0;
-	//   clearInterval(timeInterval);
-
-	//   resetCursor();
-
-	//   // resets the pressed key on keyboard to none
-	//   pressedKeyStore.set({ value: "", timestamp: 0 });
-	//   startedTyping = false;
-	//   correctCharCount = 0;
-	//   backspaceMinPosition = -1;
-	//   hasMistaken = false;
-	//   mainTextTranslateDistance = 0;
-	//   globalLetterIndex = 0;
-	//   currentWordIndex = 0;
-	//   currentLetterIndex = 0;
-	// }
-
 	function checkIfMoveText() {
-		if (
-			textObject.letterIndex === 0 &&
-			cursorElementPosition.y > 1 &&
-			textObject.hasMistaken === false
-		) {
+		if (textObject.letterIndex === 0 && cursorElementPosition.y > 1 && textObject.hasMistaken === false) {
 			// 10 is arbitrary
 			mainTextTranslateDistance = -cursorElementPosition.y;
 		}
 	}
 
 	export function focus() {
-		if (typingTestInput) {
-			if (typingTestInput != document.activeElement) {
-				typingTestInput.focus();
-			}
-		}
-	}
-
-	function checkIfEnd() {
-		if (configTestMode === 'words') {
-			if (textObject.isEnd()) {
-				// const typingTestWpm = calculateWPM();
-				testEnded({ wpm: 10 });
-			}
+		if (typingTestInputBind && typingTestInputBind instanceof HTMLElement) {
+			typingTestInputBind.focus();
+			console.log('Focus moved to typing test input');
 		}
 	}
 
 	onMount(() => {
-		typingTestInput.focus();
-		typingTestModeStore.subscribe((value) => {
-			configTestMode = value;
-			// resetTyping();
-		});
-		// wordSizeStore.subscribe((value) => {
-		// 	configWordSize = value;
-		// 	// resetTyping();
-		// });
-		typingTestTimeStore.subscribe((value) => {
-			configTestTime = value;
-			// resetTyping();
-		});
+		focus();
 
 		// this is needed if the user resized the screen
 		resizeObserver = new ResizeObserver(() => {
@@ -205,127 +137,37 @@
 			mainTextTranslateDistance = -cursorElementPosition.y;
 		});
 		resizeObserver.observe(mainTextElement);
+	});
 
-		// resetTyping();
+	onDestroy(() => {
+		typingContextData.startedTyping = false;
 	});
 </script>
 
-<!-- <button
-  hidden
-  id="show-debugging"
-  on:click={() => {
-    showDebugging ? (showDebugging = false) : (showDebugging = true);
-  }}>debug</button
-> -->
-
-<!-- {#if showDebugging}
-  <div id="debugging">
-    <div>Global letter index: {globalLetterIndex}</div>
-    <div>Current word index: {currentWordIndex}</div>
-    <div>Current letter index: {currentLetterIndex}</div>
-    <div>Backspace min position: {backspaceMinPosition}</div>
-    <div>Expected letter: {generatedWords[globalLetterIndex]}</div>
-    <div>Current mode: {configTestMode}</div>
-    <div>Word Size: {configWordSize}</div>
-    <div>Time amount: {configTestTime}</div>
-    <div>Correct chars typed: {correctCharCount}</div>
-    <div>Mistake made: {hasMistaken}</div>
-    <br />
-    <div>
-      Cursor Position x:{cursorElementPosition.x} y:{cursorElementPosition.y}
-    </div>
-  </div>
-{/if} -->
-
-<div id="statusBar">
-	{#if startedTyping}
-		<div id="typingProgress">
-			<TypingProgress wordsTyped={textObject.wordIndex} timeTyped={secondsTime} />
-		</div>
-	{/if}
-	<div id="configs">
-		<Configs />
-	</div>
-</div>
-
-<div
-	role="button"
-	id="typingTest"
-	onkeydown={() => {}}
-	onclick={() => typingTestInput.focus()}
-	tabindex="0"
-></div>
-
 <div id="overflow-placeholder">
-	<div
-		id="main-text"
-		style="transform: translateY({mainTextTranslateDistance}px)"
-		bind:this={mainTextElement}
-	>
-		<div
-			id="cursor"
-			style={`transform: translate(${cursorElementPosition.x}px, ${cursorElementPosition.y}px)`}
-			bind:this={cursorElement}
-		></div>
-		{#if textObject?.textObject?.length > 0}
-			{#each textObject?.textObject as word, index}
-				<div class="word" bind:this={textObjectBind[index]}>
-					{#each word.letters as { text, isCorrect, isSpace, isTyped }}
-						<span
-							class="letter
-                {isSpace ? 'space' : ''}
-                {isTyped && isCorrect ? 'correct' : ''}
-                {isTyped && !isCorrect ? 'incorrect' : ''}"
-						>
-							{text}
-						</span>
-					{/each}
-				</div>
-			{/each}
-		{/if}
+	<div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
+		<div id="cursor" style={`transform: translate(${cursorElementPosition.x}px, ${cursorElementPosition.y}px)`} bind:this={cursorElement}></div>
+		{#each textObject?.textObject as word, index}
+			<div class="word" bind:this={textObjectBind[index]}>
+				{#each word.letters as { text, isCorrect, isSpace, isTyped }}
+					<span class="letter {isSpace ? 'space' : ''} {isTyped && isCorrect ? 'correct' : ''} {isTyped && !isCorrect ? 'incorrect' : ''}">
+						{text}
+					</span>
+				{/each}
+			</div>
+		{/each}
 	</div>
 </div>
 
-<input
-	bind:this={typingTestInput}
-	id="wordsInput"
-	oninput={processKeyPress}
-	autocomplete="off"
-	autocorrect="off"
-	autocapitalize="off"
-	spellcheck="false"
-/>
+<input bind:this={typingTestInputBind} id="wordsInput" oninput={processKeyPress} autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
 
 <style>
-	#show-debugging {
-		color: #506a7b;
-		position: absolute;
-		width: fit-content;
-		height: min-content;
-		right: 0%;
-		top: 0%;
-	}
-	#debugging {
-		color: #506a7b;
-		position: absolute;
-		width: fit-content;
-		height: min-content;
-		left: 0%;
-		top: 0%;
-	}
 	.word {
 		margin: none;
 		padding: none;
 		width: fit-content;
 	}
 
-	#typingTest {
-		width: 100%;
-		display: flex;
-		justify-content: center;
-		height: calc(6rem + 13 * 3px);
-		/* for some obscure reason the gap betwen vertical divs is 13px but the gap is set to be 12px... */
-	}
 	#overflow-placeholder {
 		width: 70%;
 		height: 100%;
@@ -365,20 +207,6 @@
 	.letter {
 		margin-left: 2px;
 	}
-	#statusBar {
-		width: 70%;
-		display: grid;
-	}
-	#typingProgress {
-		position: absolute;
-		align-self: end;
-		margin-bottom: 10px;
-	}
-	#configs {
-		margin: auto;
-		align-items: center;
-	}
-
 	.correct {
 		color: white;
 	}
@@ -388,9 +216,6 @@
 	}
 
 	@media only screen and (max-width: 767px) {
-		#statusBar {
-			width: 90%;
-		}
 		#overflow-placeholder {
 			width: 90%;
 		}
