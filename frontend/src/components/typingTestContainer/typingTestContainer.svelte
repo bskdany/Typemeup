@@ -33,6 +33,7 @@
 	function typingTestEnded(data: { wpm: number }) {
 		console.log(data.wpm);
 		typingContextData.displayTypingTest = false;
+		typingContextData.typingTestStatus = 'ended';
 	}
 
 	function handleTabKeyDown(event: any) {
@@ -44,7 +45,7 @@
 				typingContextData.displayTypingTest = true;
 			}
 
-			typingTestRef.focus();
+			typingTestRef?.focus();
 		}
 	}
 

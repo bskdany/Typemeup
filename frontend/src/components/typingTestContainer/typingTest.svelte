@@ -54,16 +54,11 @@
 	}
 
 	function checkIfTestEnded() {
-		console.log(typingContextData.configTypingMode);
-		console.log(textObject.isEnd());
-
 		if (typingContextData.configTypingMode === 'words') {
 			if (textObject.isEnd()) {
-				console.log('Typing test ended');
 				testEnded({ wpm: 0 });
 			}
 		} else if (typingContextData.configTypingMode === 'time' && msTime > typingContextData.configTimeAmount * 1000) {
-			console.log('Typing test ended');
 			testEnded({ wpm: 0 });
 		}
 	}
