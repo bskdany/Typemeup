@@ -83,9 +83,9 @@ export function generateWordsAlgo(userTypingData: UserTypingData, howManyWords: 
   wordsRankedByTargetFingerContent.sort((a, b) => -(a[1] - b[1]))
 
   //console.log(lettersToWordsMap)
-  console.log(wordsRankedByTargetFingerContent)
-  console.log(fingersToTrain)
-  console.log(fingerTrainingOrder);
+  // console.log(wordsRankedByTargetFingerContent)
+  // console.log(fingersToTrain)
+  // console.log(fingerTrainingOrder);
 
   const finalWords: string[] = wordsRankedByTargetFingerContent
     .map(entry => entry[0])

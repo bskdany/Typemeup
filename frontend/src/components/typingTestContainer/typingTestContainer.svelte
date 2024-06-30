@@ -6,9 +6,11 @@
 	import { onMount, setContext } from 'svelte';
 	import TypingProgress from './typingProgress.svelte';
 	import Configs from './configs.svelte';
-	import type { TypingContextData, UserTypingData } from '../../interfaces';
+	import type { FingerData, SingleTypingTestReturnData, TypingContextData, UserTypingData } from '../../interfaces';
 	import { generateWords, generateWordsAlgo } from '../../algo/textGenerator';
 	import { getUserTypingData } from '../../storage/localStorageService';
+	import { analyse } from '../../algo/textAnalysis';
+	import { updated } from '$app/stores';
 
 	let typingContextData: TypingContextData = $state({
 		displayTypingTest: true,
@@ -37,11 +39,20 @@
 		console.log('Typing test started');
 	}
 
-	function typingTestEnded(data: { wpm: number }) {
-		console.log(data.wpm);
+	function typingTestEnded(data: SingleTypingTestReturnData) {
 		typingContextData.displayTypingTest = false;
 		typingContextData.typingTestStatus = 'ended';
 		typingContextData.livePressedKey.key = '';
+
+		const updatedFingerData = analyse(
+			userTypingData.fingersStatistics,
+			data.targetText,
+			data.userTypedText,
+			userTypingData.fingerMap,
+			userTypingData.defaultFingersPosition
+		);
+		console.log(updatedFingerData);
+		userTypingData.fingersStatistics = updatedFingerData;
 	}
 
 	function handleTabKeyDown(event: any) {
@@ -68,9 +79,8 @@
 		} else if (typingContextData.configTypingMode === 'words') {
 			targetText = generateWords(typingContextData.configWordAmount);
 		} else if (typingContextData.configTypingMode === 'smart') {
-			targetText = generateWordsAlgo(userTypingData, 20);
+			targetText = generateWordsAlgo(userTypingData, typingContextData.configWordAmount);
 		}
-		console.debug('Words are generated');
 	});
 
 	onMount(() => {
@@ -97,7 +107,7 @@
 
 	{#key targetText}
 		<div id="typingTestWrapper">
-			<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
+			<TypingTest {targetText} errorCorrectionMode={3} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
 		</div>
 	{/key}
 	<div id="keyboardWrapper"><Keyboard /></div>

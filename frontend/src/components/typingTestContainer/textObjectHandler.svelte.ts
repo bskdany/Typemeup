@@ -1,4 +1,4 @@
-import type { Letter, TextObject } from "../interfaces";
+import type { Letter, TextObject } from "../../interfaces";
 
 export class TextObjectHandler {
 
@@ -78,13 +78,13 @@ export class TextObjectHandler {
 
     switch (this.errorHandlingMode) {
       case 0:
-        throw "Not implemented";
+        throw `Error correction mode ${this.errorHandlingMode} not implemented`;
         break;
       case 1:
         this.handleKeyPressMode1(keyPressed);
         break;
       case 2:
-        throw "Not implemented";
+        throw `Error correction mode ${this.errorHandlingMode} not implemented`;
         break;
       case 3:
         this.handleKeyPressMode3(keyPressed);

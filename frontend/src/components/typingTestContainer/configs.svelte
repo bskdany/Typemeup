@@ -5,7 +5,7 @@
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
 
-	const typingModes: ('time' | 'words')[] = ['time', 'words'];
+	const typingModes: ('time' | 'words' | 'smart')[] = ['time', 'words', 'smart'];
 
 	const numberOfWords = [10, 25, 50, 100];
 	const timeAmount = [15, 30, 60, 120];
@@ -30,6 +30,12 @@
 		{#each timeAmount as time}
 			<button class={typingContextData.configTimeAmount === time ? 'selected' : ''} onclick={() => (typingContextData.configTimeAmount = time)}>
 				{time}
+			</button>
+		{/each}
+	{:else if typingContextData.configTypingMode === 'smart'}
+		{#each numberOfWords as words}
+			<button class={typingContextData.configWordAmount === words ? 'selected' : ''} onclick={() => (typingContextData.configWordAmount = words)}>
+				{words}
 			</button>
 		{/each}
 	{/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
-	import type { TextObject, TypingContextData, TypingContext } from '../../interfaces';
+	import type { TextObject, TypingContextData, TypingContext, SingleTypingTestReturnData } from '../../interfaces';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
@@ -18,7 +18,7 @@
 		targetText: string[];
 		errorCorrectionMode: number;
 		testStarted: () => void;
-		testEnded: (data: { wpm: number }) => void;
+		testEnded: (data: SingleTypingTestReturnData) => void;
 	} = $props();
 
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
@@ -53,12 +53,12 @@
 	}
 
 	function checkIfTestEnded() {
-		if (typingContextData.configTypingMode === 'words') {
+		if (typingContextData.configTypingMode === 'words' || typingContextData.configTypingMode === 'smart') {
 			if (textObject.isEnd()) {
-				testEnded({ wpm: 0 });
+				testEnded({ wpm: 0, targetText: textObject.targetText, userTypedText: textObject.userTypedText });
 			}
 		} else if (typingContextData.configTypingMode === 'time' && msTime > typingContextData.configTimeAmount * 1000) {
-			testEnded({ wpm: 0 });
+			testEnded({ wpm: 0, targetText: textObject.targetText, userTypedText: textObject.userTypedText });
 		}
 	}
 
@@ -127,9 +127,8 @@
 	}
 
 	export function focus() {
-		if (typingTestInputBind && typingTestInputBind instanceof HTMLElement) {
+		if (typingTestInputBind && typingTestInputBind instanceof HTMLElement && document.activeElement != typingTestInputBind) {
 			typingTestInputBind.focus();
-			console.log('Focus moved to typing test input');
 		}
 	}
 

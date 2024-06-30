@@ -8,7 +8,7 @@
 
 {#if typingContextData.configTypingMode === 'time'}
 	<div>{typingContextData.configTimeAmount - typingContextData.progressTimeElapsed}</div>
-{:else if typingContextData.configTypingMode === 'words'}
+{:else if typingContextData.configTypingMode === 'words' || typingContextData.configTypingMode === 'smart'}
 	<div>{typingContextData.progressWordsTyped}|{typingContextData.configWordAmount}</div>
 {/if}
 

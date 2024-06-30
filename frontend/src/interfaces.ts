@@ -74,7 +74,7 @@ export interface WordsSource {
 
 export interface TypingContextData {
   displayTypingTest: boolean;
-  configTypingMode: "words" | "time";
+  configTypingMode: "words" | "time" | "smart";
   configWordAmount: number;
   configTimeAmount: number;
   typingTestStatus: "started" | 'ended' | "pending";
@@ -85,4 +85,10 @@ export interface TypingContextData {
 
 export interface TypingContext {
   typingContextData: TypingContextData;
+}
+
+export interface SingleTypingTestReturnData {
+  wpm: number;
+  targetText: string[];
+  userTypedText: string[];// letter by letter
 }

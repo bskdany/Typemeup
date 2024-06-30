@@ -1,10 +1,22 @@
 import type { FingerKeypressData, FingerKeyToKeyMovement, FingerData, TypingAnalysisError, UserTypedText } from "../interfaces";
+import { reverseFingerMap } from "./fingersStatisticsHelper";
 
 
-export function analyse(fingersStatistics: FingerData[], targetText: string[], userTypedText: string[], fingerMap: string[][], reversedFingerMap: Map<string, number>, defaultFingerPositions: string[]) {
+export function analyse(fingersStatistics: FingerData[], targetTextByWord: string[], userTypedText: string[], fingerMap: string[][], defaultFingerPositions: string[]) {
+  const reversedFingerMap = reverseFingerMap(fingerMap);
+
+  const targetText: string[] = [];
+
+  for (const word of targetTextByWord) {
+    for (const letter of word) {
+      targetText.push(letter)
+    }
+    targetText.push(" ");
+  }
+  targetText.pop(); // to remove the last unneccesary space
+
   const [alignedTargetText, alignedUserTypedText] = alignText(targetText, userTypedText);
 
-  console.log(targetText)
   console.log("Original text  " + targetText.join(""));
   console.log("               " + userTypedText.join(""));
 
