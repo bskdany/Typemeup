@@ -44,25 +44,24 @@
 		typingContextData.typingTestStatus = 'ended';
 		typingContextData.livePressedKey.key = '';
 
-		const updatedFingerData = analyse(
-			userTypingData.fingersStatistics,
-			data.targetText,
-			data.userTypedText,
-			userTypingData.fingerMap,
-			userTypingData.defaultFingersPosition
-		);
-		console.log(updatedFingerData);
-		userTypingData.fingersStatistics = updatedFingerData;
+		if (typingContextData.configTypingMode === 'smart') {
+			const updatedFingerData = analyse(
+				userTypingData.fingersStatistics,
+				data.targetText,
+				data.userTypedText,
+				userTypingData.fingerMap,
+				userTypingData.defaultFingersPosition
+			);
+			console.log(updatedFingerData);
+			userTypingData.fingersStatistics = updatedFingerData;
+		}
 	}
 
 	function handleTabKeyDown(event: any) {
 		if (event.key === 'Tab') {
 			event.preventDefault();
-			if (typingContextData.displayTypingTest) {
-				resetTrigger += 1;
-			} else {
-				typingContextData.displayTypingTest = true;
-			}
+			typingContextData.displayTypingTest = true;
+			resetTrigger += 1;
 		}
 
 		typingTestRef?.focus();
