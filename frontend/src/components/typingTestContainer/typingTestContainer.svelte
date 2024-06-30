@@ -15,7 +15,8 @@
 		configTimeAmount: 15,
 		typingTestStatus: 'ended',
 		progressTimeElapsed: 0,
-		progressWordsTyped: 0
+		progressWordsTyped: 0,
+		livePressedKey: { key: '', count: 0 }
 	});
 
 	setContext('typingContext', {
@@ -36,6 +37,7 @@
 		console.log(data.wpm);
 		typingContextData.displayTypingTest = false;
 		typingContextData.typingTestStatus = 'ended';
+		typingContextData.livePressedKey.key = '';
 	}
 
 	function handleTabKeyDown(event: any) {

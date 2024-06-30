@@ -1,8 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { pressedKeyStore } from '../../scripts/stores';
+	import { onMount, getContext } from 'svelte';
+	import type { TextObject, TypingContextData, TypingContext } from '../../interfaces';
 
-	let pressedKey: string;
+	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
+	const typingContextData: TypingContextData = typingContext.typingContextData;
+
+	let pressedKey: string = $state('');
 	const row0 = [' ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'];
 	const row1 = [' ', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', ' '];
 	const row2 = [' ', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'", ' '];
@@ -10,13 +13,19 @@
 	const row4 = [' ', 'Space', ' '];
 	const rows = [row0, row1, row2, row3, row4];
 
-	onMount(() => {
-		pressedKeyStore.subscribe((value) => {
-			pressedKey = value.value;
-			setTimeout(() => {
-				pressedKey = '';
-			}, 1000);
-		});
+	let timeout: any = null;
+
+	$effect(() => {
+		typingContextData.livePressedKey.key === ' ' ? (pressedKey = 'Space') : (pressedKey = typingContextData.livePressedKey.key);
+		typingContextData.livePressedKey.count;
+
+		if (timeout != null) {
+			clearTimeout(timeout);
+		}
+
+		timeout = setTimeout(() => {
+			pressedKey = '';
+		}, 1000);
 	});
 </script>
 
@@ -24,7 +33,7 @@
 	{#each rows as row, index}
 		<div class="row" id="row{index}">
 			{#each row as key}
-				<div class=" {pressedKey == key.toLowerCase() ? 'activeKey' : 'key'} {key == ' ' ? 'invisible' : ''}" id="${key}">
+				<div class=" {pressedKey.toLowerCase() === key.toLowerCase() ? 'activeKey' : 'key'} {key === ' ' ? 'invisible' : ''}" id="${key}">
 					{key}
 				</div>
 			{/each}
@@ -67,8 +76,7 @@
 	.key {
 		color: rgb(127, 106, 106);
 		width: auto;
-		/* width: 40px; */
-		/* min-width: min-content; */
+		min-width: 40px;
 		height: 40px;
 		background-color: transparent;
 		border: solid;

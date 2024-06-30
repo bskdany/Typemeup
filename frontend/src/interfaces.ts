@@ -79,6 +79,7 @@ export interface TypingContextData {
   typingTestStatus: "started" | 'ended' | "pending";
   progressTimeElapsed: number;
   progressWordsTyped: number;
+  livePressedKey: { key: string, count: number };
 }
 
 export interface TypingContext {

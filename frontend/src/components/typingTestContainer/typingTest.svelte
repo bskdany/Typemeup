@@ -70,6 +70,8 @@
 		}
 
 		textObject.addKeyPressed(pressedKey);
+		typingContextData.livePressedKey.key = pressedKey;
+		typingContextData.livePressedKey.count += 1;
 		typingContextData.progressWordsTyped = textObject.wordIndex;
 		handleCursor();
 		checkIfTestEnded();
