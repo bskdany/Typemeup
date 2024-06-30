@@ -6,7 +6,9 @@
 	import { onMount, setContext } from 'svelte';
 	import TypingProgress from './typingProgress.svelte';
 	import Configs from './configs.svelte';
-	import type { TypingContextData } from '../../interfaces';
+	import type { TypingContextData, UserTypingData } from '../../interfaces';
+	import { generateWords } from '../../algo/textGenerator';
+	import { getUserTypingData } from '../../storage/localStorageService';
 
 	let typingContextData: TypingContextData = $state({
 		displayTypingTest: true,
@@ -26,7 +28,9 @@
 	let resetTrigger: number = $state(0); // incrementing this will reset the typing test
 	let typingTestRef: TypingTest;
 
-	let targetText = ['hello', 'world'];
+	let targetText: string[] = [];
+
+	const userTypingData: UserTypingData = getUserTypingData();
 
 	function typingTestStarted() {
 		// something
@@ -52,6 +56,15 @@
 
 		typingTestRef?.focus();
 	}
+
+	$effect(() => {
+		resetTrigger;
+		typingContextData.configWordAmount;
+		typingContextData.configTimeAmount;
+		typingContextData.configTypingMode;
+
+		targetText = generateWords();
+	});
 
 	onMount(() => {
 		document.addEventListener('keydown', handleTabKeyDown);

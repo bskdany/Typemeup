@@ -5,12 +5,6 @@ export interface TextObject {
   length: number;
 }
 
-export interface TypingError {
-  type: number;
-  message: string;
-  active: boolean;
-}
-
 export interface FingerKeypressData {
   isCorrect: boolean;
   probability: number;
@@ -24,7 +18,7 @@ export interface FingerKeypressData {
   whenWasLastKeyPressed: number;
 }
 
-export interface FingerStatistics {
+export interface FingerData {
   fingerNumber: number,
   keyPressData: FingerKeypressData[][],
   keyToKeyMovements: FingerKeyToKeyMovement[],
@@ -33,6 +27,13 @@ export interface FingerStatistics {
   totalConfidence: number,
   totalError: number,
   accuracy: number
+}
+
+export interface UserTypingData {
+  fingersStatistics: FingerData[],
+  fingerMap: string[][],
+  defaultFingersPosition: string[],
+  testsCompleted: number
 }
 
 export interface FingerKeyToKeyMovement {
