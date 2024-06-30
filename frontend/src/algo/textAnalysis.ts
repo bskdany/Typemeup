@@ -15,7 +15,7 @@ export function analyse(fingersStatistics: FingerData[], targetTextByWord: strin
   }
   targetText.pop(); // to remove the last unneccesary space
 
-  const [alignedTargetText, alignedUserTypedText] = alignText(targetText, userTypedText);
+  const [alignedTargetText, alignedUserTypedText] = alignText([...targetText], [...userTypedText]);
 
   console.log("Original text  " + targetText.join(""));
   console.log("               " + userTypedText.join(""));
@@ -23,7 +23,7 @@ export function analyse(fingersStatistics: FingerData[], targetTextByWord: strin
   console.log("Aligned text   " + alignedTargetText.join(""));
   console.log("               " + alignedUserTypedText.join(""));
 
-  const sequentialFingerKeypressData = generateFingerData(alignedTargetText, alignedUserTypedText, fingerMap, reversedFingerMap, defaultFingerPositions);
+  const sequentialFingerKeypressData = generateFingerData([...alignedTargetText], [...alignedUserTypedText], fingerMap, reversedFingerMap, defaultFingerPositions);
   console.log(sequentialFingerKeypressData)
   calculateWhenWasLastKeyPressedSameFinger(sequentialFingerKeypressData, fingerMap.length);
   const fingerKeypressData: FingerKeypressData[][] = divideDataByFinger(sequentialFingerKeypressData, fingerMap.length);
