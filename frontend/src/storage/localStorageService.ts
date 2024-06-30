@@ -9,7 +9,7 @@ function saveObjectToLocalStorage<T>(key: string, obj: T): void {
   }
 }
 
-export function getObjectFromLocalStorage<T>(key: string): T | null {
+function getObjectFromLocalStorage<T>(key: string): T | null {
   try {
     const serializedObj = localStorage.getItem(key);
     if (serializedObj === null) {
@@ -22,8 +22,8 @@ export function getObjectFromLocalStorage<T>(key: string): T | null {
   }
 }
 
-export function getUserTypingData() {
-  const userTypingData = getObjectFromLocalStorage("userTypingData");
+export function getUserTypingData(): UserTypingData {
+  const userTypingData: UserTypingData | null = getObjectFromLocalStorage("userTypingData");
   if (userTypingData === null) {
     // initializing the default user data object
 
