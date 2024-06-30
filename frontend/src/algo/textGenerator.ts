@@ -1,7 +1,7 @@
 import type { FingerData, UserTypingData } from "../interfaces";
 import wordsFile from "../words/words.json";
 
-export function generateWords(userTypingData: UserTypingData, howManyWords: number) {
+export function generateWordsAlgo(userTypingData: UserTypingData, howManyWords: number) {
   // i see that there is not 1 best way to generate words based on the statistics, 
   // there are several factors that can be looked at
   // 1. accuracy
@@ -93,4 +93,14 @@ export function generateWords(userTypingData: UserTypingData, howManyWords: numb
     .sort(() => Math.random() - 0.5);
 
   return finalWords;
+}
+
+export function generateWords(howManyWords: number): string[] {
+  const words: string[] = [];
+
+  for (let i = 0; i < howManyWords; i++) {
+    const index = Math.round(Math.random() * (wordsFile.length - 1));
+    words.push(wordsFile.words[index])
+  }
+  return words;
 }

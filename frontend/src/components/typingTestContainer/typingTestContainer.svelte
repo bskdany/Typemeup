@@ -7,7 +7,7 @@
 	import TypingProgress from './typingProgress.svelte';
 	import Configs from './configs.svelte';
 	import type { TypingContextData, UserTypingData } from '../../interfaces';
-	import { generateWords } from '../../algo/textGenerator';
+	import { generateWords, generateWordsAlgo } from '../../algo/textGenerator';
 	import { getUserTypingData } from '../../storage/localStorageService';
 
 	let typingContextData: TypingContextData = $state({
@@ -64,9 +64,11 @@
 		typingContextData.configTypingMode;
 
 		if (typingContextData.configTypingMode === 'time') {
-			targetText = generateWords(userTypingData, 100);
+			targetText = generateWords(100);
 		} else if (typingContextData.configTypingMode === 'words') {
-			targetText = generateWords(userTypingData, typingContextData.configWordAmount);
+			targetText = generateWords(typingContextData.configWordAmount);
+		} else if (typingContextData.configTypingMode === 'smart') {
+			targetText = generateWordsAlgo(userTypingData, 20);
 		}
 		console.debug('Words are generated');
 	});
