@@ -28,7 +28,7 @@
 	let resetTrigger: number = $state(0); // incrementing this will reset the typing test
 	let typingTestRef: TypingTest;
 
-	let targetText: string[] = [];
+	let targetText: string[] = $state([]);
 
 	const userTypingData: UserTypingData = getUserTypingData();
 
@@ -63,7 +63,12 @@
 		typingContextData.configTimeAmount;
 		typingContextData.configTypingMode;
 
-		targetText = generateWords();
+		if (typingContextData.configTypingMode === 'time') {
+			targetText = generateWords(userTypingData, 100);
+		} else if (typingContextData.configTypingMode === 'words') {
+			targetText = generateWords(userTypingData, typingContextData.configWordAmount);
+		}
+		console.debug('Words are generated');
 	});
 
 	onMount(() => {
@@ -88,7 +93,7 @@
 		{/if}
 	</div>
 
-	{#key [resetTrigger, typingContextData.configWordAmount, typingContextData.configTimeAmount, typingContextData.configTypingMode]}
+	{#key targetText}
 		<div id="typingTestWrapper">
 			<TypingTest {targetText} errorCorrectionMode={1} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
 		</div>

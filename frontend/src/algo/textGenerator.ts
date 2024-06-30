@@ -1,7 +1,7 @@
-import type { FingerData } from "../interfaces";
+import type { FingerData, UserTypingData } from "../interfaces";
 import wordsFile from "../words/words.json";
 
-export function generateWords(fingersStatistics: FingerData[], fingerMap: string[][], reversedFingerMap: Map<string, number>, howManyWords: number) {
+export function generateWords(userTypingData: UserTypingData, howManyWords: number) {
   // i see that there is not 1 best way to generate words based on the statistics, 
   // there are several factors that can be looked at
   // 1. accuracy
@@ -12,7 +12,7 @@ export function generateWords(fingersStatistics: FingerData[], fingerMap: string
 
   // accuracy based word suggestion
   const fingerTrainingOrder: number[][] = [];
-  for (const FingerData of fingersStatistics) {
+  for (const FingerData of userTypingData.fingersStatistics) {
     fingerTrainingOrder.push([FingerData.fingerNumber, FingerData.accuracy]);
   }
   // TODO: Make this choose randomly between the values when they are the same 
@@ -40,7 +40,7 @@ export function generateWords(fingersStatistics: FingerData[], fingerMap: string
   // each letter will point to a list of words that contain that letter, sorted from the word
   // containing most letters to the least
   const lettersToWordsMap: Map<string, Map<string, number>> = new Map();
-  for (const fingerLetters of fingerMap) {
+  for (const fingerLetters of userTypingData.fingerMap) {
     for (const letter of fingerLetters) {
       lettersToWordsMap.set(letter, new Map());
     }
@@ -65,7 +65,7 @@ export function generateWords(fingersStatistics: FingerData[], fingerMap: string
 
   const wordsByTargetFingersContent: Map<string, number> = new Map();
   for (const finger of fingersToTrain) {
-    for (const letter of fingerMap[finger]) {
+    for (const letter of userTypingData.fingerMap[finger]) {
       for (const word of lettersToWordsMap.get(letter)?.entries() ?? []) {
         const contentPercentage: number = wordsByTargetFingersContent.get(word[0]) ?? 0;
 
