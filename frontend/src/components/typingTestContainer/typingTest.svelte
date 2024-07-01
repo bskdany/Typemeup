@@ -24,7 +24,7 @@
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
 
 	let cursorElementPosition: { x: number; y: number } = $state({ x: 0, y: 0 });
-	let mainTextTranslateDistance: number = 0;
+	let mainTextTranslateDistance: number = $state(0);
 	let textHeight: number = $state(0);
 
 	// element binds
@@ -75,6 +75,7 @@
 		typingContextData.livePressedKey.count += 1;
 		typingContextData.progressWordsTyped = textObject.wordIndex;
 		handleCursor();
+		checkIfMoveText();
 		checkIfTestEnded();
 	}
 
@@ -122,7 +123,6 @@
 
 	function checkIfMoveText() {
 		if (textObject.letterIndex === 0 && cursorElementPosition.y > 1 && textObject.hasMistaken === false) {
-			// 10 is arbitrary
 			mainTextTranslateDistance = -cursorElementPosition.y;
 		}
 	}
@@ -172,7 +172,7 @@
 
 		// this is needed if the user resized the screen
 		resizeObserver = new ResizeObserver(() => {
-			// handleCursor();
+			handleCursor();
 			mainTextTranslateDistance = -cursorElementPosition.y;
 		});
 		resizeObserver.observe(mainTextElement);
