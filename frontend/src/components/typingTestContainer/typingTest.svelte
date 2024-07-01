@@ -142,8 +142,8 @@
 		}
 
 		if (cleanedTextObjectBind.length === 0) {
-			console.error("Can't calculate text height, no words");
-			return 30;
+			// console.error("Can't calculate text height, no words");
+			return 70;
 		}
 
 		let firstWordY = cleanedTextObjectBind[0].getBoundingClientRect().top;
@@ -155,7 +155,7 @@
 			}
 		}
 
-		return 30; // just in case it doesn't find any, it doesn't really matter
+		return 70; // just in case it doesn't find any, it doesn't really matter
 	}
 
 	$effect(() => {
