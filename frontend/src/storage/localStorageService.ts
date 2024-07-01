@@ -1,24 +1,35 @@
 import type { FingerData, FingerKeyToKeyMovement, UserTypingData } from "../interfaces";
 
 function saveObjectToLocalStorage<T>(key: string, obj: T): void {
-  try {
-    const serializedObj = JSON.stringify(obj);
-    localStorage.setItem(key, serializedObj);
-  } catch (e) {
-    console.error("Error saving to local storage", e);
+  if (typeof window === "undefined") {
+    console.error("localStorage is not available in this environment.");
+  }
+  else {
+    try {
+      const serializedObj = JSON.stringify(obj);
+      localStorage.setItem(key, serializedObj);
+    } catch (e) {
+      console.error("Error saving to local storage", e);
+    }
   }
 }
 
 function getObjectFromLocalStorage<T>(key: string): T | null {
-  try {
-    const serializedObj = localStorage.getItem(key);
-    if (serializedObj === null) {
+  if (typeof window === "undefined") {
+    console.error("localStorage is not available in this environment.");
+    return null;
+  }
+  else {
+    try {
+      const serializedObj = localStorage.getItem(key);
+      if (serializedObj === null) {
+        return null;
+      }
+      return JSON.parse(serializedObj) as T;
+    } catch (e) {
+      console.error("Error reading from local storage", e);
       return null;
     }
-    return JSON.parse(serializedObj) as T;
-  } catch (e) {
-    console.error("Error reading from local storage", e);
-    return null;
   }
 }
 
