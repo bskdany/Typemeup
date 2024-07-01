@@ -25,11 +25,12 @@
 
 	let cursorElementPosition: { x: number; y: number } = $state({ x: 0, y: 0 });
 	let mainTextTranslateDistance: number = 0;
+	let textHeight: number = $state(0);
 
 	// element binds
 	// let mainText: object[][] = [];
 	let mainTextElement: HTMLElement;
-	let textObjectBind: HTMLElement[] = [];
+	let textObjectBind: HTMLElement[] = $state([]);
 	let cursorElement: HTMLElement;
 	let typingTestInputBind: HTMLElement;
 
@@ -132,6 +133,36 @@
 		}
 	}
 
+	function calculateTextHeight() {
+		const cleanedTextObjectBind: Element[] = [];
+		for (const wordElement of textObjectBind) {
+			if (wordElement.nodeType !== Node.COMMENT_NODE) {
+				cleanedTextObjectBind.push(wordElement);
+			}
+		}
+
+		if (cleanedTextObjectBind.length === 0) {
+			console.error("Can't calculate text height, no words");
+			return 30;
+		}
+
+		let firstWordY = cleanedTextObjectBind[0].getBoundingClientRect().top;
+
+		for (const wordElement of cleanedTextObjectBind) {
+			const wordHeight = wordElement.getBoundingClientRect().top;
+			if (wordHeight !== firstWordY) {
+				return Math.abs(firstWordY - wordHeight) * 3;
+			}
+		}
+
+		return 30; // just in case it doesn't find any, it doesn't really matter
+	}
+
+	$effect(() => {
+		textObjectBind;
+		textHeight = calculateTextHeight();
+	});
+
 	onMount(() => {
 		typingContextData.typingTestStatus = 'pending';
 
@@ -152,7 +183,7 @@
 	});
 </script>
 
-<div id="overflow-placeholder">
+<div id="overflow-placeholder" style="height: {textHeight}px;">
 	<div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
 		<div id="cursor" style={`transform: translate(${cursorElementPosition.x}px, ${cursorElementPosition.y}px)`} bind:this={cursorElement}></div>
 		{#each textObject?.textObject as word, index}
@@ -178,7 +209,7 @@
 
 	#overflow-placeholder {
 		width: 100%;
-		height: 40%;
+		/* height: calc(6rem); */
 		overflow: hidden;
 	}
 	#main-text {
@@ -187,7 +218,6 @@
 		/* gap: 12px; */
 		color: rgb(127, 106, 106);
 		width: 100%;
-		font-size: 2rem;
 		user-select: none;
 		white-space: pre-wrap;
 		transition: transform 0.25s ease-in-out;
@@ -214,6 +244,7 @@
 	}
 	.letter {
 		margin-left: 2px;
+		font-size: 2rem;
 	}
 	.correct {
 		color: white;
