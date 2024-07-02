@@ -9,7 +9,7 @@
 	}
 </script>
 
-<button id="profilePage" onclick={navigateToProfile}> Profile </button>
+<button id="profilePage" onclick={() => alert('disabled as in early development')}> Profile </button>
 <div id="typingArea">
 	<TypingTestContainer />
 </div>
