@@ -88,7 +88,8 @@ export interface TypingContext {
 }
 
 export interface SingleTypingTestReturnData {
-  wpm: number;
+  timeTaken: number;
+  correctCharCount: number;
   targetText: string[];
   userTypedText: string[];// letter by letter
 }

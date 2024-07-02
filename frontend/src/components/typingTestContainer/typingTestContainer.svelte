@@ -29,6 +29,7 @@
 
 	let resetTrigger: number = $state(0); // incrementing this will reset the typing test
 	let typingTestRef: TypingTest;
+	let typingTestReturnData: SingleTypingTestReturnData;
 
 	let targetText: string[] = $state([]);
 
@@ -40,9 +41,8 @@
 	}
 
 	function typingTestEnded(data: SingleTypingTestReturnData) {
+		typingTestReturnData = data;
 		typingContextData.displayTypingTest = false;
-		typingContextData.typingTestStatus = 'ended';
-		typingContextData.livePressedKey.key = '';
 
 		if (typingContextData.configTypingMode === 'smart') {
 			const updatedFingerData = analyse(
@@ -112,8 +112,11 @@
 	<div id="keyboardWrapper"><Keyboard /></div>
 {:else}
 	<div id="typingTestReport">
-		<!-- <TypingResult /> -->
-		<div>press tab to restart</div>
+		<TypingResult
+			timeTaken={typingTestReturnData.timeTaken}
+			correctCharCount={typingTestReturnData.correctCharCount}
+			restart={() => (typingContextData.displayTypingTest = true)}
+		/>
 	</div>
 {/if}
 

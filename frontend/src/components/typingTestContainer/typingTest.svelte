@@ -54,12 +54,19 @@
 	}
 
 	function checkIfTestEnded() {
-		if (typingContextData.configTypingMode === 'words' || typingContextData.configTypingMode === 'smart') {
-			if (textObject.isEnd()) {
-				testEnded({ wpm: 0, targetText: textObject.targetText, userTypedText: textObject.userTypedText });
-			}
-		} else if (typingContextData.configTypingMode === 'time' && msTime > typingContextData.configTimeAmount * 1000) {
-			testEnded({ wpm: 0, targetText: textObject.targetText, userTypedText: textObject.userTypedText });
+		if (
+			((typingContextData.configTypingMode === 'words' || typingContextData.configTypingMode === 'smart') && textObject.isEnd()) ||
+			(typingContextData.configTypingMode === 'time' && msTime > typingContextData.configTimeAmount * 1000)
+		) {
+			typingContextData.typingTestStatus = 'ended';
+			typingContextData.livePressedKey.key = '';
+
+			testEnded({
+				timeTaken: msTime,
+				correctCharCount: textObject.correctCharCount,
+				targetText: textObject.targetText,
+				userTypedText: textObject.userTypedText
+			});
 		}
 	}
 

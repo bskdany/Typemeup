@@ -1,16 +1,16 @@
 <script lang="ts">
 	import WpmResult from './wpmResult.svelte';
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
-	export let typingTestWpm: number;
-	export function restart() {
-		dispatch('restartTrigger');
+
+	function calculateWPM(correctCharCount: number, msTime: number) {
+		return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2));
 	}
+
+	const { timeTaken, correctCharCount, restart }: { timeTaken: number; correctCharCount: number; restart: () => void } = $props();
 </script>
 
-<WpmResult {typingTestWpm} />
+<WpmResult wpm={calculateWPM(correctCharCount, timeTaken)} />
 <div>Press TAB to restart</div>
-<button id="restartButton" on:click={restart}>Restart</button>
+<button id="restartButton" onclick={restart}>Restart</button>
 
 <style>
 	div {

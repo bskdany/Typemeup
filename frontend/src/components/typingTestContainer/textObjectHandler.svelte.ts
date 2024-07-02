@@ -163,6 +163,15 @@ export class TextObjectHandler {
     if (letter != undefined) {
       letter.isTyped = isTyped;
       letter.isCorrect = isCorrect;
+
+      // this is the easiest way to count the correct chars
+      if (isCorrect) {
+        this.correctCharCount += 1;
+      }
+      else {
+        this.correctCharCount -= 1;
+      }
+
       return true;
     }
     else {
