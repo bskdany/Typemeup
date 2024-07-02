@@ -5,6 +5,7 @@ Made it to the [Svelte Community Showcase](https://svelte.dev/blog/whats-new-in-
 ### Features
 
 - smart mode, using complex typing analysis alghorithms to suggest words that will improve accuracy
+- live mistake correction mode, your errors are fixed as you type
 - timed and fixed word amount typing test
 - live keyboard 
 
