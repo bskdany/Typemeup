@@ -1,5 +1,7 @@
 <script lang="ts">
-	import WpmResult from './wpmResult.svelte';
+	import TextContainer from '../../common/textContainer.svelte';
+
+	let pressTabToRestartElement: any;
 
 	function calculateWPM(correctCharCount: number, msTime: number) {
 		return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2));
@@ -8,16 +10,25 @@
 	const { timeTaken, correctCharCount, restart }: { timeTaken: number; correctCharCount: number; restart: () => void } = $props();
 </script>
 
-<WpmResult wpm={calculateWPM(correctCharCount, timeTaken)} />
-<div>Press TAB to restart</div>
-<button id="restartButton" onclick={restart}>Restart</button>
+<div id="typingResult">
+	<TextContainer input={'WPM: ' + calculateWPM(correctCharCount, timeTaken)} />
+	<div id="desktop-view">
+		<TextContainer input={'Press Tab to restart'} />
+	</div>
+	<button id="restartButton" onclick={restart}>Restart</button>
+</div>
 
 <style>
-	div {
-		color: rgb(127, 106, 106);
-		font-size: 1.5rem;
-		margin-top: 50px;
+	#typingResult {
+		display: flex;
+		justify-content: top;
+		align-items: center;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		gap: 30%;
 	}
+
 	#restartButton {
 		display: none;
 		color: rgb(127, 106, 106);
@@ -32,8 +43,9 @@
 	#restartButton:hover {
 		color: #a8b9e4;
 	}
+
 	@media only screen and (max-width: 767px) {
-		div {
+		#desktop-view {
 			display: none;
 		}
 		#restartButton {
