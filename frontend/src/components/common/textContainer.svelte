@@ -6,6 +6,11 @@
 
 <style>
 	div {
+		min-width: 100px;
+		width: fit-content;
+		height: min-content;
+		white-space: nowrap;
+
 		background-color: transparent;
 		padding: 10px;
 		border: solid transparent;

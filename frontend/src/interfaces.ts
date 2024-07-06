@@ -87,9 +87,10 @@ export interface TypingContext {
   typingContextData: TypingContextData;
 }
 
-export interface SingleTypingTestReturnData {
+export interface TypingTestRunData {
   timeTaken: number;
-  correctCharCount: number;
-  targetText: string[];
+  targetText: string[];   // word by word`
   userTypedText: string[];// letter by letter
+  keyPressTimings: number[];
+  textObject: TextObject[];
 }

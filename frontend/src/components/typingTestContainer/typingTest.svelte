@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
-	import type { TextObject, TypingContextData, TypingContext, SingleTypingTestReturnData } from '../../interfaces';
+	import type { TextObject, TypingContextData, TypingContext, TypingTestRunData } from '../../interfaces';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
@@ -18,7 +18,7 @@
 		targetText: string[];
 		errorCorrectionMode: number;
 		testStarted: () => void;
-		testEnded: (data: SingleTypingTestReturnData) => void;
+		testEnded: (data: TypingTestRunData) => void;
 	} = $props();
 
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
@@ -37,12 +37,16 @@
 	let resizeObserver; // to handle mainText resizing
 
 	let msTime = 0;
+	let msTimeSinceLastKeypress = 0;
 	let timeInterval: any = null;
+
+	const keyPressTimings: number[] = [];
 
 	function typingTestStarted() {
 		msTime = 0;
 		timeInterval = setInterval(() => {
 			msTime += 10;
+			msTimeSinceLastKeypress += 10;
 			if (msTime % 1000 === 0) {
 				typingContextData.progressTimeElapsed += 1;
 			}
@@ -63,9 +67,10 @@
 
 			testEnded({
 				timeTaken: msTime,
-				correctCharCount: textObject.correctCharCount,
 				targetText: textObject.targetText,
-				userTypedText: textObject.userTypedText
+				userTypedText: textObject.userTypedText,
+				keyPressTimings: keyPressTimings,
+				textObject: JSON.parse(JSON.stringify(textObject.textObject)) // deep copy
 			});
 		}
 	}
@@ -78,12 +83,15 @@
 		}
 
 		textObject.addKeyPressed(pressedKey);
-		typingContextData.livePressedKey.key = pressedKey;
-		typingContextData.livePressedKey.count += 1;
-		typingContextData.progressWordsTyped = textObject.wordIndex;
+		keyPressTimings.push(msTimeSinceLastKeypress);
+		msTimeSinceLastKeypress = 0;
 		handleCursor();
 		checkIfMoveText();
 		checkIfTestEnded();
+
+		typingContextData.livePressedKey.key = pressedKey;
+		typingContextData.livePressedKey.count += 1;
+		typingContextData.progressWordsTyped = textObject.wordIndex;
 	}
 
 	function handleCursor() {

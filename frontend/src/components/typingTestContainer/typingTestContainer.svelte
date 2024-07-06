@@ -6,7 +6,7 @@
 	import { onMount, setContext } from 'svelte';
 	import TypingProgress from './typingProgress.svelte';
 	import Configs from './configs.svelte';
-	import type { FingerData, SingleTypingTestReturnData, TypingContextData, UserTypingData } from '../../interfaces';
+	import type { FingerData, TypingTestRunData, TypingContextData, UserTypingData } from '../../interfaces';
 	import { generateWords, generateWordsAlgo } from '../../algo/textGenerator';
 	import { getUserTypingData } from '../../storage/localStorageService';
 	import { analyse } from '../../algo/textAnalysis';
@@ -29,7 +29,7 @@
 
 	let resetTrigger: number = $state(0); // incrementing this will reset the typing test
 	let typingTestRef: TypingTest;
-	let typingTestReturnData: SingleTypingTestReturnData;
+	let typingTestRunData: TypingTestRunData;
 
 	let targetText: string[] = $state([]);
 
@@ -40,8 +40,8 @@
 		console.log('Typing test started');
 	}
 
-	function typingTestEnded(data: SingleTypingTestReturnData) {
-		typingTestReturnData = data;
+	function typingTestEnded(data: TypingTestRunData) {
+		typingTestRunData = data;
 		typingContextData.displayTypingTest = false;
 
 		if (typingContextData.configTypingMode === 'smart') {
@@ -76,7 +76,8 @@
 		if (typingContextData.configTypingMode === 'time') {
 			targetText = generateWords(100);
 		} else if (typingContextData.configTypingMode === 'words') {
-			targetText = generateWords(typingContextData.configWordAmount);
+			// targetText = generateWords(typingContextData.configWordAmount);
+			targetText = ['asdfasdf'];
 		} else if (typingContextData.configTypingMode === 'smart') {
 			targetText = generateWordsAlgo(userTypingData, typingContextData.configWordAmount);
 		}
@@ -112,11 +113,7 @@
 	<div id="keyboardWrapper"><Keyboard /></div>
 {:else}
 	<div id="typingTestReport">
-		<TypingResult
-			timeTaken={typingTestReturnData.timeTaken}
-			correctCharCount={typingTestReturnData.correctCharCount}
-			restart={() => (typingContextData.displayTypingTest = true)}
-		/>
+		<TypingResult {typingTestRunData} restart={() => (typingContextData.displayTypingTest = true)} />
 	</div>
 {/if}
 

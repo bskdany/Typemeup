@@ -1,32 +1,63 @@
 <script lang="ts">
+	import { Title } from 'chart.js';
+	import type { TypingTestRunData } from '../../../interfaces';
+	import TypingSpeedChart from '../../chart/typingSpeedChart.svelte';
+	import SingleDataContainer from '../../common/singleDataContainer.svelte';
 	import TextContainer from '../../common/textContainer.svelte';
+	import { getAccuracy, getRawWpm, getTime, getWpm } from '../../typingTestRunHelper';
 
 	let pressTabToRestartElement: any;
 
-	function calculateWPM(correctCharCount: number, msTime: number) {
-		return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2));
-	}
-
-	const { timeTaken, correctCharCount, restart }: { timeTaken: number; correctCharCount: number; restart: () => void } = $props();
+	const { typingTestRunData, restart }: { typingTestRunData: TypingTestRunData; restart: () => void } = $props();
 </script>
 
 <div id="typingResult">
-	<TextContainer input={'WPM: ' + calculateWPM(correctCharCount, timeTaken)} />
-	<div id="desktop-view">
-		<TextContainer input={'Press Tab to restart'} />
+	<div id="topHalf">
+		<div id="dataColumn">
+			<SingleDataContainer title={'wpm'} data={getWpm(typingTestRunData)} />
+			<SingleDataContainer title={'raw'} data={getRawWpm(typingTestRunData)} />
+			<SingleDataContainer title={'accuracy'} data={getAccuracy(typingTestRunData) + '%'} />
+			<SingleDataContainer title={'time'} data={getTime(typingTestRunData) + ' sec'} />
+		</div>
+		<div id="chartWrapper">
+			<TypingSpeedChart {typingTestRunData} />
+		</div>
 	</div>
-	<button id="restartButton" onclick={restart}>Restart</button>
+
+	<div id="bottomHalf">
+		<div id="desktop-view">
+			<TextContainer input={'Press Tab to restart'} />
+		</div>
+		<button id="restartButton" onclick={restart}>Restart</button>
+	</div>
 </div>
 
 <style>
-	#typingResult {
+	#topHalf {
 		display: flex;
-		justify-content: top;
+		flex-direction: row;
+		gap: 20px;
+	}
+
+	#bottomHalf {
+		display: flex;
+		justify-content: center;
 		align-items: center;
+		height: 200px;
+	}
+
+	#dataColumn {
+		display: flex;
 		flex-direction: column;
+		gap: 10px;
+	}
+
+	#chartWrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		width: 100%;
 		height: 100%;
-		gap: 30%;
 	}
 
 	#restartButton {
