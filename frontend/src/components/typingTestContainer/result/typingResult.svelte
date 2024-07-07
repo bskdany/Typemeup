@@ -5,6 +5,7 @@
 	import SingleDataContainer from '../../common/singleDataContainer.svelte';
 	import TextContainer from '../../common/textContainer.svelte';
 	import { getAccuracy, getRawWpm, getTime, getWpm } from '../../typingTestRunHelper';
+	import KeyPressTimingsChart from '../../chart/keyPressTimingsChart.svelte';
 
 	let pressTabToRestartElement: any;
 
@@ -20,7 +21,8 @@
 			<SingleDataContainer title={'time'} data={getTime(typingTestRunData) + ' sec'} />
 		</div>
 		<div id="chartWrapper">
-			<TypingSpeedChart {typingTestRunData} />
+			<!-- <TypingSpeedChart {typingTestRunData} /> -->
+			<KeyPressTimingsChart {typingTestRunData} />
 		</div>
 	</div>
 

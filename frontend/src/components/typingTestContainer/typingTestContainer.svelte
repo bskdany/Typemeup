@@ -76,8 +76,8 @@
 		if (typingContextData.configTypingMode === 'time') {
 			targetText = generateWords(100);
 		} else if (typingContextData.configTypingMode === 'words') {
-			// targetText = generateWords(typingContextData.configWordAmount);
-			targetText = ['asdfasdf'];
+			targetText = generateWords(typingContextData.configWordAmount);
+			// targetText = ['asdfasdfasdf'];
 		} else if (typingContextData.configTypingMode === 'smart') {
 			targetText = generateWordsAlgo(userTypingData, typingContextData.configWordAmount);
 		}

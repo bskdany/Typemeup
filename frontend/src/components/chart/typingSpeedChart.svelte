@@ -6,7 +6,13 @@
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
 
-	let chartValues = typingTestRunData.keyPressTimings.map((msTime) => {
+	typingTestRunData.keyPressTimings.forEach((msTime, index) => {
+		// basically a sliding window of the last 5 msTime readings, including the current one
+		const pastData = typingTestRunData.keyPressTimings.slice(Math.max(index - 4, 0), index + 1);
+		console.log(pastData);
+	});
+
+	let chartValues = typingTestRunData.keyPressTimings.map((msTime, index) => {
 		return calculateWpm(1, msTime);
 	});
 

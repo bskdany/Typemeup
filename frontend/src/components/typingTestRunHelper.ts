@@ -1,8 +1,6 @@
 import type { TypingTestRunData } from "../interfaces";
 
 function calculateWpm(correctCharCount: number, msTime: number) {
-  console.log(correctCharCount)
-  console.log(msTime)
   return parseFloat(((correctCharCount / 4.7) * (60 / (msTime / 1000))).toFixed(2));
 }
 
