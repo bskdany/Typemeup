@@ -65,9 +65,11 @@ export class TextObjectHandler {
     });
 
     // adding a space after each word
-    textObject.forEach(word => {
-      word.letters.push({ text: " ", isSpace: true, isCorrect: false, isTyped: false });
-      word.length += 1;
+    textObject.forEach((wordObject, index) => {
+      if (index !== textObject.length - 1) {
+        wordObject.letters.push({ text: " ", isSpace: true, isCorrect: false, isTyped: false });
+        wordObject.length += 1;
+      }
     })
 
     return textObject;
@@ -254,7 +256,6 @@ export class TextObjectHandler {
   }
 
   isEnd() {
-    return !this.getLetter(1);
+    return !this.getLetter(1) && this.getLetter(0)?.isTyped;
   }
-
 }
