@@ -6,20 +6,35 @@
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
 
+	const keyPressTimings: number[] = [...typingTestRunData.keyPressTimings];
+	keyPressTimings.shift();
+
+	// arr that tells if the keypress was corect or not
+	const keyPressCorrectness: boolean[] = [];
+	for (const word of typingTestRunData.textObject) {
+		for (const letter of word.letters) {
+			keyPressCorrectness.push(letter.isCorrect);
+		}
+	}
+	keyPressCorrectness.shift(); // because the first key pressed doesn't count basically
+
+	// basically a sliding window of the last 5 msTime readings, including the current one
 	const keyPressTimingsSlidingWindow: number[][] = [];
-	typingTestRunData.keyPressTimings.forEach((msTime, index) => {
-		// basically a sliding window of the last 5 msTime readings, including the current one
-		keyPressTimingsSlidingWindow.push(typingTestRunData.keyPressTimings.slice(Math.max(index - 4, 1), index + 1));
+	keyPressTimings.forEach((msTime, index) => {
+		keyPressTimingsSlidingWindow.push(keyPressTimings.slice(Math.max(index - 4, 0), index + 1));
 	});
 
-	keyPressTimingsSlidingWindow[0] = keyPressTimingsSlidingWindow[1];
-	console.log(keyPressTimingsSlidingWindow);
+	const keyPressCorrectnessSlidingWindow: boolean[][] = [];
+	keyPressCorrectness.forEach((value, index) => {
+		keyPressCorrectnessSlidingWindow.push(keyPressCorrectness.slice(Math.max(index - 4, 0), index + 1));
+	});
 
-	const chartPointsValues = typingTestRunData.keyPressTimings.map((msTime, index) => {
+	const chartPointsValues = keyPressTimings.map((msTime, index) => {
 		return {
-			x: typingTestRunData.keyPressTimings.slice(0, index + 1).reduce((sum, val) => sum + val) / 1000,
+			x: index,
+			// x: keyPressTimings.slice(0, index + 1).reduce((sum, val) => sum + val) / 1000,
 			y: calculateWpm(
-				keyPressTimingsSlidingWindow[index].length,
+				keyPressTimingsSlidingWindow[index].length - keyPressCorrectnessSlidingWindow[index].filter((value) => value === false).length,
 				keyPressTimingsSlidingWindow[index].reduce((sum, val) => sum + val)
 			)
 		};
