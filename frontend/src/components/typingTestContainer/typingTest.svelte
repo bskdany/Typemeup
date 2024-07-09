@@ -70,7 +70,8 @@
 				targetText: textObject.targetText,
 				userTypedText: textObject.userTypedText,
 				keyPressTimings: keyPressTimings,
-				textObject: JSON.parse(JSON.stringify(textObject.textObject)) // deep copy
+				textObject: JSON.parse(JSON.stringify(textObject.textObject)), // deep copy
+				errorCorrectionMode: errorCorrectionMode
 			});
 		}
 	}

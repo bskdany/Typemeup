@@ -61,6 +61,7 @@
 			type: 'scatter',
 			data: chartData,
 			options: {
+				maintainAspectRatio: false,
 				scales: {
 					x: {
 						type: 'linear',
@@ -79,6 +80,7 @@
 <style>
 	#chart-container {
 		position: relative;
-		width: 100%;
+		width: 90%;
+		height: 100%;
 	}
 </style>

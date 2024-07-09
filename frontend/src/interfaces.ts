@@ -93,4 +93,5 @@ export interface TypingTestRunData {
   userTypedText: string[];// letter by letter
   keyPressTimings: number[];
   textObject: TextObject[];
+  errorCorrectionMode: number;
 }
