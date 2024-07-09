@@ -31,6 +31,7 @@
 
 	const chartPointsValues = keyPressTimings.map((msTime, index) => {
 		return {
+			isCorrect: keyPressCorrectnessSlidingWindow[index][keyPressCorrectnessSlidingWindow[index].length - 1],
 			x: index,
 			// x: keyPressTimings.slice(0, index + 1).reduce((sum, val) => sum + val) / 1000,
 			y: calculateWpm(
@@ -43,9 +44,14 @@
 	const chartData = {
 		datasets: [
 			{
-				label: 'Keypress timings',
-				data: chartPointsValues,
+				label: 'Correct KeyPresses',
+				data: chartPointsValues.filter((point) => point.isCorrect),
 				backgroundColor: 'rgb(255, 99, 132)'
+			},
+			{
+				label: 'Wrong KeyPresses',
+				data: chartPointsValues.filter((point) => !point.isCorrect),
+				backgroundColor: 'rgb(255, 0, 10)'
 			}
 		]
 	};
