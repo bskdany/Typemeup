@@ -31,17 +31,21 @@ function getPoint(chart: Chart, index: number): { dataset: number, index: number
 export const customHighlightPlugin = {
   id: 'customHighlight',
   afterDatasetsDraw: (chart: Chart, args: any, options: { index: number }) => {
-
     const pointCoordinates = getPoint(chart, options.index);
     if (pointCoordinates) {
       const meta = chart.getDatasetMeta(pointCoordinates.dataset);
       const point = meta.data[pointCoordinates.index]
-      const ctx = chart.ctx;
+      const { ctx, chartArea: { top, bottom } } = chart;
+
       ctx.save();
       ctx.beginPath();
-      ctx.arc(point.x, point.y, 10, 0, 2 * Math.PI);
-      ctx.strokeStyle = 'red';
-      ctx.lineWidth = 2;
+      console.log(point.x);
+      console.log(top)
+      console.log(bottom)
+      ctx.moveTo(point.x, top);
+      ctx.lineTo(point.x, bottom);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgb(255 99, 132)";
       ctx.stroke();
       ctx.restore();
     }

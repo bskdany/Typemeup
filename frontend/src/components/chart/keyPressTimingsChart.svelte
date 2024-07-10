@@ -58,16 +58,17 @@
 	};
 
 	let chartCanvas: any;
+	let chart: Chart;
 
 	onMount(() => {
 		const ctx = chartCanvas.getContext('2d');
-		const chart = new Chart(ctx, {
+		chart = new Chart(ctx, {
 			type: 'scatter',
 			data: chartData,
 			options: {
 				plugins: {
 					customHighlight: {
-						index: 10
+						index: -1
 					}
 				},
 				maintainAspectRatio: false,
@@ -81,6 +82,17 @@
 			plugins: [customHighlightPlugin]
 		});
 	});
+
+	function moveActivePointBar(index: number) {
+		if (chart.options.plugins?.customHighlight) {
+			chart.options.plugins.customHighlight.index = index;
+		}
+		chart.update();
+	}
+
+	function disableActivePointBar() {
+		moveActivePointBar(-1);
+	}
 </script>
 
 <div id="chart-container">
