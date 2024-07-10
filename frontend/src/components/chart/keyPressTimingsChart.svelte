@@ -7,58 +7,76 @@
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
 
-	const keyPressTimings: number[] = [...typingTestRunData.keyPressTimings];
-	keyPressTimings.shift();
+	function getChartDataPoints() {
+		const keyPressTimings: number[] = [...typingTestRunData.keyPressTimings];
+		keyPressTimings.shift();
 
-	// arr that tells if the keypress was corect or not
-	const keyPressCorrectness: boolean[] = [];
-	for (const word of typingTestRunData.textObject) {
-		for (const letter of word.letters) {
-			keyPressCorrectness.push(letter.isCorrect);
-		}
-	}
-	keyPressCorrectness.shift(); // because the first key pressed doesn't count basically
-
-	// basically a sliding window of the last 5 msTime readings, including the current one
-	const keyPressTimingsSlidingWindow: number[][] = [];
-	keyPressTimings.forEach((msTime, index) => {
-		keyPressTimingsSlidingWindow.push(keyPressTimings.slice(Math.max(index - 4, 0), index + 1));
-	});
-
-	const keyPressCorrectnessSlidingWindow: boolean[][] = [];
-	keyPressCorrectness.forEach((value, index) => {
-		keyPressCorrectnessSlidingWindow.push(keyPressCorrectness.slice(Math.max(index - 4, 0), index + 1));
-	});
-
-	const chartPointsValues = keyPressTimings.map((msTime, index) => {
-		return {
-			isCorrect: keyPressCorrectnessSlidingWindow[index][keyPressCorrectnessSlidingWindow[index].length - 1],
-			x: index,
-			// x: keyPressTimings.slice(0, index + 1).reduce((sum, val) => sum + val) / 1000,
-			y: calculateWpm(
-				keyPressTimingsSlidingWindow[index].length - keyPressCorrectnessSlidingWindow[index].filter((value) => value === false).length,
-				keyPressTimingsSlidingWindow[index].reduce((sum, val) => sum + val)
-			)
-		};
-	});
-
-	const chartData = {
-		datasets: [
-			{
-				label: 'Correct KeyPresses',
-				data: chartPointsValues.filter((point) => point.isCorrect),
-				backgroundColor: 'rgb(255, 99, 132)'
-			},
-			{
-				label: 'Wrong KeyPresses',
-				data: chartPointsValues.filter((point) => !point.isCorrect),
-				backgroundColor: 'rgb(255, 0, 10)'
+		// arr that tells if the keypress was corect or not
+		const keyPressCorrectness: boolean[] = [];
+		for (const word of typingTestRunData.textObject) {
+			for (const letter of word.letters) {
+				keyPressCorrectness.push(letter.isCorrect);
 			}
-		]
-	};
+		}
+		keyPressCorrectness.shift(); // because the first key pressed doesn't count basically
+
+		// basically a sliding window of the last 5 msTime readings, including the current one
+		const keyPressTimingsSlidingWindow: number[][] = [];
+		keyPressTimings.forEach((msTime, index) => {
+			keyPressTimingsSlidingWindow.push(keyPressTimings.slice(Math.max(index - 4, 0), index + 1));
+		});
+
+		const keyPressCorrectnessSlidingWindow: boolean[][] = [];
+		keyPressCorrectness.forEach((value, index) => {
+			keyPressCorrectnessSlidingWindow.push(keyPressCorrectness.slice(Math.max(index - 4, 0), index + 1));
+		});
+
+		const chartDataPoints = keyPressTimings.map((msTime, index) => {
+			return {
+				isCorrect: keyPressCorrectnessSlidingWindow[index][keyPressCorrectnessSlidingWindow[index].length - 1],
+				x: index,
+				// x: keyPressTimings.slice(0, index + 1).reduce((sum, val) => sum + val) / 1000,
+				y: calculateWpm(
+					keyPressTimingsSlidingWindow[index].length - keyPressCorrectnessSlidingWindow[index].filter((value) => value === false).length,
+					keyPressTimingsSlidingWindow[index].reduce((sum, val) => sum + val)
+				)
+			};
+		});
+
+		return chartDataPoints;
+	}
+
+	function buildChartData(chartDataPoints: { x: number; y: number; isCorrect: boolean }[]) {
+		return {
+			datasets: [
+				{
+					label: 'Correct KeyPresses',
+					data: chartDataPoints.filter((point) => point.isCorrect),
+					backgroundColor: 'rgb(255, 99, 132)'
+				},
+				{
+					label: 'Wrong KeyPresses',
+					data: chartDataPoints.filter((point) => !point.isCorrect),
+					backgroundColor: 'rgb(255, 0, 10)'
+				}
+			]
+		};
+	}
 
 	let chartCanvas: any;
 	let chart: Chart;
+	const chartData = buildChartData(getChartDataPoints());
+
+	function moveActivePointBar(index: number) {
+		if (chart.options.plugins?.customHighlight) {
+			chart.options.plugins.customHighlight.index = index;
+		}
+		chart.update();
+	}
+
+	function disableActivePointBar() {
+		moveActivePointBar(-1);
+	}
 
 	onMount(() => {
 		const ctx = chartCanvas.getContext('2d');
@@ -82,17 +100,6 @@
 			plugins: [customHighlightPlugin]
 		});
 	});
-
-	function moveActivePointBar(index: number) {
-		if (chart.options.plugins?.customHighlight) {
-			chart.options.plugins.customHighlight.index = index;
-		}
-		chart.update();
-	}
-
-	function disableActivePointBar() {
-		moveActivePointBar(-1);
-	}
 </script>
 
 <div id="chart-container">
