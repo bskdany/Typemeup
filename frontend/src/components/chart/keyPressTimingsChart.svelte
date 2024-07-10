@@ -1,8 +1,9 @@
 <script lang="ts">
-	import Chart from 'chart.js/auto';
-	import { onMount } from 'svelte';
-	import type { TypingTestRunData } from '../../interfaces';
+	import { Chart } from 'chart.js';
+	import type { TypingTestRunData } from '../../types/interfaces';
 	import { calculateWpm } from '../typingTestRunHelper';
+	import { onMount } from 'svelte';
+	import { customHighlightPlugin } from './scatterChartProgressPlugin';
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
 
@@ -56,17 +57,19 @@
 		]
 	};
 
-	console.log(chartData);
-
-	let ctx;
 	let chartCanvas: any;
 
 	onMount(() => {
-		ctx = chartCanvas.getContext('2d');
-		var chart = new Chart(ctx, {
+		const ctx = chartCanvas.getContext('2d');
+		const chart = new Chart(ctx, {
 			type: 'scatter',
 			data: chartData,
 			options: {
+				plugins: {
+					customHighlight: {
+						index: 10
+					}
+				},
 				maintainAspectRatio: false,
 				scales: {
 					x: {
@@ -74,7 +77,8 @@
 						position: 'bottom'
 					}
 				}
-			}
+			},
+			plugins: [customHighlightPlugin]
 		});
 	});
 </script>
