@@ -4,9 +4,10 @@
 	import TypingSpeedChart from '../../chart/typingSpeedChart.svelte';
 	import SingleDataContainer from '../../common/singleDataContainer.svelte';
 	import TextContainer from '../../common/textContainer.svelte';
-	import { getAccuracy, getRawWpm, getTime, getWpm } from '../../typingTestRunHelper';
+	import { getAccuracy, getCorrectCharCount, getRawWpm, getTime, getWpm, getWrongCharCount } from '../../typingTestRunHelper';
 	import KeyPressTimingsChart from '../../chart/keyPressTimingsChart.svelte';
 	import TypingTestReplay from './typingTestReplay.svelte';
+	import TypingTest from '../typingTest.svelte';
 
 	let pressTabToRestartElement: any;
 
@@ -20,6 +21,18 @@
 			<SingleDataContainer title={'raw'} data={getRawWpm(typingTestRunData)} />
 			<SingleDataContainer title={'accuracy'} data={getAccuracy(typingTestRunData) + '%'} />
 			<SingleDataContainer title={'time'} data={getTime(typingTestRunData) + ' sec'} />
+			<SingleDataContainer
+				title={'characters'}
+				data={getCorrectCharCount(typingTestRunData) +
+					'/' +
+					getWrongCharCount(typingTestRunData, 'wrong') +
+					'/' +
+					getWrongCharCount(typingTestRunData, 'extra') +
+					'/' +
+					getWrongCharCount(typingTestRunData, 'missed') +
+					'/' +
+					getWrongCharCount(typingTestRunData, 'swapped')}
+			/>
 		</div>
 		<div id="chartContainer">
 			<KeyPressTimingsChart {typingTestRunData} />

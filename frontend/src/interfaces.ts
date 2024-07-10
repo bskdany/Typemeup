@@ -65,6 +65,7 @@ export interface Letter {
   isSpace: boolean;
   isCorrect: boolean;
   isTyped: boolean;
+  errorStatus: "extra" | "missed" | "swapped" | "wrong" | "";
 }
 
 export interface WordsSource {

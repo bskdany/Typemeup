@@ -11,8 +11,6 @@ export class TextObjectHandler {
   hasMistaken: boolean;
   wrongInputBuffer: string[];
 
-  correctCharCount: number;
-
   targetText: string[];
   userTypedText: string[];
 
@@ -28,7 +26,6 @@ export class TextObjectHandler {
     // this.globalLetterIndex = $state(0);
     this.hasMistaken = false;
     this.wrongInputBuffer = [];
-    this.correctCharCount = 0;
 
     this.targetText = targetText;
     this.userTypedText = [];
@@ -54,7 +51,8 @@ export class TextObjectHandler {
               text: letter,
               isSpace: false,
               isCorrect: false,
-              isTyped: false
+              isTyped: false,
+              errorStatus: "",
             };
           }),
           id: textObject.length,
@@ -67,7 +65,7 @@ export class TextObjectHandler {
     // adding a space after each word
     textObject.forEach((wordObject, index) => {
       if (index !== textObject.length - 1) {
-        wordObject.letters.push({ text: " ", isSpace: true, isCorrect: false, isTyped: false });
+        wordObject.letters.push({ text: " ", isSpace: true, isCorrect: false, isTyped: false, errorStatus: "" });
         wordObject.length += 1;
       }
     })
@@ -99,7 +97,7 @@ export class TextObjectHandler {
 
   handleKeyPressMode1(keyPressed: string) {
     if (this.getLetter(0)?.text === keyPressed) {
-      this.setLetterStatus(0, true, true);
+      this.setLetterStatus(0, { isTyped: true, isCorrect: true });
       this.gotoNextLetter();
     }
   }
@@ -107,10 +105,10 @@ export class TextObjectHandler {
   handleKeyPressMode3(keyPressed: string) {
     if (!this.hasMistaken) {
       if (this.getLetter(0)?.text === keyPressed) {
-        this.setLetterStatus(0, true, true);
+        this.setLetterStatus(0, { isTyped: true, isCorrect: true });
       } else {
         this.wrongInputBuffer.push(keyPressed);
-        this.setLetterStatus(0, true, false);
+        this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
         this.hasMistaken = true;
       }
     }
@@ -120,30 +118,32 @@ export class TextObjectHandler {
       // 1. Extra letter
       if (keyPressed == this.getLetter(-1)?.text) {
         if (this.wrongInputBuffer[0] == this.getLetter(0)?.text) {
-          this.setLetterStatus(0, true, false);
+          this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "swapped" });
+          this.setLetterStatus(-1, { errorStatus: "swapped" });
           // console.log("Swapped order of last two keys");
         }
         else {
-          this.setLetterStatus(-1, true, false);
+          this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "extra" });
           // this.setLetterStatus(0, true, true);
           // console.log("Extra key pressed. Pressed " + this.wrongInputBuffer[0] + " instead of " + this.getLetter(-1).text);
           this.gotoPreviousLetter();
         }
-        this.hasMistaken = false;
+        this.hasMistaken = false
         this.wrongInputBuffer = [];
       }
       // previous letter was miss-clicked
       else if (keyPressed == this.getLetter(0)?.text) {
-        this.setLetterStatus(0, true, true);
+        this.setLetterStatus(0, { isTyped: true, isCorrect: true });
+        this.setLetterStatus(-1, { errorStatus: "wrong" })
         // console.log("Miss click. Pressed " + this.wrongInputBuffer[0] + " instead of " + this.getLetter(-1).text);
         this.hasMistaken = false;
         this.wrongInputBuffer = [];
       }
       // 3. Missed a letter
       else if (this.wrongInputBuffer[0] == this.getLetter(0)?.text) {
-        this.setLetterStatus(-1, true, false);
-        this.setLetterStatus(0, true, true);
-        this.setLetterStatus(1, true, true);
+        this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "missed" });
+        this.setLetterStatus(0, { isTyped: true, isCorrect: true });
+        this.setLetterStatus(1, { isTyped: true, isCorrect: true });
         this.gotoNextLetter();
 
         // console.log("Missed a key");
@@ -153,26 +153,20 @@ export class TextObjectHandler {
       else {
         // TODO: I can make a better detection method for a wider range of words
         // when this burts happens,
-        this.setLetterStatus(0, true, false);
+        this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
         // console.error("Text burst");
         // console.log(this.wrongInputBuffer);
       }
     }
   }
 
-  setLetterStatus(offset: number, isTyped: boolean, isCorrect: boolean): boolean {
+  setLetterStatus(offset: number, data: { isTyped?: boolean, isCorrect?: boolean, errorStatus?: "extra" | "missed" | "swapped" | "wrong" | "" }): boolean {
     const letter = this.getLetter(offset);
-    if (letter != undefined) {
-      letter.isTyped = isTyped;
-      letter.isCorrect = isCorrect;
-
-      // this is the easiest way to count the correct chars
-      if (isCorrect) {
-        this.correctCharCount += 1;
-      }
-      else {
-        this.correctCharCount -= 1;
-      }
+    if (letter) {
+      letter.isTyped = data.isTyped ?? letter.isTyped;
+      letter.isCorrect = data.isCorrect ?? letter.isCorrect;
+      letter.errorStatus = data.isCorrect ? "" : letter.errorStatus;
+      letter.errorStatus = data.errorStatus ?? letter.errorStatus;
 
       return true;
     }

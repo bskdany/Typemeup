@@ -1,4 +1,4 @@
-import type { TypingTestRunData } from "../interfaces";
+import type { Letter, TypingTestRunData } from "../interfaces";
 
 function calculateWpm(correctCharCount: number, msTime: number) {
   return parseFloat(((correctCharCount / 4.7) * (60 / (msTime / 1000))).toFixed(2));
@@ -34,16 +34,16 @@ function mergeTargetTextWords(targetText: string[]): string[] {
   return targetTextMerged;
 }
 
-function getCorrectCharCount(typingTestRunData: TypingTestRunData): number {
-  let correctChars = 0;
-  for (const wordObject of typingTestRunData.textObject) {
-    for (const letterObject of wordObject.letters) {
-      if (letterObject.isCorrect) {
-        correctChars += 1;
-      }
-    }
-  }
-  return correctChars;
+function getLetters(typingTestRunData: TypingTestRunData): Letter[] {
+  return typingTestRunData.textObject.map((textObject) => textObject.letters).flat();
 }
 
-export { calculateWpm, getRawWpm, getWpm, getAccuracy, getTime, getCorrectCharCount };
+function getCorrectCharCount(typingTestRunData: TypingTestRunData): number {
+  return getLetters(typingTestRunData).filter((letter) => letter.isCorrect === true).length;
+}
+
+function getWrongCharCount(typingContextData: TypingTestRunData, status: "extra" | "missed" | "swapped" | "wrong"): number {
+  return getLetters(typingContextData).filter((letter) => letter.errorStatus === status).length;
+}
+
+export { calculateWpm, getRawWpm, getWpm, getAccuracy, getTime, getCorrectCharCount, getWrongCharCount };
