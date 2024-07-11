@@ -39,9 +39,6 @@ export const customHighlightPlugin = {
 
       ctx.save();
       ctx.beginPath();
-      console.log(point.x);
-      console.log(top)
-      console.log(bottom)
       ctx.moveTo(point.x, top);
       ctx.lineTo(point.x, bottom);
       ctx.lineWidth = 1;
