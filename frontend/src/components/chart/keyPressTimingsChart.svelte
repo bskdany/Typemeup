@@ -11,7 +11,7 @@
 
 	function getChartDataPoints() {
 		const keyPressTimings: number[] = [...typingTestRunData.keyPressTimings];
-		keyPressTimings.shift();
+		keyPressTimings[0] = keyPressTimings[1]; // because keyPrssTimings[0] is always 0 last thing I want is infinite wpm
 
 		// arr that tells if the keypress was corect or not
 		const keyPressCorrectness: boolean[] = [];
@@ -20,7 +20,6 @@
 				keyPressCorrectness.push(letter.isCorrect);
 			}
 		}
-		keyPressCorrectness.shift(); // because the first key pressed doesn't count basically
 
 		// basically a sliding window of the last 5 msTime readings, including the current one
 		const keyPressTimingsSlidingWindow: number[][] = [];
