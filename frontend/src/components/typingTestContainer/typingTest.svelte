@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
-	import type { TextObject, TypingContextData, TypingContext, TypingTestRunData } from '../../interfaces';
+	import type { TextObject, TypingContextData, TypingContext, TypingTestRunData } from '../../types/interfaces';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
@@ -67,7 +67,7 @@
 
 			testEnded({
 				timeTaken: msTime,
-				targetText: textObject.targetText,
+				targetText: textObject.targetText.slice(0, textObject.wordIndex + 1),
 				userTypedText: textObject.userTypedText,
 				keyPressTimings: keyPressTimings,
 				textObject: JSON.parse(JSON.stringify(textObject.textObject)), // deep copy
