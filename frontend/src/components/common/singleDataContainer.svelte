@@ -1,10 +1,10 @@
 <script lang="ts">
-	const { title, data } = $props();
+	const { title, data, data_rem = 1 } = $props();
 </script>
 
 <div id="singleDataContainer">
 	<div id="title">{title}</div>
-	<div id="data">{data}</div>
+	<div id="data" style="font-size: {data_rem}rem;">{data}</div>
 </div>
 
 <style>
@@ -24,5 +24,10 @@
 		color: rgb(127, 106, 106);
 		border-radius: 10px;
 		background-color: #2c2e31;
+	}
+
+	#data {
+		color: #a8b9e4;
+		white-space: pre-wrap;
 	}
 </style>

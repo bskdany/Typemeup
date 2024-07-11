@@ -23,9 +23,9 @@
 <div id="typingResult">
 	<div id="topHalf">
 		<div id="dataColumn">
-			<SingleDataContainer title={'wpm'} data={getWpm(typingTestRunData)} />
+			<SingleDataContainer title={'wpm'} data={getWpm(typingTestRunData)} data_rem={1.4} />
+			<SingleDataContainer title={'accuracy'} data={getAccuracy(typingTestRunData) + '%'} data_rem={1.4} />
 			<SingleDataContainer title={'raw'} data={getRawWpm(typingTestRunData)} />
-			<SingleDataContainer title={'accuracy'} data={getAccuracy(typingTestRunData) + '%'} />
 			<SingleDataContainer title={'time'} data={getTime(typingTestRunData) + ' sec'} />
 			<SingleDataContainer
 				title={'characters'}
