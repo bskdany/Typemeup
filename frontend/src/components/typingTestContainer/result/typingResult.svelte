@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Title } from 'chart.js';
-	import type { TypingTestRunData } from '../../../interfaces';
 	import TypingSpeedChart from '../../chart/typingSpeedChart.svelte';
 	import SingleDataContainer from '../../common/singleDataContainer.svelte';
 	import TextContainer from '../../common/textContainer.svelte';
@@ -8,8 +7,15 @@
 	import KeyPressTimingsChart from '../../chart/keyPressTimingsChart.svelte';
 	import TypingTestReplay from './typingTestReplay.svelte';
 	import TypingTest from '../typingTest.svelte';
+	import { setContext } from 'svelte';
+	import type { TypingResultContextData, TypingTestRunData } from '../../../types/interfaces';
 
 	let pressTabToRestartElement: any;
+	let typingResultContextData: TypingResultContextData = $state({ activeLetterId: -1, typingTestReplayStatus: 'inactive' });
+
+	setContext('typingResultContext', {
+		typingResultContextData: typingResultContextData
+	});
 
 	const { typingTestRunData, restart }: { typingTestRunData: TypingTestRunData; restart: () => void } = $props();
 </script>

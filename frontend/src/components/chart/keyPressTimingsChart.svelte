@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { Chart } from 'chart.js';
-	import type { TypingTestRunData } from '../../types/interfaces';
+	import type { TypingResultContext, TypingResultContextData, TypingTestRunData } from '../../types/interfaces';
 	import { calculateWpm } from '../typingTestRunHelper';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { customHighlightPlugin } from './scatterChartProgressPlugin';
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
+	const typingResultContext: TypingResultContext = getContext('typingResultContext');
+	const typingResultContextData: TypingResultContextData = typingResultContext.typingResultContextData;
 
 	function getChartDataPoints() {
 		const keyPressTimings: number[] = [...typingTestRunData.keyPressTimings];
@@ -99,6 +101,10 @@
 			},
 			plugins: [customHighlightPlugin]
 		});
+	});
+
+	$effect(() => {
+		moveActivePointBar(typingResultContextData.activeLetterId);
 	});
 </script>
 

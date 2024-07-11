@@ -6,7 +6,7 @@
 	import { onMount, setContext } from 'svelte';
 	import TypingProgress from './typingProgress.svelte';
 	import Configs from './configs.svelte';
-	import type { FingerData, TypingTestRunData, TypingContextData, UserTypingData } from '../../interfaces';
+	import type { FingerData, TypingTestRunData, TypingContextData, UserTypingData } from '../../types/interfaces';
 	import { generateWords, generateWordsAlgo } from '../../algo/textGenerator';
 	import { getUserTypingData } from '../../storage/localStorageService';
 	import { analyse } from '../../algo/textAnalysis';
@@ -76,8 +76,8 @@
 		if (typingContextData.configTypingMode === 'time') {
 			targetText = generateWords(100);
 		} else if (typingContextData.configTypingMode === 'words') {
-			// targetText = generateWords(typingContextData.configWordAmount);
-			targetText = ['asdfasdfasdf'];
+			targetText = generateWords(typingContextData.configWordAmount);
+			// targetText = ['asdfasdfasdf'];
 		} else if (typingContextData.configTypingMode === 'smart') {
 			targetText = generateWordsAlgo(userTypingData, typingContextData.configWordAmount);
 		}

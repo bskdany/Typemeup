@@ -1,4 +1,4 @@
-import type { Letter, TextObject } from "../../interfaces";
+import type { Letter, TextObject } from "./../../types/interfaces";
 
 export class TextObjectHandler {
 
@@ -40,6 +40,7 @@ export class TextObjectHandler {
     this.textObject = this.textObject.concat(newTextObjectData);
   }
 
+
   generateTextObject(targetText: string[]) {
     let textObject: TextObject[] = [];
 
@@ -53,6 +54,7 @@ export class TextObjectHandler {
               isCorrect: false,
               isTyped: false,
               errorStatus: "",
+              id: 0
             };
           }),
           id: textObject.length,
@@ -65,9 +67,18 @@ export class TextObjectHandler {
     // adding a space after each word
     textObject.forEach((wordObject, index) => {
       if (index !== textObject.length - 1) {
-        wordObject.letters.push({ text: " ", isSpace: true, isCorrect: false, isTyped: false, errorStatus: "" });
+        wordObject.letters.push({ text: " ", isSpace: true, isCorrect: false, isTyped: false, errorStatus: "", id: 0 });
         wordObject.length += 1;
       }
+    })
+
+    // going throug each object and adding the id
+    let letterId = 0;
+    textObject.forEach((wordObject, index) => {
+      wordObject.letters.forEach(letterObject => {
+        letterObject.id = letterId;
+        letterId += 1;
+      });
     })
 
     return textObject;

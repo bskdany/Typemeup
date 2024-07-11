@@ -1,6 +1,8 @@
 <script lang="ts">
+	import type { TypingResultContext, TypingResultContextData } from '../../../types/interfaces';
 	import KeyPressTimingsChart from '../../chart/keyPressTimingsChart.svelte';
 	import { TextObjectHandler } from '../textObjectHandler.svelte';
+	import { getContext, onMount, setContext } from 'svelte';
 
 	const {
 		targetText,
@@ -9,6 +11,9 @@
 		errorCorrectionMode
 	}: { targetText: string[]; userTypedText: string[]; typingTestKeypressTimings: number[]; errorCorrectionMode: number } = $props();
 
+	const typingResultContext: TypingResultContext = getContext('typingResultContext');
+	const typingResultContextData: TypingResultContextData = typingResultContext.typingResultContextData;
+
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
 	let simulateTypingTimeout: any = null;
 	let playPauseButtonText: string = $state('Play');
@@ -16,11 +21,9 @@
 	let remainingKeyPresses: string[] = [...userTypedText];
 	let remainingKeyPressTimings: number[] = [...typingTestKeypressTimings];
 
-	console.log(remainingKeyPresses);
-	console.log(remainingKeyPressTimings);
-
 	function simulateTyping(remainingKeyPresses: string[], remainingKeyPressTimings: number[]) {
 		textObject.addKeyPressed(remainingKeyPresses[0]);
+		typingResultContextData.activeLetterId = textObject.globalLetterIndex;
 		if (remainingKeyPressTimings.length > 1) {
 			const timing = remainingKeyPressTimings[0];
 			remainingKeyPresses.shift();
@@ -30,6 +33,7 @@
 	}
 
 	function handlePlayPauseButton() {
+		typingResultContextData.typingTestReplayStatus = 'active';
 		if (playPauseButtonText === 'Play') {
 			playPauseButtonText = 'Pause';
 			simulateTyping(remainingKeyPresses, remainingKeyPressTimings);
@@ -48,6 +52,7 @@
 
 			remainingKeyPresses = [...userTypedText];
 			remainingKeyPressTimings = [...typingTestKeypressTimings];
+			typingResultContextData.typingTestReplayStatus = 'inactive';
 		}
 	}
 </script>
@@ -60,8 +65,15 @@
 	<div id="mainText">
 		{#each textObject?.textObject as word, index}
 			<div class="word">
-				{#each word.letters as { text, isCorrect, isSpace, isTyped }}
-					<span class="letter {isSpace ? 'space' : ''} {isTyped && isCorrect ? 'correct' : ''} {isTyped && !isCorrect ? 'incorrect' : ''}">
+				{#each word.letters as { text, isCorrect, isSpace, isTyped, id }}
+					<span
+						onmouseover={() => {
+							if (typingResultContextData.typingTestReplayStatus === 'inactive') {
+								typingResultContextData.activeLetterId = id;
+							}
+						}}
+						class="letter {isSpace ? 'space' : ''} {isTyped && isCorrect ? 'correct' : ''} {isTyped && !isCorrect ? 'incorrect' : ''}"
+					>
 						{text}
 					</span>
 				{/each}

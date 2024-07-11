@@ -66,6 +66,7 @@ export interface Letter {
   isCorrect: boolean;
   isTyped: boolean;
   errorStatus: "extra" | "missed" | "swapped" | "wrong" | "";
+  id: number;
 }
 
 export interface WordsSource {
@@ -86,6 +87,15 @@ export interface TypingContextData {
 
 export interface TypingContext {
   typingContextData: TypingContextData;
+}
+
+export interface TypingResultContextData {
+  activeLetterId: number,
+  typingTestReplayStatus: "active" | "inactive"
+}
+
+export interface TypingResultContext {
+  typingResultContextData: TypingResultContextData
 }
 
 export interface TypingTestRunData {
