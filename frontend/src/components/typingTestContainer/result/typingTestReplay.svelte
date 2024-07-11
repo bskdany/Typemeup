@@ -91,6 +91,7 @@
 		justify-content: center;
 		align-items: center;
 		gap: 30px;
+		white-space: pre-wrap;
 	}
 
 	#controlBar {
