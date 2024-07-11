@@ -37,16 +37,16 @@
 	let resizeObserver; // to handle mainText resizing
 
 	let msTime = 0;
-	let msTimeSinceLastKeypress = 0;
+	let msTimeAtLastKeyPress: number;
 	let timeInterval: any = null;
 
 	const keyPressTimings: number[] = [];
 
 	function typingTestStarted() {
 		msTime = 0;
+		msTimeAtLastKeyPress = Date.now();
 		timeInterval = setInterval(() => {
 			msTime += 10;
-			msTimeSinceLastKeypress += 10;
 			if (msTime % 1000 === 0) {
 				typingContextData.progressTimeElapsed += 1;
 			}
@@ -84,8 +84,11 @@
 		}
 
 		textObject.addKeyPressed(pressedKey);
+
+		const msTimeSinceLastKeypress = Date.now() - msTimeAtLastKeyPress;
+		msTimeAtLastKeyPress = Date.now();
 		keyPressTimings.push(msTimeSinceLastKeypress);
-		msTimeSinceLastKeypress = 0;
+
 		handleCursor();
 		checkIfMoveText();
 		checkIfTestEnded();
