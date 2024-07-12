@@ -126,7 +126,7 @@
 
 		if (targetLetterNode) {
 			const rect = targetLetterNode.getBoundingClientRect();
-			newCursorPositionX = rect.left;
+			newCursorPositionX = rect.left - 2;
 			newCursorPositionY = rect.top;
 		} else {
 			// Handle the case where the childNode is not an Element
