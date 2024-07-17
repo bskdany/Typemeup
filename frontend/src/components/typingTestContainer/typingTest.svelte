@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
+	import { tweened } from 'svelte/motion';
+
 	import type { TextObject, TypingContextData, TypingContext, TypingTestRunData } from '../../types/interfaces';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
@@ -23,7 +25,9 @@
 
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
 
-	let cursorElementPosition: { x: number; y: number } = $state({ x: 0, y: 0 });
+	let cursorElementPositionX = tweened(0, { duration: 100 });
+	let cursorElementPosition: { x: any; y: number } = $state({ x: cursorElementPositionX, y: 0 });
+
 	let mainTextTranslateDistance: number = $state(0);
 	let textHeight: number = $state(0);
 
@@ -99,16 +103,6 @@
 	}
 
 	function handleCursor() {
-		if (!cursorElement) {
-			return;
-		}
-
-		const cursorPositionX = cursorElement.getBoundingClientRect().left;
-		const cursorPositionY = cursorElement.getBoundingClientRect().top;
-
-		let newCursorPositionX = 0;
-		let newCursorPositionY = 0;
-
 		// why me
 		const cleanedTextObjectBind: any = [];
 		for (let wordCounter = 0; wordCounter < textObjectBind.length; wordCounter++) {
@@ -125,19 +119,21 @@
 		const targetLetterNode = cleanedTextObjectBind[textObject.wordIndex][textObject.letterIndex];
 
 		if (targetLetterNode) {
-			const rect = targetLetterNode.getBoundingClientRect();
-			newCursorPositionX = rect.left - 2;
-			newCursorPositionY = rect.top;
+			const cursorPositionX = cursorElement.getBoundingClientRect().left;
+			const cursorPositionY = cursorElement.getBoundingClientRect().top;
+
+			const newCursorPositionX = targetLetterNode.getBoundingClientRect().left - 2;
+			const newCursorPositionY = targetLetterNode.getBoundingClientRect().top;
+
+			const xOffset = newCursorPositionX - cursorPositionX;
+			const yOffset = newCursorPositionY - cursorPositionY;
+
+			$cursorElementPositionX += xOffset;
+			cursorElementPosition.y += yOffset;
 		} else {
 			// Handle the case where the childNode is not an Element
 			// throw 'Error moving cursor, child node is not an alement';
 		}
-
-		const xOffset = newCursorPositionX - cursorPositionX;
-		const yOffset = newCursorPositionY - cursorPositionY;
-
-		cursorElementPosition.x += xOffset;
-		cursorElementPosition.y += yOffset;
 	}
 
 	function checkIfMoveText() {
@@ -204,7 +200,7 @@
 
 <div id="overflow-placeholder" style="height: {textHeight}px;">
 	<div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
-		<div id="cursor" style={`transform: translate(${cursorElementPosition.x}px, ${cursorElementPosition.y}px)`} bind:this={cursorElement}></div>
+		<div id="cursor" style="transform: translate({$cursorElementPositionX}px, {cursorElementPosition.y}px)" bind:this={cursorElement}></div>
 		{#each textObject?.textObject as word, index}
 			<div class="word" bind:this={textObjectBind[index]}>
 				{#each word.letters as { text, isCorrect, isSpace, isTyped }}
