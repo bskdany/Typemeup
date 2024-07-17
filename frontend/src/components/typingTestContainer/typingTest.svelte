@@ -103,20 +103,21 @@
 	}
 
 	function handleCursor() {
+		if (!cursorElement || !textObjectBind) {
+			return;
+		}
+
 		// why me
-		const cleanedTextObjectBind: any = [];
-		for (let wordCounter = 0; wordCounter < textObjectBind.length; wordCounter++) {
-			if (textObjectBind[wordCounter].nodeType !== Node.COMMENT_NODE) {
-				cleanedTextObjectBind.push([]);
-				for (const letter of textObjectBind[wordCounter].childNodes) {
-					if (letter.nodeType !== Node.COMMENT_NODE) {
-						cleanedTextObjectBind[wordCounter].push(letter);
-					}
+		const cleanedTextObjectBind: HTMLElement[] = [];
+		for (const wordElement of textObjectBind) {
+			for (const letterElement of wordElement.childNodes) {
+				if (letterElement.nodeType === Node.ELEMENT_NODE) {
+					cleanedTextObjectBind.push(letterElement as HTMLElement);
 				}
 			}
 		}
 
-		const targetLetterNode = cleanedTextObjectBind[textObject.wordIndex][textObject.letterIndex];
+		const targetLetterNode = cleanedTextObjectBind[textObject.globalLetterIndex];
 
 		if (targetLetterNode) {
 			const cursorPositionX = cursorElement.getBoundingClientRect().left;
