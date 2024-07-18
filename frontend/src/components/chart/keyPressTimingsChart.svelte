@@ -15,18 +15,8 @@
 		});
 	}
 
-	function getChartDataPoints() {
+	function getChartData() {
 		const keyPressTimings: number[] = [...typingTestRunData.keyPressTimings];
-
-		// workaround to avoid very high wpm at the beginning while avoiding completely removing the types chars
-		// let keyPressTimingsFiller = 0;
-		// for (let counter = 4; counter > 0; counter--) {
-		// 	if (keyPressTimingsFiller > 0) {
-		// 		keyPressTimings[counter] = keyPressTimingsFiller;
-		// 	} else if (keyPressTimings[counter]) {
-		// 		keyPressTimingsFiller = keyPressTimings[counter];
-		// 	}
-		// }
 
 		keyPressTimings[0] = keyPressTimings[1]; // because keyPrssTimings[0] is always 0 last thing I want is infinite wpm
 		const keyPressErrorStatuses: Letter['errorStatus'][] = [];
@@ -41,7 +31,7 @@
 		const keyPressTimingsSlidingWindow: number[][] = createSlidingWindow(keyPressTimings, 5);
 		const keyPressErrorStatusesSlidingWindow: string[][] = createSlidingWindow(keyPressErrorStatuses, 5);
 
-		const chartDataPoints: { errorStatus: Letter['errorStatus']; x: number; y: number }[] = [];
+		const chartKeyPressData: { errorStatus: Letter['errorStatus']; x: number; y: number }[] = [];
 
 		let keyPressTimingsCounter = 0;
 		for (let index = 0; index < keyPressErrorStatuses.length; index++) {
@@ -88,43 +78,77 @@
 				yCoordinate = wpm;
 			}
 
-			chartDataPoints.push({
+			chartKeyPressData.push({
 				errorStatus: keyPressErrorStatuses[index],
 				x: index,
 				y: index > 4 ? yCoordinate : getWpm(typingTestRunData)
 			});
 		}
 
-		return chartDataPoints;
+		const chartWpmData: { x: number; y: number }[] = chartKeyPressData
+			.reduce((resultArray: { x: number; y: number }[][], item, index) => {
+				const chunkIndex = Math.floor(index / 10);
+
+				if (!resultArray[chunkIndex]) {
+					resultArray[chunkIndex] = []; // start a new chunk
+				}
+
+				resultArray[chunkIndex].push({ x: item.x, y: item.y });
+
+				return resultArray;
+			}, [])
+			.map((chunk) => {
+				const averageWpm = chunk.reduce((sum, current) => (sum += current.y), 0) / chunk.length;
+				return {
+					x: chunk[chunk.length - 1].x,
+					y: averageWpm
+				};
+			});
+
+		return { chartKeyPressData, chartWpmData };
 	}
 
-	function buildChartData(chartDataPoints: { x: number; y: number; errorStatus: Letter['errorStatus'] }[]) {
+	function buildChartData({
+		chartKeyPressData,
+		chartWpmData
+	}: {
+		chartKeyPressData: { x: number; y: number; errorStatus: Letter['errorStatus'] }[];
+		chartWpmData: { x: number; y: number }[];
+	}) {
 		return {
 			datasets: [
 				{
 					label: 'Correct KeyPresses',
-					data: chartDataPoints.filter((point) => point.errorStatus === ''),
+					data: chartKeyPressData.filter((point) => point.errorStatus === ''),
 					backgroundColor: 'rgb(127, 106, 106)'
 				},
 				{
 					label: 'Missed',
-					data: chartDataPoints.filter((point) => point.errorStatus === 'missed'),
+					data: chartKeyPressData.filter((point) => point.errorStatus === 'missed'),
 					backgroundColor: 'transparent'
 				},
 				{
 					label: 'Wrong',
-					data: chartDataPoints.filter((point) => point.errorStatus === 'wrong'),
+					data: chartKeyPressData.filter((point) => point.errorStatus === 'wrong'),
 					backgroundColor: 'red'
 				},
 				{
 					label: 'Extra',
-					data: chartDataPoints.filter((point) => point.errorStatus === 'extra'),
+					data: chartKeyPressData.filter((point) => point.errorStatus === 'extra'),
 					backgroundColor: 'red',
 					pointBackgroundColor: 'red',
 					pointStyle: 'dash',
 					pointRadius: 15,
 					borderWidth: 4,
 					borderColor: 'red'
+				},
+				{
+					label: 'Wpm',
+					type: 'line' as any,
+					data: chartWpmData,
+					borderColor: '#a8b9e4',
+					borderWidth: 1,
+					lineTension: 0.4
 				}
 			]
 		};
@@ -132,7 +156,7 @@
 
 	let chartCanvas: any;
 	let chart: Chart;
-	const chartData = buildChartData(getChartDataPoints());
+	const chartData = buildChartData(getChartData());
 
 	function moveActivePointBar(index: number) {
 		if (chart.options.plugins?.customHighlight) {
