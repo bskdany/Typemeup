@@ -1,24 +1,25 @@
 <script lang="ts">
-	import { Chart, PointElement } from 'chart.js';
+	import { Chart, PointElement, type ScriptableContext } from 'chart.js';
 	import type { Letter, TypingResultContext, TypingResultContextData, TypingTestRunData } from '../../types/interfaces';
 	import { calculateWpm, getWpm } from '../typingTestRunHelper';
 	import { getContext, onMount } from 'svelte';
 	import { customHighlightPlugin } from './scatterChartProgressPlugin';
+	import type { ContextProxy } from 'chart.js/helpers';
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
 	const typingResultContext: TypingResultContext = getContext('typingResultContext');
 	const typingResultContextData: TypingResultContextData = typingResultContext.typingResultContextData;
 
-	function createSlidingWindow<T>(input: T[], length: number): T[][] {
+	function createSlidingWindow<T>(input: T[]): T[][] {
 		return input.map((element, index) => {
-			return input.slice(Math.max(index - (length - 1), 0), index + 1);
+			return input.slice(0, index + 1);
 		});
 	}
 
 	function getChartData() {
 		const keyPressTimings: number[] = [...typingTestRunData.keyPressTimings];
 
-		keyPressTimings[0] = keyPressTimings[1]; // because keyPrssTimings[0] is always 0 last thing I want is infinite wpm
+		// keyPressTimings[0] = keyPressTimings[1]; // because keyPrssTimings[0] is always 0 last thing I want is infinite wpm
 		const keyPressErrorStatuses: Letter['errorStatus'][] = [];
 		for (const word of typingTestRunData.textObject) {
 			for (const letter of word.letters) {
@@ -28,8 +29,8 @@
 			}
 		}
 
-		const keyPressTimingsSlidingWindow: number[][] = createSlidingWindow(keyPressTimings, 5);
-		const keyPressErrorStatusesSlidingWindow: string[][] = createSlidingWindow(keyPressErrorStatuses, 5);
+		const keyPressTimingsSlidingWindow: number[][] = createSlidingWindow(keyPressTimings);
+		const keyPressErrorStatusesSlidingWindow: string[][] = createSlidingWindow(keyPressErrorStatuses);
 
 		const chartKeyPressData: { errorStatus: Letter['errorStatus']; x: number; y: number }[] = [];
 
@@ -63,8 +64,14 @@
 				const averageWpm = Math.floor((wpmPoint1 + wpmPoint2) / 2);
 				yCoordinate = averageWpm;
 			} else if (keyPressErrorStatuses[index] === 'missed') {
-				// empty spacing
-				yCoordinate = 0;
+				const totalChars = keyPressTimingsSlidingWindow[keyPressTimingsCounter].length;
+				const correctChars = keyPressErrorStatusesSlidingWindow[index].filter((value) => value === '').length;
+				const time = keyPressTimingsSlidingWindow[keyPressTimingsCounter].reduce((sum, val) => sum + val);
+				const rawWpm = calculateWpm(totalChars, time);
+				const accuracy = correctChars / totalChars;
+				const wpm = rawWpm * accuracy;
+
+				yCoordinate = wpm;
 			} else {
 				const totalChars = keyPressTimingsSlidingWindow[keyPressTimingsCounter].length;
 				const correctChars = keyPressErrorStatusesSlidingWindow[index].filter((value) => value === '').length;
@@ -81,31 +88,15 @@
 			chartKeyPressData.push({
 				errorStatus: keyPressErrorStatuses[index],
 				x: index,
-				y: index > 4 ? yCoordinate : getWpm(typingTestRunData)
+				y: index > 9 ? yCoordinate : getWpm(typingTestRunData)
 			});
 		}
 
-		const chartWpmData: { x: number; y: number }[] = chartKeyPressData
-			.reduce((resultArray: { x: number; y: number }[][], item, index) => {
-				const chunkIndex = Math.floor(index / 10);
+		const chartWpmData: { x: number; y: number }[] = chartKeyPressData.filter((element, index, arr) => {
+			return (index % 10 === 0 && index > 0) || index === arr.length - 1;
+		});
 
-				if (!resultArray[chunkIndex]) {
-					resultArray[chunkIndex] = []; // start a new chunk
-				}
-
-				resultArray[chunkIndex].push({ x: item.x, y: item.y });
-
-				return resultArray;
-			}, [])
-			.map((chunk) => {
-				const averageWpm = chunk.reduce((sum, current) => (sum += current.y), 0) / chunk.length;
-				return {
-					x: chunk[chunk.length - 1].x,
-					y: averageWpm
-				};
-			});
-
-		return { chartKeyPressData, chartWpmData };
+		return { chartKeyPressData: chartKeyPressData, chartWpmData: chartWpmData };
 	}
 
 	function buildChartData({
@@ -115,40 +106,49 @@
 		chartKeyPressData: { x: number; y: number; errorStatus: Letter['errorStatus'] }[];
 		chartWpmData: { x: number; y: number }[];
 	}) {
+		const fillerData: { x: number; y: number }[] = [];
+		for (let i = 0; i < 10; i++) {
+			fillerData.push({ x: i, y: 0 });
+		}
+
 		return {
 			datasets: [
 				{
-					label: 'Correct KeyPresses',
-					data: chartKeyPressData.filter((point) => point.errorStatus === ''),
-					backgroundColor: 'rgb(127, 106, 106)'
-				},
-				{
-					label: 'Missed',
-					data: chartKeyPressData.filter((point) => point.errorStatus === 'missed'),
-					backgroundColor: 'transparent'
-				},
-				{
-					label: 'Wrong',
-					data: chartKeyPressData.filter((point) => point.errorStatus === 'wrong'),
-					backgroundColor: 'red'
-				},
-				{
-					label: 'Extra',
-					data: chartKeyPressData.filter((point) => point.errorStatus === 'extra'),
-					backgroundColor: 'red',
-					pointBackgroundColor: 'red',
-					pointStyle: 'dash',
-					pointRadius: 15,
-					borderWidth: 4,
-					borderColor: 'red'
+					label: 'Wrong Keypress',
+					type: 'scatter',
+					data: chartKeyPressData.filter((point) => point.errorStatus !== '' && point.x > 9),
+					pointStyle: 'cross',
+					rotation: 45,
+					borderColor: 'red',
+					radius: 4,
+					borderWidth: 2
 				},
 				{
 					label: 'Wpm',
 					type: 'line' as any,
 					data: chartWpmData,
 					borderColor: '#a8b9e4',
-					borderWidth: 1,
-					lineTension: 0.4
+					backgroundColor: '#a8b9e4',
+					borderWidth: 2,
+					lineTension: 0.4,
+					pointRadius: 1,
+					pointBorderWidth: 1,
+					hoverRadius: 3,
+					hitRadius: 3
+				},
+				{
+					label: 'Correct KeyPresses',
+					data: chartKeyPressData.filter((point) => point.errorStatus === '' && point.x > 9),
+					backgroundColor: 'rgb(127, 106, 106)',
+					pointRadius: 0,
+					hoverRadius: 0,
+					hitRadius: 0
+				},
+				{
+					label: 'Filler',
+					data: fillerData,
+					backgroundColor: 'transparent',
+					hoverRadius: 0
 				}
 			]
 		};
