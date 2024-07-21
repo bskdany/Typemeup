@@ -276,4 +276,8 @@
 	.incorrect {
 		color: red;
 	}
+
+	.space.incorrect {
+		background-color: red;
+	}
 </style>
