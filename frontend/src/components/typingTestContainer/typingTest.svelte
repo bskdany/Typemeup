@@ -81,7 +81,14 @@
 	}
 
 	function processKeyPress(keydown: any) {
-		const pressedKey = keydown.data;
+		let pressedKey = keydown.data;
+
+		if (!pressedKey) {
+			if (keydown.inputType === 'deleteContentBackward') {
+				pressedKey = 'backspace';
+			}
+		}
+
 		if (typingContextData.typingTestStatus != 'started') {
 			typingContextData.typingTestStatus = 'started';
 			typingTestStarted();
