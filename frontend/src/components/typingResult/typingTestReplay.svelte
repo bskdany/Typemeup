@@ -28,6 +28,8 @@
 			remainingKeyPresses.shift();
 			remainingKeyPressTimings.shift();
 			simulateTypingTimeout = setTimeout(() => simulateTyping(remainingKeyPresses, remainingKeyPressTimings), timing);
+		} else {
+			reset();
 		}
 	}
 
@@ -35,22 +37,15 @@
 		for (const keyPress of userTypedText) {
 			textObject.addKeyPressed(keyPress);
 		}
-		console.log(textObject);
-
-		// textObject.addKeyPressed(remainingKeyPresses[0]);
-		// typingResultContextData.activeLetterId = textObject.globalLetterIndex;
-		// if (remainingKeyPressTimings.length > 1) {
-		// 	const timing = remainingKeyPressTimings[0];
-		// 	remainingKeyPresses.shift();
-		// 	remainingKeyPressTimings.shift();
-		// 	simulateTypingTimeout = setTimeout(() => simulateTyping(remainingKeyPresses, remainingKeyPressTimings), timing);
-		// }
 	}
 
 	function handlePlayPauseButton() {
 		typingResultContextData.typingTestReplayStatus = 'active';
 		if (playPauseButtonText === 'Play') {
 			playPauseButtonText = 'Pause';
+			if (simulateTypingTimeout === null) {
+				textObject = new TextObjectHandler(targetText, errorCorrectionMode);
+			}
 			simulateTyping(remainingKeyPresses, remainingKeyPressTimings);
 		} else if (playPauseButtonText === 'Pause') {
 			clearTimeout(simulateTypingTimeout);
@@ -64,6 +59,7 @@
 			simulateTypingTimeout = null;
 			textObject = new TextObjectHandler(targetText, errorCorrectionMode);
 			playPauseButtonText = 'Play';
+			completeTest();
 
 			remainingKeyPresses = [...userTypedText];
 			remainingKeyPressTimings = [...typingTestKeypressTimings];
@@ -85,9 +81,7 @@
 				{#each word.letters as { text, isCorrect, isSpace, isTyped, id }}
 					<span
 						onmouseover={() => {
-							if (typingResultContextData.typingTestReplayStatus === 'inactive') {
-								typingResultContextData.activeLetterId = id;
-							}
+							typingResultContextData.activeLetterId = id;
 						}}
 						class="letter {isSpace ? 'space' : ''} {isTyped && isCorrect ? 'correct' : ''} {isTyped && !isCorrect ? 'incorrect' : ''}"
 					>
@@ -143,5 +137,8 @@
 
 	button {
 		min-width: 70px;
+	}
+	.space.incorrect {
+		background-color: red;
 	}
 </style>
