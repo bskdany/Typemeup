@@ -5,11 +5,11 @@
 	import type { TypingContextData, TypingTestRunData, UserTypingData } from '../types/interfaces';
 	import { analyse } from '../algo/textAnalysis';
 	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
-	import Configs from '../components/typingTestContainer/configs.svelte';
-	import Keyboard from '../components/typingTestContainer/keyboard.svelte';
-	import TypingResult from '../components/typingTestContainer/result/typingResult.svelte';
-	import TypingProgress from '../components/typingTestContainer/typingProgress.svelte';
-	import TypingTest from '../components/typingTestContainer/typingTest.svelte';
+	import Configs from '../components/typingTest/configs.svelte';
+	import Keyboard from '../components/typingTest/keyboard.svelte';
+	import TypingResult from '../components/typingTest/result/typingResult.svelte';
+	import TypingProgress from '../components/typingTest/typingProgress.svelte';
+	import TypingTest from '../components/typingTest/typingTest.svelte';
 	import { getUserTypingData } from '../storage/localStorageService';
 
 	let typingContextData = $state({

@@ -1,4 +1,4 @@
-import type { Letter, TextObject } from "./../../types/interfaces";
+import type { Letter, TextObject } from "../../types/interfaces";
 
 export class TextObjectHandler {
 
