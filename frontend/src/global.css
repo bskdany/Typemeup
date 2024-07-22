@@ -8,9 +8,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100dvh;
+  /* height: 100dvh; */
   flex-direction: column;
-  overflow: hidden;
+  /* overflow: hidden; */
   color: white;
 }
 
@@ -29,4 +29,17 @@ button {
 
 button:hover {
   color: #a8b9e4;
+}
+
+.selected {
+  color: #a8b9e4;
+}
+
+/* button.selected {
+  border: 1px solid #a8b9e4;
+} */
+
+.descriptionText {
+  color: white;
+  opacity: 70%;
 }

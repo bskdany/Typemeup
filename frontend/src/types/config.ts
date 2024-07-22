@@ -1,3 +1,4 @@
 export interface Config {
-  errorCorrectionMode: number
+  errorCorrectionMode: number,
+  fingerMap: string[][]
 }

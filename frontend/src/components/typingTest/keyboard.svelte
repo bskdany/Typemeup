@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, getContext } from 'svelte';
-	import type { TextObject, TypingContextData, TypingContext } from '../../interfaces';
+	import type { TextObject, TypingContextData, TypingContext } from '../../types/interfaces';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;

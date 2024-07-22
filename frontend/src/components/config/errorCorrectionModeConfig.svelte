@@ -39,6 +39,9 @@
 
 <style>
 	#container {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 		width: 100%;
 		background-color: transparent;
 		border: solid transparent;
@@ -80,17 +83,9 @@
 		flex-direction: row;
 	}
 
-	.selected {
-		color: #a8b9e4;
-	}
-
 	button {
 		background-color: #171d1f;
 		padding: 15px 10px 15px 10px;
 		border: 1px solid transparent;
-	}
-
-	button.selected {
-		border: 1px solid #a8b9e4;
 	}
 </style>
