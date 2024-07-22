@@ -7,10 +7,11 @@
 	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
 	import Configs from '../components/typingTest/configs.svelte';
 	import Keyboard from '../components/typingTest/keyboard.svelte';
-	import TypingResult from '../components/typingTest/result/typingResult.svelte';
+	// import TypingResult from '../components/typingResu';
 	import TypingProgress from '../components/typingTest/typingProgress.svelte';
 	import TypingTest from '../components/typingTest/typingTest.svelte';
 	import { getUserTypingData } from '../storage/localStorageService';
+	import TypingResult from '../components/typingResult/typingResult.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,

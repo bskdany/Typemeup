@@ -1,8 +1,7 @@
 <script lang="ts">
-	import type { TypingResultContext, TypingResultContextData } from '../../../types/interfaces';
-	import KeyPressTimingsChart from '../../chart/keyPressTimingsChart.svelte';
-	import { TextObjectHandler } from '../textObjectHandler.svelte';
 	import { getContext, onMount, setContext } from 'svelte';
+	import type { TypingResultContext, TypingResultContextData } from '../../types/interfaces';
+	import { TextObjectHandler } from '../typingTest/textObjectHandler.svelte';
 
 	const {
 		targetText,
@@ -32,6 +31,22 @@
 		}
 	}
 
+	function completeTest() {
+		for (const keyPress of userTypedText) {
+			textObject.addKeyPressed(keyPress);
+		}
+		console.log(textObject);
+
+		// textObject.addKeyPressed(remainingKeyPresses[0]);
+		// typingResultContextData.activeLetterId = textObject.globalLetterIndex;
+		// if (remainingKeyPressTimings.length > 1) {
+		// 	const timing = remainingKeyPressTimings[0];
+		// 	remainingKeyPresses.shift();
+		// 	remainingKeyPressTimings.shift();
+		// 	simulateTypingTimeout = setTimeout(() => simulateTyping(remainingKeyPresses, remainingKeyPressTimings), timing);
+		// }
+	}
+
 	function handlePlayPauseButton() {
 		typingResultContextData.typingTestReplayStatus = 'active';
 		if (playPauseButtonText === 'Play') {
@@ -55,6 +70,8 @@
 			typingResultContextData.typingTestReplayStatus = 'inactive';
 		}
 	}
+
+	completeTest();
 </script>
 
 <div id="typingTestReplayContainer">
