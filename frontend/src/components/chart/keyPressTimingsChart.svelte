@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { Chart, PointElement, type ScriptableContext } from 'chart.js';
+	import { Chart } from 'chart.js/auto';
 	import type { Letter, TypingResultContext, TypingResultContextData, TypingTestRunData } from '../../types/interfaces';
 	import { calculateWpm, getWpm } from '../typingTestRunHelper';
 	import { getContext, onMount } from 'svelte';
 	import { customHighlightPlugin } from './scatterChartProgressPlugin';
-	import type { ContextProxy } from 'chart.js/helpers';
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
 	const typingResultContext: TypingResultContext = getContext('typingResultContext');
