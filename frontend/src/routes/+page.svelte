@@ -5,7 +5,7 @@
 	import type { TypingContextData, TypingTestRunData, UserTypingData } from '../types/interfaces';
 	import { analyse } from '../algo/textAnalysis';
 	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
-	import Configs from '../components/typingTest/configs.svelte';
+	import Configs from '../components/typingTest/quickConfigs.svelte';
 	import Keyboard from '../components/typingTest/keyboard.svelte';
 	// import TypingResult from '../components/typingResu';
 	import TypingProgress from '../components/typingTest/typingProgress.svelte';
@@ -78,7 +78,7 @@
 			targetText = generateWords(100);
 		} else if (typingContextData.configTypingMode === 'words') {
 			targetText = generateWords(typingContextData.configWordAmount);
-			// targetText = ['asdfasdfasdf'];
+			targetText = ['asdfasdfasdf'];
 		} else if (typingContextData.configTypingMode === 'smart') {
 			targetText = generateWordsAlgo(userTypingData, typingContextData.configWordAmount);
 		}
