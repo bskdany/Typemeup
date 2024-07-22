@@ -1,7 +1,13 @@
 <script lang="ts">
+	import { elements } from 'chart.js';
 	import { userConfig } from '../../userConfig.svelte';
 
-	let configData: number[] = [0, 1, 2, 3];
+	let errorCorrectionModes = {
+		0: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
+		2: { name: 'Error ignore', description: 'Incorrect letters are ignored from being added' },
+		3: { name: 'Spacebar skip', description: 'Spacebar skips the word in case of error' },
+		4: { name: 'Smart', description: 'Smart error detection mode (recomended)' }
+	};
 </script>
 
 <div id="container">
@@ -9,17 +15,23 @@
 
 	<div id="content">
 		<div id="description">
-			<p>
-				<strong>0</strong> need to remove all incorrect letters before continuing<br />
-				<strong>1</strong> incorrect letters are not added, thus ignored<br />
-				<strong>2</strong> spacebar skips the word in case of an error<br />
-				<strong>3</strong> smart error detection mode <strong>(recomended)</strong>
-			</p>
+			<table>
+				<tbody>
+					{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
+						<tr style="display: flex; gap: 8px">
+							<th style="white-space: nowrap; display: flex;">{name}:</th>
+							<td class:selected={userConfig.errorCorrectionMode === parseInt(modeNumber)}>{description}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		</div>
 
 		<div id="choiceSelection">
-			{#each configData as data}
-				<button class:selected={userConfig.errorCorrectionMode === data} onclick={() => (userConfig.errorCorrectionMode = data)}>{data}</button>
+			{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
+				<button class:selected={userConfig.errorCorrectionMode === parseInt(modeNumber)} onclick={() => (userConfig.errorCorrectionMode = parseInt(modeNumber))}
+					>{name}</button
+				>
 			{/each}
 		</div>
 	</div>
@@ -35,7 +47,6 @@
 		padding: 15px;
 		box-sizing: border-box;
 		background-color: #2c2e31;
-		max-width: 60%;
 	}
 
 	#content {
@@ -49,15 +60,12 @@
 		background-color: #2c2e31;
 		min-width: fit-content;
 		height: fit-content;
-		/* padding: 10px; */
 		margin: 10px;
 		border-radius: 15px;
 		background-color: #171d1f;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		padding-left: 20px;
-		padding-right: 20px;
 		box-sizing: content-box;
 	}
 
@@ -68,6 +76,8 @@
 
 	#description {
 		opacity: 60%;
+		display: flex;
+		flex-direction: row;
 	}
 
 	.selected {
