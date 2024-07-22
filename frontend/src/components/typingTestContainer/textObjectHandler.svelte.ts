@@ -99,7 +99,6 @@ export class TextObjectHandler {
         break;
       case 3:
         this.handleKeyPressMode3(keyPressed);
-        this.gotoNextLetter();
         break;
       default:
         throw "Wrong mode, 0 to 3 please";
@@ -114,7 +113,12 @@ export class TextObjectHandler {
   }
 
   handleKeyPressMode3(keyPressed: string) {
-    if (!this.hasMistaken) {
+    if (keyPressed === "backspace") {
+      this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+      this.gotoPreviousLetter();
+    }
+
+    else if (!this.hasMistaken) {
       if (this.getLetter(0)?.text === keyPressed) {
         this.setLetterStatus(0, { isTyped: true, isCorrect: true });
       } else {
@@ -122,6 +126,7 @@ export class TextObjectHandler {
         this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
         this.hasMistaken = true;
       }
+      this.gotoNextLetter();
     }
     else {
       // handling mistake detection and correction logic
@@ -132,12 +137,13 @@ export class TextObjectHandler {
           this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "swapped" });
           this.setLetterStatus(-1, { errorStatus: "swapped" });
           // console.log("Swapped order of last two keys");
+          this.gotoNextLetter();
         }
         else {
           this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "extra" });
           // this.setLetterStatus(0, true, true);
           // console.log("Extra key pressed. Pressed " + this.wrongInputBuffer[0] + " instead of " + this.getLetter(-1).text);
-          this.gotoPreviousLetter();
+          // this.gotoPreviousLetter();
         }
         this.hasMistaken = false
         this.wrongInputBuffer = [];
@@ -149,12 +155,14 @@ export class TextObjectHandler {
         // console.log("Miss click. Pressed " + this.wrongInputBuffer[0] + " instead of " + this.getLetter(-1).text);
         this.hasMistaken = false;
         this.wrongInputBuffer = [];
+        this.gotoNextLetter();
       }
       // 3. Missed a letter
       else if (this.wrongInputBuffer[0] == this.getLetter(0)?.text) {
         this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "missed" });
         this.setLetterStatus(0, { isTyped: true, isCorrect: true });
         this.setLetterStatus(1, { isTyped: true, isCorrect: true });
+        this.gotoNextLetter();
         this.gotoNextLetter();
 
         // console.log("Missed a key");
@@ -167,6 +175,7 @@ export class TextObjectHandler {
         this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
         // console.error("Text burst");
         // console.log(this.wrongInputBuffer);
+        this.gotoNextLetter();
       }
     }
   }
@@ -187,6 +196,7 @@ export class TextObjectHandler {
   }
 
   gotoNextLetter(): boolean {
+    // console.log("Went to next letter")
     const currentWordLength = this.textObject[this.wordIndex].length;
 
     if (this.letterIndex === currentWordLength - 1) {
