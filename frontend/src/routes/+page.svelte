@@ -1,34 +1,150 @@
 <script lang="ts">
 	import '../global.css';
-	import { goto } from '$app/navigation';
-	import { onDestroy, onMount } from 'svelte';
-	import TypingTestContainer from '../components/typingTestContainer/typingTestContainer.svelte';
+	import { updated } from '$app/stores';
+	import { onMount, setContext } from 'svelte';
+	import type { TypingContextData, TypingTestRunData, UserTypingData } from '../types/interfaces';
+	import { analyse } from '../algo/textAnalysis';
+	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
+	import Configs from '../components/typingTestContainer/configs.svelte';
+	import Keyboard from '../components/typingTestContainer/keyboard.svelte';
+	import TypingResult from '../components/typingTestContainer/result/typingResult.svelte';
+	import TypingProgress from '../components/typingTestContainer/typingProgress.svelte';
+	import TypingTest from '../components/typingTestContainer/typingTest.svelte';
+	import { getUserTypingData } from '../storage/localStorageService';
 
-	function navigateToProfile() {
-		goto('/profile');
+	let typingContextData = $state({
+		displayTypingTest: true,
+		configTypingMode: 'words',
+		configWordAmount: 10,
+		configTimeAmount: 15,
+		typingTestStatus: 'ended',
+		progressTimeElapsed: 0,
+		progressWordsTyped: 0,
+		livePressedKey: { key: '', count: 0 }
+	});
+
+	setContext('typingContext', {
+		typingContextData: typingContextData
+	});
+
+	let resetTrigger: number = $state(0); // incrementing this will reset the typing test
+	let typingTestRef: TypingTest;
+	let typingTestRunData: TypingTestRunData;
+
+	let targetText: string[] = $state([]);
+
+	const userTypingData: UserTypingData = getUserTypingData();
+
+	function typingTestStarted() {
+		// something
+		console.log('Typing test started');
 	}
+
+	function typingTestEnded(data: TypingTestRunData) {
+		typingTestRunData = data;
+		typingContextData.displayTypingTest = false;
+
+		if (typingContextData.configTypingMode === 'smart') {
+			const updatedFingerData = analyse(
+				userTypingData.fingersStatistics,
+				data.targetText,
+				data.userTypedText,
+				userTypingData.fingerMap,
+				userTypingData.defaultFingersPosition
+			);
+			console.log(updatedFingerData);
+			userTypingData.fingersStatistics = updatedFingerData;
+		}
+	}
+
+	function handleTabKeyDown(event: any) {
+		if (event.key === 'Tab') {
+			event.preventDefault();
+			typingContextData.displayTypingTest = true;
+			resetTrigger += 1;
+		}
+
+		typingTestRef?.focus();
+	}
+
+	$effect(() => {
+		resetTrigger;
+		typingContextData.configWordAmount;
+		typingContextData.configTimeAmount;
+		typingContextData.configTypingMode;
+
+		if (typingContextData.configTypingMode === 'time') {
+			targetText = generateWords(100);
+		} else if (typingContextData.configTypingMode === 'words') {
+			targetText = generateWords(typingContextData.configWordAmount);
+			// targetText = ['asdfasdfasdf'];
+		} else if (typingContextData.configTypingMode === 'smart') {
+			targetText = generateWordsAlgo(userTypingData, typingContextData.configWordAmount);
+		}
+	});
+
+	onMount(() => {
+		document.addEventListener('keydown', handleTabKeyDown);
+		// return () => {
+		// 	unsubscribe;
+		// 	document.removeEventListener('keydown', handleTabKeyDown);
+		// };
+	});
 </script>
 
-<button id="profilePage" onclick={() => alert('disabled as in early development')}> Profile </button>
-<div id="typingArea">
-	<TypingTestContainer />
-</div>
+{#if typingContextData.displayTypingTest}
+	<div id="configs">
+		<Configs />
+	</div>
+
+	<div id="statusBar">
+		{#if typingContextData.typingTestStatus === 'started'}
+			<TypingProgress />
+		{:else}
+			<div style="visibility: hidden;"><TypingProgress /></div>
+		{/if}
+	</div>
+
+	{#key targetText}
+		<div id="typingTestWrapper">
+			<TypingTest {targetText} errorCorrectionMode={3} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
+		</div>
+	{/key}
+	<div id="keyboardWrapper"><Keyboard /></div>
+{:else}
+	<div id="typingTestReport">
+		<TypingResult {typingTestRunData} restart={() => (typingContextData.displayTypingTest = true)} />
+	</div>
+{/if}
 
 <style>
-	#typingArea {
-		width: 80%;
-		height: 70%;
+	#configs {
+		display: flex;
+		justify-content: center;
+	}
+	#keyboardWrapper {
+		display: flex;
+		justify-content: center;
+	}
+	#statusBar {
+		display: flex;
+		justify-content: left;
+	}
+	#typingTestWrapper {
+		display: flex;
+		justify-content: center;
+		height: 30%;
+		/* width: 80%; */
 	}
 
-	#profilePage {
-		position: absolute;
-		right: 30px;
-		top: 30px;
+	#typingTestReport {
+		width: 100%;
+		height: 100%;
 	}
 
 	@media only screen and (max-width: 767px) {
-		#typingArea {
-			width: 90%;
+		#keyboardWrapper {
+			display: none;
 		}
 	}
 </style>
