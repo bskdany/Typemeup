@@ -13,5 +13,6 @@ export const userConfig: Config = $state({
     ['p', ';', '/'],
     [' '],
     []
-  ]
+  ],
+  defaultFingersPosition: ["a", "s", "d", "f", "j", "k", "l", ";", " ", ""]
 })

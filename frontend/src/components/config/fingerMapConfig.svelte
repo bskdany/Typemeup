@@ -38,7 +38,12 @@
 		}
 	}
 
-	function handleDoubleKeySelection(key: string) {}
+	function handleDoubleKeySelection(key: string) {
+		const currentFinger = reversedFingerMap.get(key);
+		if (currentFinger !== undefined && selectedFinger === currentFinger) {
+			userConfig.defaultFingersPosition[selectedFinger] = key;
+		}
+	}
 </script>
 
 <div id="container">
@@ -70,7 +75,8 @@
 								onclick={() => handleKeySelection(key.toLowerCase())}
 								ondblclick={() => handleDoubleKeySelection(key.toLowerCase())}
 								class="key"
-								style="background-color: {fingerArr[reversedFingerMap.get(key.toLowerCase()) ?? 0].color};"
+								style="background-color: {fingerArr[reversedFingerMap.get(key.toLowerCase()) ?? 0].color};
+                opacity: {userConfig.defaultFingersPosition.indexOf(key.toLowerCase()) >= 0 ? '100%' : '60%'}"
 							>
 								{key}
 							</button>
@@ -111,14 +117,13 @@
 		</div>
 	</div>
 
-	<!-- <div id="instructions">
+	<div id="instructions">
 		<h3>How to use</h3>
 		<p class="dimmedText">
-			Select the base (qwerty), then click on New, this will override the custom fingermap.<br /><br /> Select the finger you want to configure, then select
-			each key it presses. Double click a key to mark it as the default resting position of the finger.<br /><br /> Clicking the reset button on the custom
-			layout will reset it to before editing.<br /><br />Remember to save the layout or it will be lost!!!
+			Select the finger you want to configure, then select each key it presses.<br />
+			Double click a key to mark it as the default resting position of the finger.
 		</p>
-	</div> -->
+	</div>
 </div>
 
 <style>
