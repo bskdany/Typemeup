@@ -7,10 +7,8 @@
 	const row1 = ['', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', ''];
 	const row2 = ['', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'", ''];
 	const row3 = ['', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', ''];
-	const row4 = ['', 'Space', ''];
+	const row4 = ['', ' ', ''];
 	const rows = [row0, row1, row2, row3, row4];
-
-	// let fingerMap: string[][] = $state();
 
 	const fingerArr = [
 		{ id: 0, name: 'Pinkie-L', color: 'tomato' },

@@ -12,6 +12,6 @@ export const userConfig: Config = $state({
     ['o', 'l', '.'],
     ['p', ';', '/'],
     [' '],
-    [' ']
+    []
   ]
 })
