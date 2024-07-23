@@ -1,18 +1,20 @@
+/* y this? https://wiki.csswg.org/ideas/mistakes */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
-  /* background-color: #323437; */
   background-color: #171d1f;
-  /* font-family: 'Roboto Mono', monospace; */
-  /* font-family: Arial, Helvetica, sans-serif; */
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  /* letter-spacing: 2px; */
   display: flex;
   justify-content: center;
   align-items: center;
-  /* height: 100dvh; */
   flex-direction: column;
-  /* overflow: hidden; */
   color: white;
 }
+
 
 footer {
   display: none;
@@ -39,7 +41,15 @@ button:hover {
   border: 1px solid #a8b9e4;
 } */
 
-.descriptionText {
+.dimmedText {
   color: white;
-  opacity: 70%;
+  opacity: 80%;
+}
+
+button:active {
+  border: 1px solid #a8b9e4;
+  /* -webkit-box-shadow: inset 0px 0px 5px #a8b9e4; */
+  /* -moz-box-shadow: inset 0px 0px 5px #a8b9e4; */
+  /* box-shadow: inset 0px 0px 5px #a8b9e4; */
+  /* outline: none; */
 }

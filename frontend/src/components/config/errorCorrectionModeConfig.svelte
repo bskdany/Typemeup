@@ -69,7 +69,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		box-sizing: content-box;
+		/* box-sizing: content-box; */
 	}
 
 	#title {

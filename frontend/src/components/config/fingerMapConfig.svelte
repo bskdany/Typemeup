@@ -10,20 +10,7 @@
 	const row4 = ['', 'Space', ''];
 	const rows = [row0, row1, row2, row3, row4];
 
-	const fingerMapQwerty: string[][] = [
-		['q', 'a', 'z'],
-		['w', 's', 'x'],
-		['e', 'd', 'c'],
-		['r', 'f', 'v', 't', 'g', 'b'],
-		['u', 'j', 'm', 'y', 'h', 'h', 'n'],
-		['i', 'k', ','],
-		['o', 'l', '.'],
-		['p', ';', '/'],
-		[' '],
-		[' ']
-	];
-
-	const fingerMapCustom: string[][] = [[], [], [], [], [], [], [], [], [], []];
+	// let fingerMap: string[][] = $state();
 
 	const fingerArr = [
 		{ id: 0, name: 'Pinkie-L', color: 'tomato' },
@@ -43,27 +30,37 @@
 
 	let reversedFingerMap = $derived(reverseFingerMap(userConfig.fingerMap));
 
-	let selectedFinger = $state();
-	let selectedMode = $state('custom');
+	let selectedFinger: number = $state(-1);
+
+	function handleKeySelection(key: string) {
+		const currentFinger = reversedFingerMap.get(key);
+		if (currentFinger !== undefined && selectedFinger >= 0 && !userConfig.fingerMap[selectedFinger]?.includes(key)) {
+			userConfig.fingerMap[currentFinger] = userConfig.fingerMap[currentFinger].filter((value) => value !== key);
+			userConfig.fingerMap[selectedFinger].push(key);
+		}
+	}
+
+	function handleDoubleKeySelection(key: string) {}
 </script>
 
 <div id="container">
 	<div id="title">Finger Map</div>
-	<div class="descriptionText">
-		Select the finger you want to configure, then select each key it presses. Double click a key to mark it as the default resting position of the finger.
-	</div>
 
-	<div id="presetBar">
+	<!-- <div id="presetBar">
 		<div>
-			<button class:selected={selectedMode === 'qwerty'} onclick={() => ((userConfig.fingerMap = [...fingerMapQwerty]), (selectedMode = 'qwerty'))}
+			<button class:selected={selectedMode === 'qwerty'} onclick={() => ((userConfig.fingerMap = [...qwertyFingerMap]), (selectedMode = 'qwerty'))}
 				>Qwerty</button
 			>
-			<button class:selected={selectedMode === 'custom'} onclick={() => ((userConfig.fingerMap = [...fingerMapCustom]), (selectedMode = 'custom'))}
+			<button class:selected={selectedMode === 'custom'} onclick={() => ((userConfig.fingerMap = [...customFingerMap]), (selectedMode = 'custom'))}
 				>Custom</button
 			>
 		</div>
-		<button>Reset</button>
-	</div>
+		<div>
+			<button>New</button>
+			<button>Save</button>
+			<button onclick={discardChanges}>Discard</button>
+		</div>
+	</div> -->
 
 	<div id="content">
 		<div id="keyboardWrapper">
@@ -71,9 +68,14 @@
 				<div class="row" id="row{index}">
 					{#each row as key}
 						{#if reversedFingerMap.get(key.toLowerCase()) !== undefined}
-							<div class="key" style="background-color: {fingerArr[reversedFingerMap.get(key.toLowerCase()) ?? 0].color};">
+							<button
+								onclick={() => handleKeySelection(key.toLowerCase())}
+								ondblclick={() => handleDoubleKeySelection(key.toLowerCase())}
+								class="key"
+								style="background-color: {fingerArr[reversedFingerMap.get(key.toLowerCase()) ?? 0].color};"
+							>
 								{key}
-							</div>
+							</button>
 						{:else}
 							<div class="key">
 								{key}
@@ -110,6 +112,15 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- <div id="instructions">
+		<h3>How to use</h3>
+		<p class="dimmedText">
+			Select the base (qwerty), then click on New, this will override the custom fingermap.<br /><br /> Select the finger you want to configure, then select
+			each key it presses. Double click a key to mark it as the default resting position of the finger.<br /><br /> Clicking the reset button on the custom
+			layout will reset it to before editing.<br /><br />Remember to save the layout or it will be lost!!!
+		</p>
+	</div> -->
 </div>
 
 <style>
@@ -204,8 +215,8 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		transition: border-color 0.5s linear;
-		transition: background-color 0.5s linear;
+		/* transition: border-color 0.5s linear; */
+		/* transition: background-color 0.5s linear; */
 	}
 
 	button {
