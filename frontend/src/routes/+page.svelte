@@ -12,6 +12,7 @@
 	import TypingTest from '../components/typingTest/typingTest.svelte';
 	import { getUserTypingData } from '../storage/localStorageService';
 	import TypingResult from '../components/typingResult/typingResult.svelte';
+	import { userConfig } from '../userConfig.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -38,7 +39,6 @@
 
 	function typingTestStarted() {
 		// something
-		console.log('Typing test started');
 	}
 
 	function typingTestEnded(data: TypingTestRunData) {
@@ -50,8 +50,8 @@
 				userTypingData.fingersStatistics,
 				data.targetText,
 				data.userTypedText,
-				userTypingData.fingerMap,
-				userTypingData.defaultFingersPosition
+				userConfig.fingerMap,
+				userConfig.defaultFingersPosition
 			);
 			console.log(updatedFingerData);
 			userTypingData.fingersStatistics = updatedFingerData;
@@ -108,7 +108,13 @@
 
 	{#key targetText}
 		<div id="typingTestWrapper">
-			<TypingTest {targetText} errorCorrectionMode={3} testStarted={typingTestStarted} testEnded={typingTestEnded} bind:this={typingTestRef} />
+			<TypingTest
+				{targetText}
+				errorCorrectionMode={userConfig.errorCorrectionMode}
+				testStarted={typingTestStarted}
+				testEnded={typingTestEnded}
+				bind:this={typingTestRef}
+			/>
 		</div>
 	{/key}
 	<div id="keyboardWrapper"><Keyboard /></div>
