@@ -3,27 +3,34 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/index.ts",
-    "build": "tsc",
-    "serve": "node dist/index.js"
+    "dev": "npx tsx watch src/index.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@lucia-auth/adapter-sqlite": "^3.0.2",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.8",
     "bcrypt": "^5.1.1",
+    "better-sqlite3": "^11.1.2",
     "cookie": "^0.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "oslo": "^1.2.1",
     "pg": "^8.11.3",
+    "sqlite3": "^5.1.7",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3",
     "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "lucia": "^3.2.0",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
   }
 }

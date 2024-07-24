@@ -1,14 +1,9 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs",
-      "outDir": "./dist",
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true
-    },
-    "include": ["src/**/*.ts", "src/db/database.ts"],
-    "exclude": ["node_modules"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
   }
-  
+}
