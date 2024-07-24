@@ -2,9 +2,9 @@ import express from "express";
 import { verifyRequestOrigin } from "lucia";
 import dotenv from "dotenv";
 import { lucia } from "./lib/auth.js";
-import { loginRouter } from "./routes/login.js";
-import { signupRouter } from "./routes/signup.js";
 import type { User, Session } from "lucia";
+import { profileRouter } from "./routes/profile/profileRouter.js";
+import { authRouter } from "./routes/auth/authRouter.js";
 
 dotenv.config();
 const app = express();
@@ -42,7 +42,8 @@ app.use(async (req, res, next) => {
   return next();
 });
 
-app.use(loginRouter, signupRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/profile", profileRouter);
 
 app.listen(process.env.PORT);
 

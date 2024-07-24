@@ -1,13 +1,10 @@
-import express from "express";
-import { db } from "../lib/db.js";
+import { Request, Response } from "express";
+import { db } from "../../lib/db.js";
 import { hash } from "@node-rs/argon2";
-import { lucia } from "../lib/auth.js";
-import { SqliteError } from "better-sqlite3";
+import { lucia } from "../../lib/auth.js";
 import { generateId } from "lucia";
 
-export const signupRouter = express.Router();
-
-signupRouter.post("/api/signup", async (req, res) => {
+export const signupRoute = async (req: Request, res: Response) => {
   const username: string | null = req.body.username ?? null;
   if (!username || username.length < 3 || username.length > 31 || !/^[a-z0-9_-]+$/.test(username)) {
     return res.status(400).json({ status: "error", message: 'Invalid username format' });
@@ -47,4 +44,4 @@ signupRouter.post("/api/signup", async (req, res) => {
 
     return res.status(500).json({ status: "error", message: "Internal server error" });
   }
-});
+};
