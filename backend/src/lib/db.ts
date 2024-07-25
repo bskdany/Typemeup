@@ -1,12 +1,8 @@
+
 import Database from 'better-sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { config } from './config.js';
 
-const dbPath: string = path.resolve(__dirname, '..', '..', '..', 'data', 'dev_typemeup.sqlite');
-
-export const db = new Database(dbPath);
+export const db = new Database(config.db_path);
 
 db.exec(`CREATE TABLE IF NOT EXISTS user (
   id TEXT NOT NULL PRIMARY KEY,

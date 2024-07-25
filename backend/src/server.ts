@@ -2,15 +2,13 @@ import express from "express";
 import type { User, Session } from "lucia";
 import { profileRouter } from "./routes/profile/profileRouter.js";
 import { authRouter } from "./routes/auth/authRouter.js";
-import dotenv from "dotenv";
 import { corsProtection, validateSession } from "./routes/middleware.js";
-import { envPath } from "./lib/envPath.js";
+import { config } from "./lib/config.js";
 
-dotenv.config({ path: envPath });
 const app = express();
 app.use(express.urlencoded());
 
-if (process.env.NODE_ENV === "production") {
+if (config.env === "production") {
   app.use(corsProtection);
 }
 app.use(validateSession);
@@ -18,9 +16,9 @@ app.use(validateSession);
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 
-app.listen(process.env.PORT_BACKEND);
+app.listen(config.port);
 
-console.log("Server running on port " + process.env.PORT_BACKEND);
+console.log("Server running on port " + config.port);
 
 declare global {
   namespace Express {
