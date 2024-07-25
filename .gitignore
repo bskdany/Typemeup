@@ -12,3 +12,4 @@ vite.config.ts.timestamp-*
 /frontend/.svelte-kit/
 /build/
 /data/
+dist/
