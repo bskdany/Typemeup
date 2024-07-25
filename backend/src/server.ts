@@ -4,7 +4,9 @@ import { profileRouter } from "./routes/profile/profileRouter.js";
 import { authRouter } from "./routes/auth/authRouter.js";
 import dotenv from "dotenv";
 import { corsProtection, validateSession } from "./routes/middleware.js";
-dotenv.config();
+import { envPath } from "./lib/envPath.js";
+
+dotenv.config({ path: envPath });
 const app = express();
 app.use(express.urlencoded());
 
@@ -16,9 +18,9 @@ app.use(validateSession);
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 
-app.listen(process.env.PORT);
+app.listen(process.env.PORT_BACKEND);
 
-console.log("Server running on port " + process.env.PORT);
+console.log("Server running on port " + process.env.PORT_BACKEND);
 
 declare global {
   namespace Express {

@@ -6,7 +6,7 @@ const __dirname = path.dirname(__filename);
 
 const dbPath: string = path.resolve(__dirname, '..', '..', '..', 'data', 'dev_typemeup.sqlite');
 
-export const db = new Database(dbPath, { verbose: console.log });
+export const db = new Database(dbPath);
 
 db.exec(`CREATE TABLE IF NOT EXISTS user (
   id TEXT NOT NULL PRIMARY KEY,
