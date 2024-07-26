@@ -5,6 +5,10 @@ import { authRouter } from "./routes/auth/authRouter.js";
 import { corsProtection, validateSession } from "./routes/middleware.js";
 import { config } from "./lib/config.js";
 
+console.log("Server running in " + config.env + " environment");
+console.log("Backend port: " + config.port);
+console.log("Db location: " + config.db_path + "/" + config.db_name);
+
 const app = express();
 app.use(express.urlencoded());
 

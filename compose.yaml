@@ -1,52 +1,27 @@
-version: '3'
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
 services:
-  backend:
-    image: typemeup-backend:latest
-    container_name: typemeup-backend
-    environment:
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
-      - DB_HOST_ADDR=172.24.0.2
-      - DB_NAME=typemeup
-      - DB_PORT=5432
-      - JWT_KEY=YOUR_JWT_KEY
-    ports:
-      - "3000:3000"
-    links:
-      - db
-
   frontend:
-    image: typemeup-frontend:latest
-    container_name: typemeup-frontend
+    build:
+      context: frontend
+    env_file:
+      - .env
     ports:
-      - "5173:3000"
-    links:
-      - db
+      - "4445:${PORT_FRONTEND}"
 
-  db:
-    container_name: pg_container
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: typemeup
+  backend:
+    build:
+      context: backend
+    env_file:
+      - .env
     ports:
-      - "5432:5432"
+      - "4446:${PORT_BACKEND}"
     volumes:
-      - postgres_typemeup:/var/lib/postgresql/data
-
-  pgadmin:
-    container_name: pgadmin4_container
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
-    ports:
-      - "5050:80"
-    links:
-      - db
-
-volumes:
-  postgres_typemeup:
+      - "./data:${PATH_TO_DB}"
