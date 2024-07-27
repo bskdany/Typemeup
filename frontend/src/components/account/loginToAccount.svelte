@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { getData } from '../../api/fetch';
 
 	let username: string = '';
@@ -7,8 +8,8 @@
 
 	const loginToAccount = async () => {
 		try {
-			const result = await getData('/auth/login', { method: 'POST', body: { usenrame: username, password: password } });
-			console.log(result);
+			await getData('/auth/login', { method: 'POST', body: { username: username, password: password } });
+			goto('/profile');
 		} catch (error) {
 			errorMessage = error;
 		}
