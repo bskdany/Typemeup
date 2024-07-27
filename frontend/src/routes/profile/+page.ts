@@ -1,14 +1,7 @@
-import { goto } from '$app/navigation';
-import { redirect } from '@sveltejs/kit';
-import { accessRestriced, checkJWT } from '../../api/account'
-import type { PageLoad } from './$types'
+import { getData } from '../../api/fetch';
+import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ parent, data }) => {
-    try{
-        const result = await accessRestriced();
-        return result;
-    }
-    catch(error){
-        redirect(301, '/account')
-    }
+
+  return getData("/profile")
 }

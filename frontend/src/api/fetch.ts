@@ -1,16 +1,36 @@
-const baseUrl = "https://api.bskdany.com";
+import { redirect } from "@sveltejs/kit";
+const baseUrl = import.meta.env.BASE_URL;
 
-export async function fetchData(endpoint: string, options = {}) {
-  const response = await fetch(`${baseUrl}${endpoint}`, options);
-  // console.log(response)
+export async function getData(endpoint: string, options?: { body?: {}, method?: "GET" | "POST" }) {
+  console.log(options?.body)
+  const response = await fetch(`${baseUrl}${endpoint}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    credentials: 'include',
+    method: options?.method ?? "GET",
+    body: options?.body ? JSON.stringify(options?.body) : undefined
+  });
+
   if (!response.ok) {
-    const message = await response.json();
-    if (!message) {
-      throw new Error(response.statusText);
-    }
-    else {
-      throw new Error(message.error)
+    if (response.status === 401 || response.status === 403) {
+      throw redirect(302, '/account');
+    } else {
+      console.log(response)
+      let message;
+      try {
+        message = await response.json();
+      } catch (error) {
+        throw new Error(response.statusText);
+      }
+      throw new Error(message.error || response.statusText);
     }
   }
-  return response.json()
+
+  try {
+    return await response.json();
+  } catch (error) {
+    throw new Error('Failed to parse JSON response');
+  }
 }

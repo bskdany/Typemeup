@@ -2,16 +2,11 @@ import { lucia } from "../lib/auth.js";
 import { NextFunction, Request, Response } from "express";
 import { verifyRequestOrigin } from "lucia";
 
-// manual cors protection
-const corsProtection = async (req: Request, res: Response, next: NextFunction) => {
-  const originHeader = req.headers.origin ?? null;
-  const hostHeader = req.headers.host ?? null;
-  if (!originHeader || !hostHeader || !verifyRequestOrigin(originHeader, [hostHeader])) {
-    return res.status(403).json({ status: "error", message: "CORS HIT PANIK" });
-  }
+const devMode = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.method + " " + req.path + " " + JSON.stringify(req.body));
+  next();
+}
 
-  return next();
-};
 
 // session validation
 const validateSession = async (req: Request, res: Response, next: NextFunction) => {
@@ -53,7 +48,7 @@ const authorizeSession = async (req: Request, res: Response, next: NextFunction)
 }
 
 export {
-  corsProtection,
   validateSession,
-  authorizeSession
+  authorizeSession,
+  devMode
 }

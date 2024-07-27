@@ -5,4 +5,4 @@ import { profileRoute } from "./profile.js";
 export const profileRouter = express.Router();
 profileRouter.use(authorizeSession);
 
-profileRouter.post('/', profileRoute);
+profileRouter.get('/', profileRoute);

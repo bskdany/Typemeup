@@ -5,20 +5,22 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
-    "dev": "npx tsx watch --env-file=../.env src/server.ts"
+    "start": "NODE_ENV=production node dist/server.js",
+    "dev": "NODE_ENV=development npx tsx watch --env-file=../.env src/server.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lucia": "^3.2.0",
     "@lucia-auth/adapter-sqlite": "^3.0.2",
     "better-sqlite3": "^11.1.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "lucia": "^3.2.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.11",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.12",
     "ts-node": "^10.9.2",
