@@ -17,14 +17,13 @@ export async function getData(endpoint: string, options?: { body?: {}, method?: 
     if (response.status === 401 || response.status === 403) {
       throw redirect(302, '/account');
     } else {
-      console.log(response)
-      let message;
+      let errorData;
       try {
-        message = await response.json();
+        errorData = await response.json() as any;
       } catch (error) {
         throw new Error(response.statusText);
       }
-      throw new Error(message.error || response.statusText);
+      throw new Error(errorData.message || response.statusText);
     }
   }
 

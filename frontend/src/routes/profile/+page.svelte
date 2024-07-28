@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { getData } from '../../api/fetch';
+
+	function logout() {
+		try {
+			getData('/auth/logout', { method: 'POST' });
+			goto('/account');
+		} catch (e) {
+			console.error(e);
+		}
+	}
 </script>
 
-<!-- <button id="homepage" on:click={navigateToAHomePage}> Home </button>
-<div>
-	{result}
-</div>
-<button on:click={logoutHandler} id="logout">Logout</button> -->
+<button onclick={logout}>Logout</button>
 
 PROFILE
 
