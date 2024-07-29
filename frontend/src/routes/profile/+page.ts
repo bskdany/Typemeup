@@ -1,9 +1,9 @@
-import { getData } from '../../api/fetch';
+import { fetchBackend } from '../../lib/fetch';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ parent, data }) => {
+export const load: PageLoad = async ({ fetch }) => {
   try {
-    const data = await getData("/profile");
+    const data = await fetchBackend(fetch, "/profile");
     return JSON.parse(data.message)
   }
   catch (e) {

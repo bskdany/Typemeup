@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { getData } from '../../api/fetch';
+	import { fetchBackend } from '../../lib/fetch';
 	import { userData } from '../../globalUserData.svelte';
 
 	let username: string = '';
@@ -9,7 +9,7 @@
 
 	const loginToAccount = async () => {
 		try {
-			const data = await getData('/auth/login', { method: 'POST', body: { username: username, password: password } });
+			const data = await fetchBackend(fetch, '/auth/login', { method: 'POST', body: { username: username, password: password } });
 			console.log(data);
 			userData.username = data.username;
 			goto('/profile');

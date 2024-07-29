@@ -12,7 +12,7 @@
 	import TypingTest from '../components/typingTest/typingTest.svelte';
 	import TypingResult from '../components/typingResult/typingResult.svelte';
 	import { userConfig } from '../userConfig.svelte';
-	import { getData } from '../api/fetch';
+	import { fetchBackend } from '../lib/fetch';
 	import { getAccuracy, getWpm } from '../components/typingTestRunHelper';
 	import { getUserTypingData } from '../storage/localStorageService';
 	import { isLoggedIn } from '../globalUserData.svelte';
@@ -49,7 +49,7 @@
 
 		if (isLoggedIn()) {
 			try {
-				getData('/profile/saveTypingTest', {
+				fetchBackend(fetch, '/profile/saveTypingTest', {
 					method: 'POST',
 					body: {
 						typingMode:

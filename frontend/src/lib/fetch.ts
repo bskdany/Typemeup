@@ -2,7 +2,7 @@ import { goto } from "$app/navigation";
 const baseUrl = import.meta.env.BASE_URL;
 const redirectWhitelistedRoutes = ["/api/config/getUserConfig"]
 
-export async function getData(endpoint: string, options?: { body?: {}, method?: "GET" | "POST" }) {
+export async function fetchBackend(fetch: any, endpoint: string, options?: { body?: {}, method?: "GET" | "POST" }) {
   const response = await fetch(`${baseUrl}${endpoint}`, {
     headers: {
       'Content-Type': 'application/json',

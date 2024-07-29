@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { getData } from '../../api/fetch';
+	import { fetchBackend } from '../../lib/fetch';
 
 	let username: string = '';
 	let password1: string = '';
@@ -13,7 +13,7 @@
 			return;
 		}
 		try {
-			await getData('/auth/signup', { method: 'POST', body: { username: username, password: password1 } });
+			await fetchBackend(fetch, '/auth/signup', { method: 'POST', body: { username: username, password: password1 } });
 			goto('/profile');
 		} catch (error) {
 			errorMessage = error;
