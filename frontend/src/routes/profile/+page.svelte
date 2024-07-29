@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { getData } from '../../api/fetch';
+	import ProfileOverview from '../../components/profile/profileOverview.svelte';
+
+	export let data;
+	console.log(data);
 
 	function logout() {
 		try {
@@ -12,9 +16,9 @@
 	}
 </script>
 
-<button onclick={logout}>Logout</button>
+<!-- <ProfileOverview username={data.username} testsStarted={data.testsStarted} testsCompleted={data.testsCompleted} /> -->
 
-PROFILE
+<button onclick={logout}>Logout</button>
 
 <style>
 </style>

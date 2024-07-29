@@ -105,4 +105,6 @@ export interface TypingTestRunData {
   keyPressTimings: number[];
   textObject: TextObject[];
   errorCorrectionMode: number;
+  timeStarted: string;
+  timeEnded: string;
 }

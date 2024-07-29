@@ -43,12 +43,14 @@
 	let msTime = 0;
 	let msTimeAtLastKeyPress: number;
 	let timeInterval: any = null;
+	let timeStarted: string;
 
 	const keyPressTimings: number[] = [];
 
 	function typingTestStarted() {
 		msTime = 0;
 		msTimeAtLastKeyPress = Date.now();
+		timeStarted = new Date().toISOString();
 		timeInterval = setInterval(() => {
 			msTime += 10;
 			if (msTime % 1000 === 0) {
@@ -75,7 +77,9 @@
 				userTypedText: textObject.userTypedText,
 				keyPressTimings: keyPressTimings,
 				textObject: JSON.parse(JSON.stringify(textObject.textObject)), // deep copy
-				errorCorrectionMode: errorCorrectionMode
+				errorCorrectionMode: errorCorrectionMode,
+				timeStarted: timeStarted,
+				timeEnded: new Date().toISOString()
 			});
 		}
 	}

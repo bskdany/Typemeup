@@ -2,7 +2,6 @@ import { redirect } from "@sveltejs/kit";
 const baseUrl = import.meta.env.BASE_URL;
 
 export async function getData(endpoint: string, options?: { body?: {}, method?: "GET" | "POST" }) {
-  console.log(options?.body)
   const response = await fetch(`${baseUrl}${endpoint}`, {
     headers: {
       'Content-Type': 'application/json',
