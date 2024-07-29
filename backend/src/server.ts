@@ -6,6 +6,7 @@ import { devMode, validateSession } from "./routes/middleware.js";
 import { config } from "./lib/config.js";
 import cors from 'cors';
 import { url } from "inspector";
+import { configRouter } from "./routes/config/configRouter.js";
 
 console.log("Server running in " + config.env + " environment");
 console.log("Backend port: " + config.port_backend);
@@ -30,6 +31,7 @@ app.use(validateSession);
 
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
+app.use("/api/config", configRouter);
 
 app.listen(config.port_backend);
 
