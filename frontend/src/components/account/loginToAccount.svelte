@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { getData } from '../../api/fetch';
+	import { userData } from '../../globalUserData.svelte';
 
 	let username: string = '';
 	let password: string = '';
@@ -8,7 +9,9 @@
 
 	const loginToAccount = async () => {
 		try {
-			await getData('/auth/login', { method: 'POST', body: { username: username, password: password } });
+			const data = await getData('/auth/login', { method: 'POST', body: { username: username, password: password } });
+			console.log(data);
+			userData.username = data.username;
 			goto('/profile');
 		} catch (error) {
 			errorMessage = error;

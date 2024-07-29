@@ -15,6 +15,7 @@
 	import { getData } from '../api/fetch';
 	import { getAccuracy, getWpm } from '../components/typingTestRunHelper';
 	import { getUserTypingData } from '../storage/localStorageService';
+	import { isLoggedIn } from '../globalUserData.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -46,25 +47,27 @@
 	function typingTestEnded(data: TypingTestRunData) {
 		typingTestRunData = data;
 
-		try {
-			getData('/profile/saveTypingTest', {
-				method: 'POST',
-				body: {
-					typingMode:
-						typingContextData.configTypingMode +
-						' ' +
-						(typingContextData.configTypingMode === 'time' ? typingContextData.configTimeAmount : typingContextData.configWordAmount),
-					errorCorrectionMode: data.errorCorrectionMode,
-					targetText: data.targetText.flat().join(' '),
-					timeTaken: data.timeTaken,
-					timeStarted: data.timeStarted,
-					timeEnded: data.timeEnded,
-					wpm: getWpm(typingTestRunData),
-					accuracy: getAccuracy(typingTestRunData)
-				}
-			});
-		} catch (e) {
-			console.error(e);
+		if (isLoggedIn()) {
+			try {
+				getData('/profile/saveTypingTest', {
+					method: 'POST',
+					body: {
+						typingMode:
+							typingContextData.configTypingMode +
+							' ' +
+							(typingContextData.configTypingMode === 'time' ? typingContextData.configTimeAmount : typingContextData.configWordAmount),
+						errorCorrectionMode: data.errorCorrectionMode,
+						targetText: data.targetText.flat().join(' '),
+						timeTaken: data.timeTaken,
+						timeStarted: data.timeStarted,
+						timeEnded: data.timeEnded,
+						wpm: getWpm(typingTestRunData),
+						accuracy: getAccuracy(typingTestRunData)
+					}
+				});
+			} catch (e) {
+				console.error(e);
+			}
 		}
 
 		typingContextData.displayTypingTest = false;

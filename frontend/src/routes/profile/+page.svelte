@@ -2,13 +2,12 @@
 	import { goto } from '$app/navigation';
 	import { getData } from '../../api/fetch';
 	import ProfileOverview from '../../components/profile/profileOverview.svelte';
-
-	export let data;
-	console.log(data);
+	import { userData } from '../../globalUserData.svelte';
 
 	function logout() {
 		try {
 			getData('/auth/logout', { method: 'POST' });
+			userData.username = '';
 			goto('/account');
 		} catch (e) {
 			console.error(e);

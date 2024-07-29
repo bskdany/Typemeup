@@ -33,5 +33,5 @@ export const loginRoute = async (req: Request, res: Response) => {
 
   const session = await lucia.createSession(existingUser.id, {});
   res.setHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
-  return res.status(200).json({ status: "success" })
+  return res.status(200).json({ status: "success", username: username });
 };

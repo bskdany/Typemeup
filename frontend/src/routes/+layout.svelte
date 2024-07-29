@@ -2,6 +2,7 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { userData } from '../globalUserData.svelte';
 
 	let { children } = $props();
 	let currentPath = $derived($page.url.pathname);
@@ -10,11 +11,11 @@
 	let displayConfig: boolean = $state(false);
 	let displayProfile: boolean = $state(false);
 
-	const navigationObject = {
+	const navigationObject = $derived({
 		'/': 'Home',
 		'/config': 'Config',
-		'/profile': 'Profile'
-	};
+		'/profile': `Profile ${userData.username}`
+	});
 </script>
 
 <div id="app">
