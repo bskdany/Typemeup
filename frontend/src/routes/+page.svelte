@@ -10,11 +10,11 @@
 	// import TypingResult from '../components/typingResu';
 	import TypingProgress from '../components/typingTest/typingProgress.svelte';
 	import TypingTest from '../components/typingTest/typingTest.svelte';
-	import { getUserTypingData } from '../storage/localStorageService';
 	import TypingResult from '../components/typingResult/typingResult.svelte';
 	import { userConfig } from '../userConfig.svelte';
 	import { getData } from '../api/fetch';
 	import { getAccuracy, getWpm } from '../components/typingTestRunHelper';
+	import { getUserTypingData } from '../storage/localStorageService';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
