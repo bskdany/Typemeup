@@ -1,6 +1,6 @@
 import { goto } from "$app/navigation";
 const baseUrl = import.meta.env.BASE_URL;
-const redirectWhitelistedRoutes = ["/api/config/getUserConfig"]
+const redirectWhitelistedRoutes = ["/config/getUserConfig"]
 
 export async function fetchBackend(fetch: any, endpoint: string, options?: { body?: {}, method?: "GET" | "POST" }) {
   const response = await fetch(`${baseUrl}${endpoint}`, {
@@ -12,8 +12,9 @@ export async function fetchBackend(fetch: any, endpoint: string, options?: { bod
     method: options?.method ?? "GET",
     body: options?.body ? JSON.stringify(options?.body) : undefined
   });
+
   if (!response.ok) {
-    if ((response.status === 401 || response.status === 403) && !redirectWhitelistedRoutes.find(url => response.url.endsWith(url))) {
+    if ((response.status === 401 || response.status === 403) && !redirectWhitelistedRoutes.includes(endpoint)) {
       goto('/account');
     }
 
