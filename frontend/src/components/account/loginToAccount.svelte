@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { fetchBackend } from '../../lib/fetch';
-	import { userData } from '../../userData.svelte';
+	import { userData } from '../../shared/userData.svelte';
 
 	let username: string = '';
 	let password: string = '';

@@ -15,7 +15,7 @@
 	import { fetchBackend } from '../lib/fetch';
 	import { getAccuracy, getWpm } from '../components/typingTestRunHelper';
 	import { getUserTypingData } from '../storage/localStorageService';
-	import { isLoggedIn, userData } from '../userData.svelte';
+	import { isLoggedIn, userData } from '../shared/userData.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,

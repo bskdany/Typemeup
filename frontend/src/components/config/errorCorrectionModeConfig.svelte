@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { userData } from '../../userData.svelte';
+	import { userData } from '../../shared/userData.svelte';
 
 	let errorCorrectionModes = {
 		0: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },

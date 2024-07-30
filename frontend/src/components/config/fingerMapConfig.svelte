@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { reverseFingerMap } from '../../algo/fingersStatisticsHelper';
-	import { userData } from '../../userData.svelte';
+	import { userData } from '../../shared/userData.svelte';
 
 	let pressedKey: string = $state('');
 	const row0 = ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'];
