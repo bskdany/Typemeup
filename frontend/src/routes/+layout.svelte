@@ -10,16 +10,6 @@
 	let { children } = $props();
 	let currentPath = $derived($page.url.pathname);
 
-	let displayHome: boolean = $state(false);
-	let displayConfig: boolean = $state(false);
-	let displayProfile: boolean = $state(false);
-
-	const navigationObject = $derived({
-		'/': 'Home',
-		'/config': 'Config',
-		'/profile': `Profile ${userData.username}`
-	});
-
 	async function saveConfig() {
 		try {
 			await fetchBackend(fetch, '/config/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
@@ -28,6 +18,27 @@
 			console.error(e);
 		}
 	}
+
+	async function logout() {
+		try {
+			await fetchBackend(fetch, '/auth/logout', { method: 'POST' });
+			userData.username = '';
+			goto('/account');
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	const navigationObject = $derived({
+		'/': 'Home',
+		'/config': 'Config',
+		'/profile': `Profile ${userData.username}`
+	});
+
+	const pageHelperButtons: { [path: string]: [string, () => void] } = {
+		'/config': ['Save', saveConfig],
+		'/profile': ['Logout', logout]
+	};
 </script>
 
 <div id="app">
@@ -38,7 +49,14 @@
 	</div>
 
 	<header>
-		<button onclick={() => saveConfig()} style={currentPath !== '/config' ? 'visibility:hidden' : ''}> Save </button>
+		{#if currentPath in pageHelperButtons}
+			<button onclick={() => pageHelperButtons[currentPath][1]()}>
+				{pageHelperButtons[currentPath][0]}
+			</button>
+		{:else}
+			<button style="visibility: hidden;"></button>
+		{/if}
+
 		<div id="globalNavigation">
 			{#each Object.entries(navigationObject) as [path, title]}
 				{#if currentPath !== path}
