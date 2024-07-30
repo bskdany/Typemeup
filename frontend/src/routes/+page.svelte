@@ -11,11 +11,11 @@
 	import TypingProgress from '../components/typingTest/typingProgress.svelte';
 	import TypingTest from '../components/typingTest/typingTest.svelte';
 	import TypingResult from '../components/typingResult/typingResult.svelte';
-	import { userConfig } from '../userConfig.svelte';
+	// import { userConfig } from '../userConfig.svelte';
 	import { fetchBackend } from '../lib/fetch';
 	import { getAccuracy, getWpm } from '../components/typingTestRunHelper';
 	import { getUserTypingData } from '../storage/localStorageService';
-	import { isLoggedIn } from '../globalUserData.svelte';
+	import { isLoggedIn, userData } from '../userData.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -77,8 +77,8 @@
 				userTypingData.fingersStatistics,
 				data.targetText,
 				data.userTypedText,
-				userConfig.fingerMap,
-				userConfig.defaultFingersPosition
+				userData.userTypingConfig.fingerMap,
+				userData.userTypingConfig.defaultFingersPosition
 			);
 			console.log(updatedFingerData);
 			userTypingData.fingersStatistics = updatedFingerData;
@@ -137,7 +137,7 @@
 		<div id="typingTestWrapper">
 			<TypingTest
 				{targetText}
-				errorCorrectionMode={userConfig.errorCorrectionMode}
+				errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
 				testStarted={typingTestStarted}
 				testEnded={typingTestEnded}
 				bind:this={typingTestRef}

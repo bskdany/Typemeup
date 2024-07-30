@@ -2,7 +2,8 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { userData } from '../globalUserData.svelte';
+	import { userData } from '../userData.svelte';
+	import { fetchBackend } from '$lib/fetch';
 
 	let { children } = $props();
 	let currentPath = $derived($page.url.pathname);
@@ -16,21 +17,32 @@
 		'/config': 'Config',
 		'/profile': `Profile ${userData.username}`
 	});
+
+	async function saveConfig() {
+		try {
+			await fetchBackend(fetch, '/config/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
+		} catch (e) {
+			console.error(e);
+		}
+	}
 </script>
 
 <div id="app">
 	<header>
-		{#each Object.entries(navigationObject) as [path, title]}
-			{#if currentPath !== path}
-				<button
-					onclick={() => {
-						goto(path);
-					}}
-				>
-					{title}
-				</button>
-			{/if}
-		{/each}
+		<button onclick={() => saveConfig()} style={currentPath !== '/config' ? 'visibility:hidden' : ''}> Save </button>
+		<div id="globalNavigation">
+			{#each Object.entries(navigationObject) as [path, title]}
+				{#if currentPath !== path}
+					<button
+						onclick={() => {
+							goto(path);
+						}}
+					>
+						{title}
+					</button>
+				{/if}
+			{/each}
+		</div>
 	</header>
 
 	{@render children()}
@@ -47,9 +59,15 @@
 	header {
 		display: flex;
 		flex-direction: row;
+		justify-content: space-between;
+		margin: 15px 0 15px 0;
+	}
+
+	#globalNavigation {
+		display: flex;
+		flex-direction: row;
 		justify-content: right;
 		align-items: center;
 		gap: 10px;
-		padding: 10px;
 	}
 </style>

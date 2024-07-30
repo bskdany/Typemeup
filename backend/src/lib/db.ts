@@ -4,10 +4,28 @@ import { config } from './config.js';
 
 export const db = new Database(config.db_path);
 
+const defaultUserTypingConfig = {
+  errorCorrectionMode: 3,
+  fingerMap: [
+    ['q', 'a', 'z'],
+    ['w', 's', 'x'],
+    ['e', 'd', 'c'],
+    ['r', 'f', 'v', 't', 'g', 'b'],
+    ['u', 'j', 'm', 'y', 'h', 'h', 'n'],
+    ['i', 'k', ','],
+    ['o', 'l', '.'],
+    ['p', ';', '/'],
+    [' '],
+    []
+  ],
+  defaultFingersPosition: ["a", "s", "d", "f", "j", "k", "l", ";", " ", ""]
+}
+
 db.exec(`CREATE TABLE IF NOT EXISTS user (
   id TEXT NOT NULL PRIMARY KEY,
   username TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  typing_config DEFAULT '${JSON.stringify(defaultUserTypingConfig)}' 
 )`);
 
 db.exec(`CREATE TABLE IF NOT EXISTS session (

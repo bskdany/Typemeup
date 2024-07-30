@@ -1,6 +1,6 @@
 import { goto } from "$app/navigation";
 const baseUrl = import.meta.env.BASE_URL;
-const redirectWhitelistedRoutes = ["/config/getUserConfig"]
+const redirectWhitelistedRoutes = ["/config/getUserTypingConfig"]
 
 export async function fetchBackend(fetch: any, endpoint: string, options?: { body?: {}, method?: "GET" | "POST" }) {
   const response = await fetch(`${baseUrl}${endpoint}`, {
@@ -28,6 +28,7 @@ export async function fetchBackend(fetch: any, endpoint: string, options?: { bod
   }
 
   try {
+    console.log(response)
     return await response.json();
   } catch (error) {
     throw new Error('Failed to parse JSON response');

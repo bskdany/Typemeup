@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { fetchBackend } from '../../lib/fetch';
 	import ProfileOverview from '../../components/profile/profileOverview.svelte';
-	import { userData } from '../../globalUserData.svelte';
+	import { userData } from '../../userData.svelte';
 
 	function logout() {
 		try {

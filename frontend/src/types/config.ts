@@ -1,4 +1,4 @@
-export interface Config {
+export interface UserTypingConfig {
   errorCorrectionMode: number,
   fingerMap: string[][],
   defaultFingersPosition: string[]

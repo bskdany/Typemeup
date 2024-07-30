@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { reverseFingerMap } from '../../algo/fingersStatisticsHelper';
-	import { userConfig } from '../../userConfig.svelte';
+	import { userData } from '../../userData.svelte';
 
 	let pressedKey: string = $state('');
 	const row0 = ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'];
@@ -26,22 +26,22 @@
 	const fingersRightHand = fingerArr.slice(4, 8);
 	const thumbs = fingerArr.slice(8, 10);
 
-	let reversedFingerMap = $derived(reverseFingerMap(userConfig.fingerMap));
+	let reversedFingerMap = $derived(reverseFingerMap(userData.userTypingConfig.fingerMap));
 
 	let selectedFinger: number = $state(-1);
 
 	function handleKeySelection(key: string) {
 		const currentFinger = reversedFingerMap.get(key);
-		if (currentFinger !== undefined && selectedFinger >= 0 && !userConfig.fingerMap[selectedFinger]?.includes(key)) {
-			userConfig.fingerMap[currentFinger] = userConfig.fingerMap[currentFinger].filter((value) => value !== key);
-			userConfig.fingerMap[selectedFinger].push(key);
+		if (currentFinger !== undefined && selectedFinger >= 0 && !userData.userTypingConfig.fingerMap[selectedFinger]?.includes(key)) {
+			userData.userTypingConfig.fingerMap[currentFinger] = userData.userTypingConfig.fingerMap[currentFinger].filter((value) => value !== key);
+			userData.userTypingConfig.fingerMap[selectedFinger].push(key);
 		}
 	}
 
 	function handleDoubleKeySelection(key: string) {
 		const currentFinger = reversedFingerMap.get(key);
 		if (currentFinger !== undefined && selectedFinger === currentFinger) {
-			userConfig.defaultFingersPosition[selectedFinger] = key;
+			userData.userTypingConfig.defaultFingersPosition[selectedFinger] = key;
 		}
 	}
 </script>
@@ -76,7 +76,7 @@
 								ondblclick={() => handleDoubleKeySelection(key.toLowerCase())}
 								class="key"
 								style="background-color: {fingerArr[reversedFingerMap.get(key.toLowerCase()) ?? 0].color};
-                opacity: {userConfig.defaultFingersPosition.indexOf(key.toLowerCase()) >= 0 ? '100%' : '60%'}"
+                opacity: {userData.userTypingConfig.defaultFingersPosition.indexOf(key.toLowerCase()) >= 0 ? '100%' : '60%'}"
 							>
 								{key}
 							</button>

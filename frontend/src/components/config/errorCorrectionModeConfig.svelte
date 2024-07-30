@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { elements } from 'chart.js';
-	import { userConfig } from '../../userConfig.svelte';
+	import { userData } from '../../userData.svelte';
 
 	let errorCorrectionModes = {
 		0: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
@@ -20,7 +19,7 @@
 					{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
 						<tr style="display: flex; gap: 8px">
 							<th style="white-space: nowrap; display: flex;">{name}:</th>
-							<td class:selected={userConfig.errorCorrectionMode === parseInt(modeNumber)}>{description}</td>
+							<td class:selected={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}>{description}</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -29,8 +28,9 @@
 
 		<div id="choiceSelection">
 			{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
-				<button class:selected={userConfig.errorCorrectionMode === parseInt(modeNumber)} onclick={() => (userConfig.errorCorrectionMode = parseInt(modeNumber))}
-					>{name}</button
+				<button
+					class:selected={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}
+					onclick={() => (userData.userTypingConfig.errorCorrectionMode = parseInt(modeNumber))}>{name}</button
 				>
 			{/each}
 		</div>
