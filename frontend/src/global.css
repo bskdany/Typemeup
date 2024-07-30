@@ -63,6 +63,7 @@ input {
   padding: var(--padding-medium);
   border-radius: var(--border-radius);
   background-color: var(--primary-color);
+  color: white;
 }
 
 button:hover {

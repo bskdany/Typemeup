@@ -47,7 +47,7 @@
 		border: solid transparent;
 		border-radius: var(--border-radius);
 		color: var(--text-color);
-		padding: calc(var(--padding-medium) + 10) var(--button-padding) calc(var(--padding-medium) + 10) var(--button-padding);
+		padding: var(--padding-medium);
 		background-color: var(--primary-color);
 	}
 
