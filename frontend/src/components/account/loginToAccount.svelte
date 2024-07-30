@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { fetchBackend } from '../../lib/fetch';
+	import { showToast } from '../../shared/toastController.svelte';
 	import { userData } from '../../shared/userData.svelte';
 
 	let username: string = '';
 	let password: string = '';
-	let errorMessage: any = '';
+	// let errorMessage: any = '';
 
 	const loginToAccount = async () => {
 		try {
@@ -14,7 +15,7 @@
 			userData.username = data.username;
 			goto('/profile');
 		} catch (error) {
-			errorMessage = error;
+			showToast({ message: error as string, type: 'error' });
 		}
 	};
 </script>
