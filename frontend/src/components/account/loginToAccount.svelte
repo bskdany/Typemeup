@@ -24,17 +24,11 @@
 	<input type="password" placeholder="password" bind:value={password} />
 	<button on:click={loginToAccount}>Login</button>
 </div>
-<div id="errorMessage">{errorMessage}</div>
 
 <style>
 	#loginWrapper {
 		display: flex;
 		flex-direction: column;
 		gap: var(--spacing-small);
-	}
-	#errorMessage {
-		margin-top: 10px;
-		color: rgb(215, 61, 61);
-		height: 1rem;
 	}
 </style>

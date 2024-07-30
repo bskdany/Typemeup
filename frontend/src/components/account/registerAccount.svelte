@@ -27,7 +27,6 @@
 	<input type="password" placeholder="repeat password" bind:value={password2} />
 	<button on:click={registerAccount}>Register</button>
 </div>
-<div id="errorMessage">{errorMessage}</div>
 
 <style>
 	#loginWrapper {
@@ -35,10 +34,5 @@
 		flex-direction: column;
 		gap: var(--spacing-small);
 		width: min-content;
-	}
-	#errorMessage {
-		margin-top: 10px;
-		color: rgb(215, 61, 61);
-		height: 1rem;
 	}
 </style>
