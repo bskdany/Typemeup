@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../global.css';
 	import { updated } from '$app/stores';
-	import { onMount, setContext } from 'svelte';
+	import { onDestroy, onMount, setContext } from 'svelte';
 	import type { TypingContextData, TypingTestRunData, UserTypingData } from '../types/interfaces';
 	import { analyse } from '../algo/textAnalysis';
 	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
@@ -86,6 +86,7 @@
 	}
 
 	function handleTabKeyDown(event: any) {
+		console.log('KEY PRESSED');
 		if (event.key === 'Tab') {
 			event.preventDefault();
 			typingContextData.displayTypingTest = true;
@@ -113,10 +114,14 @@
 
 	onMount(() => {
 		document.addEventListener('keydown', handleTabKeyDown);
-		// return () => {
-		// 	unsubscribe;
-		// 	document.removeEventListener('keydown', handleTabKeyDown);
-		// };
+	});
+
+	onDestroy(() => {
+		try {
+			document.removeEventListener('keydown', handleTabKeyDown);
+		} catch (e) {
+			console.error(e);
+		}
 	});
 </script>
 
