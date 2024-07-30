@@ -101,13 +101,13 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		gap: 30px;
+		gap: var(--spacing-medium);
 		white-space: pre-wrap;
 	}
 
 	#controlBar {
 		display: flex;
-		gap: 10px;
+		gap: var(--spacing-medium);
 	}
 
 	#mainText {
@@ -118,9 +118,8 @@
 
 	.word {
 		margin: none;
-		padding: none;
 		width: fit-content;
-		color: rgb(127, 106, 106);
+		color: var(--secondary-color);
 	}
 
 	.letter {

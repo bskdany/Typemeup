@@ -19,7 +19,7 @@
 		white-space: nowrap;
 
 		background-color: transparent;
-		padding: 10px;
+		padding: var(--padding-medium);
 		border: solid transparent;
 		color: rgb(127, 106, 106);
 		border-radius: 10px;

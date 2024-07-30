@@ -24,10 +24,9 @@
 
 <style>
 	.toast {
-		padding: 10px 20px;
-		border-radius: 4px;
-		color: white;
-		font-weight: bold;
+		padding: var(--padding-medium);
+		border-radius: var(--border-radius);
+		color: var(--text-color);
 		z-index: 1000;
 	}
 	.success {

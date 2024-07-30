@@ -62,15 +62,14 @@
 	#typingResult {
 		display: flex;
 		flex-direction: column;
-		/* justify-content: center; */
 		align-items: center;
-		gap: 30px;
+		gap: var(--spacing-medium);
 	}
 
 	#topHalf {
 		display: flex;
 		flex-direction: row;
-		gap: 20px;
+		gap: var(--spacing-medium);
 		height: 50%;
 		width: 100%;
 	}
@@ -85,22 +84,11 @@
 	#dataColumn {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: var(--spacing-medium);
 	}
 
 	#restartButton {
-		display: none;
-		color: rgb(127, 106, 106);
 		font-size: 1rem;
-		border: none;
-		background-color: #2c2e31;
-		padding: 10px;
-		border: solid 1px transparent;
-		border-radius: 10px;
-		margin-top: 30px;
-	}
-	#restartButton:hover {
-		color: #a8b9e4;
 	}
 
 	@media only screen and (max-width: 767px) {

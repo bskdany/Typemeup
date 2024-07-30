@@ -1,11 +1,7 @@
 <script lang="ts">
-	const {
-		username
-	}: {
-		username: string;
-	} = $props();
+	import { userData } from '../../shared/userData.svelte';
 </script>
 
 <div>
-	{username}
+	Welcome back {userData.username}
 </div>

@@ -230,7 +230,6 @@
 <style>
 	.word {
 		margin: none;
-		padding: none;
 		width: fit-content;
 	}
 
@@ -242,8 +241,7 @@
 	#main-text {
 		display: flex;
 		flex-wrap: wrap;
-		/* gap: 12px; */
-		color: rgb(127, 106, 106);
+		color: var(--secondary-color);
 		width: 100%;
 		user-select: none;
 		white-space: pre-wrap;
@@ -253,8 +251,7 @@
 		position: absolute;
 		height: 2rem;
 		width: 2px;
-		background-color: #a8b9e4;
-		/* transition: transform 0.1s ease-in-out; */
+		background-color: var(--accent-color);
 	}
 	#wordsInput {
 		pointer-events: none;

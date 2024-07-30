@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TypingContext, TypingContextData } from '../../interfaces';
 	import { getContext } from 'svelte';
+	import type { TypingContext, TypingContextData } from '../../types/interfaces';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
@@ -14,7 +14,7 @@
 
 <style>
 	div {
-		color: #a8b9e4;
+		color: var(--accent-color);
 		font-size: 1.5rem;
 	}
 </style>

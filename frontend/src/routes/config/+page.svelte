@@ -12,6 +12,6 @@
 	#config {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--spacing-medium);
 	}
 </style>

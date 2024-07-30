@@ -30,15 +30,7 @@
 	#loginWrapper {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
-		width: min-content;
-	}
-	input {
-		border: solid transparent;
-		padding: 10px;
-		border-radius: 10px;
-		background-color: #2c2e31;
-		color: white;
+		gap: var(--spacing-small);
 	}
 	#errorMessage {
 		margin-top: 10px;

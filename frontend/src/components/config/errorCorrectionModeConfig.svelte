@@ -41,40 +41,36 @@
 	#container {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: var(--spacing-medium);
 		width: 100%;
 		background-color: transparent;
 		border: solid transparent;
-		border-radius: 10px;
-		color: white;
-		padding: 15px;
-		box-sizing: border-box;
-		background-color: #2c2e31;
+		border-radius: var(--border-radius);
+		color: var(--text-color);
+		padding: calc(var(--padding-medium) + 10) var(--button-padding) calc(var(--padding-medium) + 10) var(--button-padding);
+		background-color: var(--primary-color);
 	}
 
 	#content {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		/* align-items: center; */
 	}
 
 	#choiceSelection {
-		background-color: #2c2e31;
 		min-width: fit-content;
 		height: fit-content;
-		margin: 10px;
-		border-radius: 15px;
-		background-color: #171d1f;
+		margin: var(--spacing-medium);
+		border-radius: var(--border-radius);
+		background-color: var(--background-color);
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		/* box-sizing: content-box; */
 	}
 
 	#title {
 		opacity: 80%;
-		font-size: 1.5em;
+		font-size: 1.5rem;
 	}
 
 	#description {
@@ -84,8 +80,7 @@
 	}
 
 	button {
-		background-color: #171d1f;
-		padding: 15px 10px 15px 10px;
-		border: 1px solid transparent;
+		background-color: var(--background-color);
+		padding: calc(var(--padding-medium) + 5px) var(--padding-medium) calc(var(--padding-medium) + 5px) var(--padding-medium);
 	}
 </style>

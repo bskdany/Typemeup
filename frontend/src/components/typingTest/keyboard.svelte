@@ -43,13 +43,11 @@
 
 <style>
 	#keyboardWrapper {
-		/* margin: 50px; */
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		height: fit-content;
-		/* width: min-content; */
 	}
 	.row {
 		display: grid;
@@ -74,15 +72,14 @@
 	}
 
 	.key {
-		color: rgb(127, 106, 106);
 		width: auto;
 		min-width: 40px;
 		height: 40px;
 		background-color: transparent;
 		border: solid;
-		border-width: 2px;
+		border-width: 1px;
 		border-radius: 5px;
-		border-color: #2c2e31;
+		border-color: var(--primary-color);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -90,17 +87,14 @@
 		transition: background-color 0.5s linear;
 	}
 	.activeKey {
-		color: rgb(127, 106, 106);
 		width: auto;
 		min-width: 40px;
 		height: 40px;
-		background-color: #27282a;
+		background-color: var(--primary-color);
 		border: solid;
-		border-width: 2px;
+		border-width: 1px;
 		border-radius: 5px;
-		border-color: #2c2e31;
-		/* uncommnet for fun mode */
-		/* border-color: gold; */
+		border-color: var(--primary-color);
 		display: flex;
 		justify-content: center;
 		align-items: center;

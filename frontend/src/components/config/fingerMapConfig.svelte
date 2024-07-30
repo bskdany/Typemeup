@@ -130,25 +130,21 @@
 	#container {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: var(--spacing-medium);
 		width: 100%;
-		background-color: transparent;
-		border: solid transparent;
-		border-radius: 10px;
-		color: white;
-		padding: 15px;
-		box-sizing: border-box;
-		background-color: #2c2e31;
+		border-radius: var(--border-radius);
+		padding: var(--padding-medium);
+		color: var(--text-color);
+		background-color: var(--primary-color);
 	}
 
 	#content {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--spacing-medium);
 	}
 
 	#title {
-		opacity: 80%;
 		font-size: 1.5em;
 	}
 
@@ -160,11 +156,9 @@
 	}
 
 	.fingerButton {
-		background-color: #171d1f;
 		width: fit-content;
 		height: fit-content;
 		min-width: 100px;
-		box-sizing: border-box;
 	}
 
 	#presetBar {
@@ -174,7 +168,6 @@
 	}
 
 	#keyboardWrapper {
-		/* margin: 50px; */
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -206,24 +199,18 @@
 	}
 
 	.key {
-		color: rgb(127, 106, 106);
-		background-color: #171d1f;
+		color: var(--secondary-color);
+		background-color: var(--background-color);
 		width: auto;
 		min-width: 40px;
 		height: 40px;
 		border: solid;
-		border-width: 2px;
+		border-width: 1px;
 		border-radius: 5px;
-		border-color: #2c2e31;
+		border-color: var(--primary-color);
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		/* transition: border-color 0.5s linear; */
-		/* transition: background-color 0.5s linear; */
-	}
-
-	button {
-		background-color: #171d1f;
 	}
 
 	.fingerButton:hover {

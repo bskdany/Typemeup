@@ -69,7 +69,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		margin: 15px 0 15px 0;
+		margin: var(--spacing-medium) 0 var(--spacing-medium) 0;
 	}
 
 	#globalNavigation {
@@ -77,17 +77,17 @@
 		flex-direction: row;
 		justify-content: right;
 		align-items: center;
-		gap: 10px;
+		gap: var(--spacing-medium);
 	}
 
 	#toastContainer {
 		position: absolute;
 		position: absolute;
-		top: 20px;
+		/* top: var(--spacing-medium); */
 		left: 50%;
 		transform: translateX(-50%);
 		display: flex;
-		gap: 10px;
+		gap: var(--spacing-medium);
 		flex-direction: column;
 	}
 </style>
