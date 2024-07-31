@@ -108,3 +108,13 @@ export interface TypingTestRunData {
   timeStarted: string;
   timeEnded: string;
 }
+
+export type PastTypingTestResult = {
+  typingMode: string;
+  errorCorrectionMode: number;
+  timeStarted: string;
+  timeEnded: string;
+  timeTaken: number;
+  wpm: number;
+  accuracy: number;
+};

@@ -4,7 +4,7 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async ({ fetch }) => {
   try {
     const data = await fetchBackend(fetch, "/profile");
-    return JSON.parse(data.message)
+    return data
   }
   catch (e) {
     console.error(e)

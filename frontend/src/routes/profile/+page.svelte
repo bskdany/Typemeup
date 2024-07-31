@@ -1,11 +1,24 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { fetchBackend } from '../../lib/fetch';
 	import ProfileOverview from '../../components/profile/profileOverview.svelte';
-	import { userData } from '../../shared/userData.svelte';
+	import PastTypingTestsChart from '../../components/chart/pastTypingTestsChart.svelte';
+	import type { PastTypingTestResult } from '../../types/interfaces';
+
+	const { data } = $props();
+	const pastTypingTestResult: PastTypingTestResult[] = JSON.parse(data.typingData);
 </script>
 
-<ProfileOverview />
+<ProfileOverview {pastTypingTestResult} />
+<div id="chartContainer">
+	<PastTypingTestsChart
+		data={pastTypingTestResult.map((entry) => {
+			return { wpm: entry.wpm, accuracy: entry.accuracy };
+		})}
+	/>
+</div>
 
 <style>
+	#chartContainer {
+		width: 100%;
+		height: 200px;
+	}
 </style>
