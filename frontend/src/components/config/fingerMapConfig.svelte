@@ -26,22 +26,24 @@
 	const fingersRightHand = fingerArr.slice(4, 8);
 	const thumbs = fingerArr.slice(8, 10);
 
-	let reversedFingerMap = $derived(reverseFingerMap(userData.userTypingConfig.fingerMap));
+	let reversedFingerMap = $derived(reverseFingerMap(userData.userTypingConfig.smartModeConfig.fingerMap));
 
 	let selectedFinger: number = $state(-1);
 
 	function handleKeySelection(key: string) {
 		const currentFinger = reversedFingerMap.get(key);
-		if (currentFinger !== undefined && selectedFinger >= 0 && !userData.userTypingConfig.fingerMap[selectedFinger]?.includes(key)) {
-			userData.userTypingConfig.fingerMap[currentFinger] = userData.userTypingConfig.fingerMap[currentFinger].filter((value) => value !== key);
-			userData.userTypingConfig.fingerMap[selectedFinger].push(key);
+		if (currentFinger !== undefined && selectedFinger >= 0 && !userData.userTypingConfig.smartModeConfig.fingerMap[selectedFinger]?.includes(key)) {
+			userData.userTypingConfig.smartModeConfig.fingerMap[currentFinger] = userData.userTypingConfig.smartModeConfig.fingerMap[currentFinger].filter(
+				(value) => value !== key
+			);
+			userData.userTypingConfig.smartModeConfig.fingerMap[selectedFinger].push(key);
 		}
 	}
 
 	function handleDoubleKeySelection(key: string) {
 		const currentFinger = reversedFingerMap.get(key);
 		if (currentFinger !== undefined && selectedFinger === currentFinger) {
-			userData.userTypingConfig.defaultFingersPosition[selectedFinger] = key;
+			userData.userTypingConfig.smartModeConfig.defaultFingersPosition[selectedFinger] = key;
 		}
 	}
 </script>
@@ -76,7 +78,7 @@
 								ondblclick={() => handleDoubleKeySelection(key.toLowerCase())}
 								class="key"
 								style="background-color: {fingerArr[reversedFingerMap.get(key.toLowerCase()) ?? 0].color};
-                opacity: {userData.userTypingConfig.defaultFingersPosition.indexOf(key.toLowerCase()) >= 0 ? '100%' : '60%'}"
+                opacity: {userData.userTypingConfig.smartModeConfig.defaultFingersPosition.indexOf(key.toLowerCase()) >= 0 ? '100%' : '60%'}"
 							>
 								{key}
 							</button>

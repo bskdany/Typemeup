@@ -4,7 +4,7 @@ import { db } from "../../lib/db.js";
 export const saveTypingTest = async (req: Request, res: Response) => {
   try {
 
-    db.prepare("INSERT INTO TypingTest (user_id, typingMode, errorCorrectionMode, timeStarted, timeEnded, timeTaken, wpm, accuracy, targetText) VALUES(?,?,?,?,?,?,?,?,?)").run(res.locals.user?.id, req.body.typingMode, req.body.errorCorrectionMode, req.body.timeStarted, req.body.timeEnded, req.body.timeTaken, req.body.wpm, req.body.accuracy, req.body.targetText);
+    db.prepare("INSERT INTO TypingTest (user_id, typingMode, typingEndMode, errorCorrectionMode, timeStarted, timeEnded, timeTaken, wpm, accuracy, targetText) VALUES(?,?,?,?,?,?,?,?,?,?)").run(res.locals.user?.id, req.body.typingMode, req.body.typingEndMode, req.body.errorCorrectionMode, req.body.timeStarted, req.body.timeEnded, req.body.timeTaken, req.body.wpm, req.body.accuracy, req.body.targetText);
   }
   catch (e) {
     console.error(e)

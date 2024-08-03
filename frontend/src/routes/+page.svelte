@@ -1,27 +1,20 @@
 <script lang="ts">
 	import '../global.css';
-	import { updated } from '$app/stores';
 	import { onDestroy, onMount, setContext } from 'svelte';
 	import type { TypingContextData, TypingTestRunData, UserTypingData } from '../types/interfaces';
 	import { analyse } from '../algo/textAnalysis';
 	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
-	import Configs from '../components/typingTest/quickConfigs.svelte';
 	import Keyboard from '../components/typingTest/keyboard.svelte';
-	// import TypingResult from '../components/typingResu';
 	import TypingProgress from '../components/typingTest/typingProgress.svelte';
 	import TypingTest from '../components/typingTest/typingTest.svelte';
 	import TypingResult from '../components/typingResult/typingResult.svelte';
-	// import { userConfig } from '../userConfig.svelte';
 	import { fetchBackend } from '../lib/fetch';
 	import { getAccuracy, getWpm } from '../components/typingTestRunHelper';
-	import { getUserTypingData } from '../storage/localStorageService';
-	import { isLoggedIn, userData } from '../shared/userData.svelte';
+	import { getCombinedTypingEndMode, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
+	import QuickConfigs from '../components/typingTest/quickConfigs.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
-		configTypingMode: 'words',
-		configWordAmount: 10,
-		configTimeAmount: 15,
 		typingTestStatus: 'ended',
 		progressTimeElapsed: 0,
 		progressWordsTyped: 0,
@@ -38,8 +31,6 @@
 
 	let targetText: string[] = $state([]);
 
-	const userTypingData: UserTypingData = getUserTypingData();
-
 	function typingTestStarted() {
 		// something
 	}
@@ -52,10 +43,8 @@
 				fetchBackend(fetch, '/profile/saveTypingTest', {
 					method: 'POST',
 					body: {
-						typingMode:
-							typingContextData.configTypingMode +
-							' ' +
-							(typingContextData.configTypingMode === 'time' ? typingContextData.configTimeAmount : typingContextData.configWordAmount),
+						typingMode: userData.userTypingConfig.typingMode,
+						typingEndMode: getCombinedTypingEndMode(),
 						errorCorrectionMode: data.errorCorrectionMode,
 						targetText: data.targetText.flat().join(' '),
 						timeTaken: data.timeTaken,
@@ -72,21 +61,20 @@
 
 		typingContextData.displayTypingTest = false;
 
-		if (typingContextData.configTypingMode === 'smart') {
-			const updatedFingerData = analyse(
-				userTypingData.fingersStatistics,
-				data.targetText,
-				data.userTypedText,
-				userData.userTypingConfig.fingerMap,
-				userData.userTypingConfig.defaultFingersPosition
-			);
-			console.log(updatedFingerData);
-			userTypingData.fingersStatistics = updatedFingerData;
-		}
+		// if (userData.userTypingConfig.typingMode === 'smart') {
+		// 	const updatedFingerData = analyse(
+		// 		userTypingData.fingersStatistics,
+		// 		data.targetText,
+		// 		data.userTypedText,
+		// 		userData.userTypingConfig.learnModeConfig.fingerMap,
+		// 		userData.userTypingConfig.learnModeConfig.defaultFingersPosition
+		// 	);
+		// 	console.log(updatedFingerData);
+		// 	userTypingData.fingersStatistics = updatedFingerData;
+		// }
 	}
 
 	function handleTabKeyDown(event: any) {
-		console.log('KEY PRESSED');
 		if (event.key === 'Tab') {
 			event.preventDefault();
 			typingContextData.displayTypingTest = true;
@@ -96,20 +84,21 @@
 		typingTestRef?.focus();
 	}
 
+	function resetTypingTest() {
+		if (userData.userTypingConfig.typingEndMode.startsWith('time')) {
+			targetText = generateWords(100);
+		} else if (userData.userTypingConfig.typingEndMode.startsWith('words')) {
+			targetText = generateWords(parseInt(userData.userTypingConfig.typingEndMode.split(' ')[1]) ?? 10);
+			targetText = ['asdfasdfasdf'];
+		}
+	}
+
 	$effect(() => {
 		resetTrigger;
-		typingContextData.configWordAmount;
-		typingContextData.configTimeAmount;
-		typingContextData.configTypingMode;
-
-		if (typingContextData.configTypingMode === 'time') {
-			targetText = generateWords(100);
-		} else if (typingContextData.configTypingMode === 'words') {
-			targetText = generateWords(typingContextData.configWordAmount);
-			targetText = ['asdfasdfasdf'];
-		} else if (typingContextData.configTypingMode === 'smart') {
-			targetText = generateWordsAlgo(userTypingData, typingContextData.configWordAmount);
-		}
+		userData.userTypingConfig.typingEndMode;
+		userData.userTypingConfig.typingEndTimeMode;
+		userData.userTypingConfig.typingEndWordMode;
+		resetTypingTest();
 	});
 
 	onMount(() => {
@@ -119,15 +108,13 @@
 	onDestroy(() => {
 		try {
 			document.removeEventListener('keydown', handleTabKeyDown);
-		} catch (e) {
-			console.error(e);
-		}
+		} catch (e) {}
 	});
 </script>
 
 {#if typingContextData.displayTypingTest}
 	<div id="configs">
-		<Configs />
+		<QuickConfigs />
 	</div>
 
 	<div id="statusBar">
@@ -143,6 +130,9 @@
 			<TypingTest
 				{targetText}
 				errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
+				typingEndMode={userData.userTypingConfig.typingEndMode}
+				typingEndTimeMode={userData.userTypingConfig.typingEndTimeMode}
+				typingEndWordMode={userData.userTypingConfig.typingEndWordMode}
 				testStarted={typingTestStarted}
 				testEnded={typingTestEnded}
 				bind:this={typingTestRef}

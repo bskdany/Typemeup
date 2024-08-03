@@ -3,7 +3,9 @@
 	import { TextObjectHandler } from './textObjectHandler.svelte';
 	import { tweened } from 'svelte/motion';
 
-	import type { TextObject, TypingContextData, TypingContext, TypingTestRunData } from '../../types/interfaces';
+	import type { TextObject, TypingContextData, TypingContext, TypingTestRunData, UserTypingConfig } from '../../types/interfaces';
+	import { userData } from '../../shared/userData.svelte';
+	import type { UserConfig } from 'vite';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
@@ -14,11 +16,17 @@
 	const {
 		targetText,
 		errorCorrectionMode,
+		typingEndMode,
+		typingEndTimeMode,
+		typingEndWordMode,
 		testStarted,
 		testEnded
 	}: {
 		targetText: string[];
 		errorCorrectionMode: number;
+		typingEndMode: UserTypingConfig['typingEndMode'];
+		typingEndTimeMode: number;
+		typingEndWordMode: number;
 		testStarted: () => void;
 		testEnded: (data: TypingTestRunData) => void;
 	} = $props();
@@ -57,17 +65,14 @@
 				typingContextData.progressTimeElapsed += 1;
 			}
 
-			if (typingContextData.configTypingMode === 'time') {
+			if (typingEndMode === 'time') {
 				checkIfTestEnded();
 			}
 		}, 10);
 	}
 
 	function checkIfTestEnded() {
-		if (
-			((typingContextData.configTypingMode === 'words' || typingContextData.configTypingMode === 'smart') && textObject.isEnd()) ||
-			(typingContextData.configTypingMode === 'time' && msTime > typingContextData.configTimeAmount * 1000)
-		) {
+		if ((typingEndMode === 'words' && textObject.isEnd()) || (typingEndMode === 'time' && msTime > typingEndTimeMode * 1000)) {
 			typingContextData.typingTestStatus = 'ended';
 			typingContextData.livePressedKey.key = '';
 

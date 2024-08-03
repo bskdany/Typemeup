@@ -76,9 +76,6 @@ export interface WordsSource {
 
 export interface TypingContextData {
   displayTypingTest: boolean;
-  configTypingMode: "words" | "time" | "smart";
-  configWordAmount: number;
-  configTimeAmount: number;
   typingTestStatus: "started" | 'ended' | "pending";
   progressTimeElapsed: number;
   progressWordsTyped: number;
@@ -111,6 +108,7 @@ export interface TypingTestRunData {
 
 export type PastTypingTestResult = {
   typingMode: string;
+  typingEndMode: string;
   errorCorrectionMode: number;
   timeStarted: string;
   timeEnded: string;
@@ -118,3 +116,15 @@ export type PastTypingTestResult = {
   wpm: number;
   accuracy: number;
 };
+
+export interface UserTypingConfig {
+  errorCorrectionMode: number,
+  typingMode: "test" | "smart" | "compete",
+  typingEndMode: "time" | "words",
+  typingEndTimeMode: number,
+  typingEndWordMode: number,
+  smartModeConfig: {
+    fingerMap: string[][],
+    defaultFingersPosition: string[],
+  },
+}

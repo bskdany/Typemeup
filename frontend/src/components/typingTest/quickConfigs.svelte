@@ -1,41 +1,35 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { TypingContext, TypingContextData } from '../../types/interfaces';
-
-	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
-	const typingContextData: TypingContextData = typingContext.typingContextData;
-
-	const typingModes: ('time' | 'words' | 'smart')[] = ['time', 'words', 'smart'];
-
-	const numberOfWords = [10, 25, 50, 100];
-	const timeAmount = [15, 30, 60, 120];
+	import { typingEndModes, typingEndTimeModes, typingEndWordModes, userData } from '../../shared/userData.svelte';
 </script>
 
 <div id="configWrapper">
-	{#each typingModes as mode}
-		<button class={typingContextData.configTypingMode === mode ? 'selected' : ''} onclick={() => (typingContextData.configTypingMode = mode)}>
-			{mode}
+	{#each typingEndModes as typingEndMode}
+		<button
+			class:selected={userData.userTypingConfig.typingEndMode === typingEndMode}
+			onclick={() => (userData.userTypingConfig.typingEndMode = typingEndMode)}
+		>
+			{typingEndMode}
 		</button>
 	{/each}
 
 	<div id="separator"></div>
 
-	{#if typingContextData.configTypingMode === 'words'}
-		{#each numberOfWords as words}
-			<button class={typingContextData.configWordAmount === words ? 'selected' : ''} onclick={() => (typingContextData.configWordAmount = words)}>
-				{words}
+	{#if userData.userTypingConfig.typingEndMode === 'words'}
+		{#each typingEndWordModes as typingEndWordMode}
+			<button
+				class:selected={userData.userTypingConfig.typingEndWordMode === typingEndWordMode}
+				onclick={() => (userData.userTypingConfig.typingEndWordMode = typingEndWordMode)}
+			>
+				{typingEndWordMode}
 			</button>
 		{/each}
-	{:else if typingContextData.configTypingMode === 'time'}
-		{#each timeAmount as time}
-			<button class={typingContextData.configTimeAmount === time ? 'selected' : ''} onclick={() => (typingContextData.configTimeAmount = time)}>
-				{time}
-			</button>
-		{/each}
-	{:else if typingContextData.configTypingMode === 'smart'}
-		{#each numberOfWords as words}
-			<button class={typingContextData.configWordAmount === words ? 'selected' : ''} onclick={() => (typingContextData.configWordAmount = words)}>
-				{words}
+	{:else if userData.userTypingConfig.typingEndMode === 'time'}
+		{#each typingEndTimeModes as typingEndTimeMode}
+			<button
+				class:selected={userData.userTypingConfig.typingEndTimeMode === typingEndTimeMode}
+				onclick={() => (userData.userTypingConfig.typingEndTimeMode = typingEndTimeMode)}
+			>
+				{typingEndTimeMode}
 			</button>
 		{/each}
 	{/if}
@@ -49,7 +43,7 @@
 	#configWrapper {
 		display: flex;
 		flex-direction: row;
-		padding: var(--padding-medium);var(--button-padding);
+		padding: var(--padding-medium);
 		border-radius: var(--border-radius);
 		background-color: var(--primary-color);
 	}

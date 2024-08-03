@@ -10,12 +10,12 @@
 </script>
 
 <div id="profileContainer">
-	<ProfileOverview />
+	<ProfileOverview {pastTypingTestResult} />
 	<PersonalBest {pastTypingTestResult} />
 	<BubbleContainer>
 		<PastTypingTestsChart
 			data={pastTypingTestResult.map((entry) => {
-				return { wpm: entry.wpm, accuracy: entry.accuracy };
+				return { wpm: entry.wpm, accuracy: entry.accuracy, typingEndMode: entry.typingEndMode };
 			})}
 		/>
 	</BubbleContainer>

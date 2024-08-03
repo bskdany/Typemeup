@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { TypingContext, TypingContextData } from '../../types/interfaces';
+	import { userData } from '../../shared/userData.svelte';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
 </script>
 
-{#if typingContextData.configTypingMode === 'time'}
-	<div>{typingContextData.configTimeAmount - typingContextData.progressTimeElapsed}</div>
-{:else if typingContextData.configTypingMode === 'words' || typingContextData.configTypingMode === 'smart'}
-	<div>{typingContextData.progressWordsTyped}|{typingContextData.configWordAmount}</div>
+{#if userData.userTypingConfig.typingEndMode === 'time'}
+	<div>{userData.userTypingConfig.typingEndTimeMode - typingContextData.progressTimeElapsed}</div>
+{:else if userData.userTypingConfig.typingEndMode === 'words'}
+	<div>{typingContextData.progressWordsTyped}|{userData.userTypingConfig.typingEndWordMode}</div>
 {/if}
 
 <style>

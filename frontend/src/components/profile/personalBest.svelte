@@ -1,25 +1,21 @@
 <script lang="ts">
+	import { allTypingEndModes } from '../../shared/userData.svelte';
+
 	import type { PastTypingTestResult } from '../../types/interfaces';
 	import BubbleContainer from '../common/bubbleContainer.svelte';
 	import SingleDataContainer from '../common/singleDataContainer.svelte';
 
 	const { pastTypingTestResult }: { pastTypingTestResult: PastTypingTestResult[] } = $props();
 
-	const personalBestData = {
-		'time 15': 0,
-		'time 30': 0,
-		'time 60': 0,
-		'time 120': 0,
-		'words 10': 0,
-		'words 25': 0,
-		'words 50': 0,
-		'words 100': 0
-	};
+	const personalBestData: { [key: string]: number } = {};
+	allTypingEndModes.forEach((typingEndMode) => {
+		personalBestData[typingEndMode] = 0;
+	});
 
 	for (const typingResult of pastTypingTestResult) {
-		let typingMode = typingResult.typingMode as keyof typeof personalBestData;
-		if (typingResult.wpm >= personalBestData[typingMode]) {
-			personalBestData[typingMode] = typingResult.wpm;
+		let typingEndMode = typingResult.typingEndMode as keyof typeof personalBestData;
+		if (typingResult.wpm >= personalBestData[typingEndMode]) {
+			personalBestData[typingEndMode] = typingResult.wpm;
 		}
 	}
 </script>

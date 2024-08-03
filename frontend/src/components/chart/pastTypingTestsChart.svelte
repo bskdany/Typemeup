@@ -1,24 +1,45 @@
 <script lang="ts">
-	import { Chart } from 'chart.js';
+	import { Chart, ScatterController } from 'chart.js';
 	import { onMount } from 'svelte';
+	import Dropdown from '../common/dropdown.svelte';
+	import { allTypingEndModes, getCombinedTypingEndMode } from '../../shared/userData.svelte';
+	// import { allTypingEndMode, typingEndModes, userData } from '../../shared/userData.svelte';
 
 	type PastTypingTestData = {
 		wpm: number;
 		accuracy: number;
+		typingEndMode: string;
 	};
 
 	const { data }: { data: PastTypingTestData[] } = $props();
 
+	function calculateEMA(data: number[], period: number): number[] {
+		if (data.length < 2) {
+			return [];
+		}
+
+		const smoothingFactor = 2 / (period + 1);
+		const ema: number[] = [data[0]]; // Initialize EMA with the first data point
+
+		for (let i = 1; i < data.length; i++) {
+			const currentEMA = (data[i] - ema[i - 1]) * smoothingFactor + ema[i - 1];
+			ema.push(currentEMA);
+		}
+
+		return ema;
+	}
+
 	function buildChartData(data: PastTypingTestData[]) {
-		const coordinateSplitData = data.map((entry, index) => {
-			return { x: index, y: entry.wpm };
-		});
+		const wpmEma = calculateEMA(
+			data.map((entry) => entry.wpm),
+			10
+		);
 
 		return {
 			datasets: [
 				{
 					label: 'Wpm',
-					type: 'line' as any,
+					type: 'scatter' as any,
 					data: data.map((entry, index) => {
 						return { x: index, y: entry.wpm };
 					}),
@@ -32,10 +53,10 @@
 					hitRadius: 3
 				},
 				{
-					label: 'Accuracy',
+					label: 'Wpm Ema',
 					type: 'line' as any,
-					data: data.map((entry, index) => {
-						return { x: index, y: entry.accuracy };
+					data: wpmEma.map((entry, index) => {
+						return { x: index, y: entry };
 					}),
 					borderColor: '#a8b9e4',
 					backgroundColor: '#a8b9e4',
@@ -46,35 +67,42 @@
 					hoverRadius: 3,
 					hitRadius: 3
 				}
+
+				// {
+				// 	label: 'Accuracy',
+				// 	type: 'line' as any,
+				// 	data: data.map((entry, index) => {
+				// 		return { x: index, y: entry.accuracy };
+				// 	}),
+				// 	borderColor: '#a8b9e4',
+				// 	backgroundColor: '#a8b9e4',
+				// 	borderWidth: 2,
+				// 	lineTension: 0.4,
+				// 	pointRadius: 1,
+				// 	pointBorderWidth: 1,
+				// 	hoverRadius: 3,
+				// 	hitRadius: 3
+				// }
 			]
 		};
 	}
 
-	let chartCanvas: any;
-	let chart: Chart;
-	const chartData = buildChartData(data);
-
-	function moveActivePointBar(index: number) {
-		if (chart.options.plugins?.customHighlight) {
-			chart.options.plugins.customHighlight.index = index;
+	function generateChart(filteredData: PastTypingTestData[]) {
+		if (!chartCanvas) {
+			return;
 		}
-		chart.update();
-	}
 
-	function disableActivePointBar() {
-		moveActivePointBar(-1);
-	}
-
-	onMount(() => {
 		const ctx = chartCanvas.getContext('2d');
 		chart = new Chart(ctx, {
-			type: 'scatter',
-			data: chartData,
+			type: 'line',
+			data: buildChartData(filteredData),
 			options: {
 				plugins: {
 					legend: {
+						display: true,
 						labels: {
-							usePointStyle: true
+							usePointStyle: true,
+							color: 'rgb(255, 99, 132)'
 						}
 					}
 				},
@@ -82,14 +110,35 @@
 				scales: {
 					x: {
 						type: 'linear',
-						position: 'bottom'
+						position: 'bottom',
+						display: false
 					}
 				}
 			}
 		});
+	}
+
+	let chartCanvas: any;
+	let chart: Chart;
+	let filteredData: PastTypingTestData[] = data;
+
+	function updateTypingDataModeFilter(filterMode: string) {
+		filteredData = data.filter((data) => data.typingEndMode === filterMode);
+
+		var chartExist = Chart.getChart('myChart'); // <canvas> id
+		if (chart) {
+			chart.destroy();
+		}
+
+		generateChart(filteredData);
+	}
+
+	onMount(() => {
+		generateChart(filteredData);
 	});
 </script>
 
+<Dropdown options={allTypingEndModes} defaultOption={getCombinedTypingEndMode()} onOptionSelected={(data) => updateTypingDataModeFilter(data)} />
 <div id="chart-container">
 	<canvas bind:this={chartCanvas} id="chart"></canvas>
 </div>
