@@ -7,13 +7,16 @@ Made it to the [Svelte Community Showcase](https://svelte.dev/blog/whats-new-in-
 - smart mode, using complex typing analysis alghorithms to suggest words that will improve accuracy
 - live mistake correction mode, your errors are fixed as you type
 - timed and fixed word amount typing test
-- live keyboard 
-
-### Incoming features
-
-- user configs with typing and theme settings
+- live keyboard
+- smooth cursor
 - graphs with in-depth statistics and analysis of the test
+- user configs
+  
+### Incoming features
+- theme settings
 - theme marketplace
+- competition mode (like 10fastfingers)
+- import progress from monkeytype
 
 Got any other ideas for features or just want to say hi? Join the [Discord](https://discord.gg/YdcJdE4HBv)!
 
