@@ -20,8 +20,8 @@ export const saveFingersStatistics = async (req: Request, res: Response) => {
     const fingerMap = req.body.fingerMap;
     const defaultFingersPosition = req.body.defaultFingersPosition;
 
-    db.prepare("INSERT OR UPDATE fingers_statistics = ? FROM user_fingers_statistics WHERE user_id = ? AND finger_map = ? AND default_fingers_position = ?")
-      .run(fingersStatistics, res.locals.user?.id, fingerMap, defaultFingersPosition);
+    db.prepare("UPDATE user_fingers_statistics SET fingers_statistics = ? WHERE user_id = ? AND finger_map = ? AND default_fingers_position = ?")
+      .run(res.locals.user?.id, JSON.stringify(fingerMap), JSON.stringify(defaultFingersPosition), JSON.stringify(fingersStatistics));
 
     return res.status(200).json({ status: "success" });
   }

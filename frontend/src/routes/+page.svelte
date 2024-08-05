@@ -12,6 +12,7 @@
 	import { getAccuracy, getWpm } from '../lib/typingTestRunHelper';
 	import { getCombinedTypingEndMode, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
 	import QuickConfigs from '../components/typingTest/quickConfigs.svelte';
+	import { showToast } from '../shared/toastController.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -38,6 +39,21 @@
 	function typingTestEnded(data: TypingTestRunData) {
 		typingTestRunData = data;
 
+		if (userData.userTypingConfig.typingMode === 'test') {
+			typingContextData.displayTypingTest = false;
+		} else if (userData.userTypingConfig.typingMode === 'smart') {
+			const updatedFingerStatistics = analyse(
+				userData.fingersStatistics,
+				data.targetText,
+				data.userTypedText,
+				userData.userTypingConfig.smartModeConfig.fingerMap,
+				userData.userTypingConfig.smartModeConfig.defaultFingersPosition
+			);
+			userData.fingersStatistics = updatedFingerStatistics;
+
+			resetTypingTest();
+		}
+
 		if (isLoggedIn()) {
 			try {
 				fetchBackend(fetch, '/profile/saveTypingTest', {
@@ -56,22 +72,24 @@
 				});
 			} catch (e) {
 				console.error(e);
+				showToast({ message: "Couldn't save typing data" });
 			}
-		}
 
-		if (userData.userTypingConfig.typingMode === 'test') {
-			typingContextData.displayTypingTest = false;
-		}
-
-		if (userData.userTypingConfig.typingMode === 'smart') {
-			const updatedFingerStatistics = analyse(
-				userData.fingersStatistics,
-				data.targetText,
-				data.userTypedText,
-				userData.userTypingConfig.smartModeConfig.fingerMap,
-				userData.userTypingConfig.smartModeConfig.defaultFingersPosition
-			);
-			userData.fingersStatistics = updatedFingerStatistics;
+			if (userData.userTypingConfig.typingMode === 'smart') {
+				try {
+					fetchBackend(fetch, '/profile/saveFingersStatistics', {
+						method: 'POST',
+						body: {
+							fingersStatistics: userData.fingersStatistics,
+							fingerMap: userData.userTypingConfig.smartModeConfig.fingerMap,
+							defaultFingersPosition: userData.userTypingConfig.smartModeConfig.defaultFingersPosition
+						}
+					});
+				} catch (e) {
+					console.error(e);
+					showToast({ message: "Couldn't save fingers statistics" });
+				}
+			}
 		}
 	}
 
