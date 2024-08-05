@@ -1,8 +1,16 @@
 <script lang="ts">
-	import { typingEndModes, typingEndTimeModes, typingEndWordModes, userData } from '../../shared/userData.svelte';
+	import { typingEndModes, typingEndTimeModes, typingEndWordModes, typingModes, userData } from '../../shared/userData.svelte';
 </script>
 
 <div id="configWrapper">
+	{#each typingModes as typingMode}
+		<button class:selected={userData.userTypingConfig.typingMode === typingMode} onclick={() => (userData.userTypingConfig.typingMode = typingMode)}>
+			{typingMode}
+		</button>
+	{/each}
+
+	<div class="separator"></div>
+
 	{#each typingEndModes as typingEndMode}
 		<button
 			class:selected={userData.userTypingConfig.typingEndMode === typingEndMode}
@@ -12,7 +20,7 @@
 		</button>
 	{/each}
 
-	<div id="separator"></div>
+	<div class="separator"></div>
 
 	{#if userData.userTypingConfig.typingEndMode === 'words'}
 		{#each typingEndWordModes as typingEndWordMode}
@@ -33,6 +41,7 @@
 			</button>
 		{/each}
 	{/if}
+	<!-- <div class="separator"></div> -->
 </div>
 
 <style>
@@ -47,8 +56,8 @@
 		border-radius: var(--border-radius);
 		background-color: var(--primary-color);
 	}
-	#separator {
-		width: 2px;
+	.separator {
+		width: 1px;
 		background-color: var(--secondary-color);
 	}
 </style>

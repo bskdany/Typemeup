@@ -30,6 +30,9 @@
 		background-color: var(--primary-color);
 		padding: var(--padding-small);
 	}
+	.option {
+		color: var(--secondary-color);
+	}
 
 	.dropdown:hover {
 		color: var(--accent-color);

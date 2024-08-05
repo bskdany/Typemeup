@@ -3,8 +3,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch }) => {
   try {
-    const data = await fetchBackend(fetch, "/profile");
-    return data
+    return await fetchBackend(fetch, "/profile/getTypingHistory");
   }
   catch (e) {
     console.error(e)

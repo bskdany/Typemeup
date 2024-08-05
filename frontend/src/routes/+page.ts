@@ -4,14 +4,14 @@ import type { PageLoad } from "./profile/$types";
 
 export const load: PageLoad = async ({ fetch }) => {
   try {
-    const data = await fetchBackend(fetch, "/config/getUserTypingConfig");
+    const data = await fetchBackend(fetch, "/profile/getUserData");
     if (data) {
-      console.log(data)
       userData.username = data?.username;
       userData.userTypingConfig = JSON.parse(data?.userTypingConfig);
+      userData.fingersStatistics = JSON.parse(data?.fingersStatistics);
     }
   }
   catch (e) {
-    // nothing because yey
+    console.error(e);
   }
 }

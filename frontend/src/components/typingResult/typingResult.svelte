@@ -5,7 +5,7 @@
 	import KeyPressTimingsChart from '../chart/keyPressTimingsChart.svelte';
 	import SingleDataContainer from '../common/singleDataContainer.svelte';
 	import TextContainer from '../common/textContainer.svelte';
-	import { getWpm, getAccuracy, getRawWpm, getTime, getCorrectCharCount, getWrongCharCount } from '../typingTestRunHelper';
+	import { getWpm, getAccuracy, getRawWpm, getTime, getCorrectCharCount, getWrongCharCount } from '../../lib/typingTestRunHelper';
 	import TypingTestReplay from './typingTestReplay.svelte';
 
 	let pressTabToRestartElement: any;

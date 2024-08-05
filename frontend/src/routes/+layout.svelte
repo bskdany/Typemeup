@@ -12,7 +12,7 @@
 
 	async function saveConfig() {
 		try {
-			await fetchBackend(fetch, '/config/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
+			await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
 			showToast({ message: 'Config saved succesfully', type: 'success' });
 		} catch (e) {
 			console.error(e);

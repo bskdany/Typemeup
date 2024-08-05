@@ -1,4 +1,4 @@
-import type { FingerData, UserTypingData } from "../interfaces";
+import type { UserTypingData } from "../types/algo";
 import wordsFile from "../words/words.json";
 
 export function generateWordsAlgo(userTypingData: UserTypingData, howManyWords: number) {
@@ -12,8 +12,8 @@ export function generateWordsAlgo(userTypingData: UserTypingData, howManyWords: 
 
   // accuracy based word suggestion
   const fingerTrainingOrder: number[][] = [];
-  for (const FingerData of userTypingData.fingersStatistics) {
-    fingerTrainingOrder.push([FingerData.fingerNumber, FingerData.accuracy]);
+  for (const FingerStatistics of userTypingData.fingersStatistics) {
+    fingerTrainingOrder.push([FingerStatistics.fingerNumber, FingerStatistics.accuracy]);
   }
   // TODO: Make this choose randomly between the values when they are the same 
   fingerTrainingOrder.sort((a, b) => {

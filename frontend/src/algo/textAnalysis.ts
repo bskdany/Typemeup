@@ -1,8 +1,7 @@
-import type { FingerKeypressData, FingerKeyToKeyMovement, FingerData, TypingAnalysisError, UserTypedText } from "../interfaces";
+import type { FingerStatistics, FingerKeypressData, TypingAnalysisError } from "../types/algo";
 import { reverseFingerMap } from "./fingersStatisticsHelper";
 
-
-export function analyse(fingersStatistics: FingerData[], targetTextByWord: string[], userTypedText: string[], fingerMap: string[][], defaultFingerPositions: string[]) {
+export function analyse(fingersStatistics: FingerStatistics[], targetTextByWord: string[], userTypedText: string[], fingerMap: string[][], defaultFingerPositions: string[]) {
   const reversedFingerMap = reverseFingerMap(fingerMap);
 
   const targetText: string[] = [];
@@ -23,7 +22,7 @@ export function analyse(fingersStatistics: FingerData[], targetTextByWord: strin
   console.log("Aligned text   " + alignedTargetText.join(""));
   console.log("               " + alignedUserTypedText.join(""));
 
-  const sequentialFingerKeypressData = generateFingerData([...alignedTargetText], [...alignedUserTypedText], fingerMap, reversedFingerMap, defaultFingerPositions);
+  const sequentialFingerKeypressData = generateFingerStatistics([...alignedTargetText], [...alignedUserTypedText], fingerMap, reversedFingerMap, defaultFingerPositions);
   console.log(sequentialFingerKeypressData)
   calculateWhenWasLastKeyPressedSameFinger(sequentialFingerKeypressData, fingerMap.length);
   const fingerKeypressData: FingerKeypressData[][] = divideDataByFinger(sequentialFingerKeypressData, fingerMap.length);
@@ -33,9 +32,9 @@ export function analyse(fingersStatistics: FingerData[], targetTextByWord: strin
   return fingersStatistics;
 }
 
-function updateStatistics(fingersStatistics: FingerData[], fingersKeyPressData: FingerKeypressData[][]) {
+function updateStatistics(fingersStatistics: FingerStatistics[], fingersKeyPressData: FingerKeypressData[][]) {
   for (let i = 0; i < fingersStatistics.length; i++) {
-    const FingerData = fingersStatistics[i];
+    const FingerStatistics = fingersStatistics[i];
     const fingerKeypressData: FingerKeypressData[] = fingersKeyPressData[i];
     let totalCorrectHitCount = 0;
     let totalWrongHitCount = 0;
@@ -49,7 +48,7 @@ function updateStatistics(fingersStatistics: FingerData[], fingersKeyPressData: 
       if (keyPress.isCorrect) {
         totalConfidence += keyPressWeightedProbability;
         totalCorrectHitCount += 1;
-        for (const fingerKeyToKeyMovement of FingerData.keyToKeyMovements) {
+        for (const fingerKeyToKeyMovement of FingerStatistics.keyToKeyMovements) {
           if (fingerKeyToKeyMovement.sourceKey === keyPress.lastFingerPosition && fingerKeyToKeyMovement.destinationKey === keyPress.pressedKey) {
             fingerKeyToKeyMovement.confidence += keyPressWeightedProbability;
             break; // because we will only have 1 match
@@ -62,19 +61,19 @@ function updateStatistics(fingersStatistics: FingerData[], fingersKeyPressData: 
         totalWrongHitCount += 1;
       }
     }
-    FingerData.totalCorrectHitCount += totalCorrectHitCount;
-    FingerData.totalWrongHitCount += totalWrongHitCount;
+    FingerStatistics.totalCorrectHitCount += totalCorrectHitCount;
+    FingerStatistics.totalWrongHitCount += totalWrongHitCount;
     // the condifence is divided by the number of key to key finger movements that each finger can do
-    FingerData.totalConfidence = parseFloat((FingerData.totalConfidence + totalConfidence / FingerData.keyToKeyMovements.length).toFixed(5));
-    FingerData.totalError = parseFloat((FingerData.totalError + totalError).toFixed(5));
+    FingerStatistics.totalConfidence = parseFloat((FingerStatistics.totalConfidence + totalConfidence / FingerStatistics.keyToKeyMovements.length).toFixed(5));
+    FingerStatistics.totalError = parseFloat((FingerStatistics.totalError + totalError).toFixed(5));
 
-    if (FingerData.totalConfidence + FingerData.totalError != 0) {
-      FingerData.accuracy = parseFloat((FingerData.totalCorrectHitCount / (FingerData.totalCorrectHitCount + FingerData.totalWrongHitCount) * 100).toFixed(2));
+    if (FingerStatistics.totalConfidence + FingerStatistics.totalError != 0) {
+      FingerStatistics.accuracy = parseFloat((FingerStatistics.totalCorrectHitCount / (FingerStatistics.totalCorrectHitCount + FingerStatistics.totalWrongHitCount) * 100).toFixed(2));
     }
   }
 }
 
-function addKeysToFingersStatistics(fingersStatistics: FingerData[], fingersKeypressData: FingerKeypressData[][]) {
+function addKeysToFingersStatistics(fingersStatistics: FingerStatistics[], fingersKeypressData: FingerKeypressData[][]) {
   for (let i = 0; i < fingersKeypressData.length; i++) {
     fingersStatistics[i].keyPressData.push([]);
     for (const keyPress of fingersKeypressData[i]) {
@@ -105,10 +104,10 @@ function calculateFingerAccuracy(fingerKeypressData: FingerKeypressData[][], fin
   return currentFingerAccuracy;
 }
 
-function calculateWhenWasLastKeyPressedSameFinger(sequentialFingerData: FingerKeypressData[], fingerMapLength: number) {
+function calculateWhenWasLastKeyPressedSameFinger(sequentialFingerStatistics: FingerKeypressData[], fingerMapLength: number) {
   const currentFingerPositionLastKeyPressed: number[] = new Array(fingerMapLength).fill(0);
 
-  for (const fingerDataEntry of sequentialFingerData) {
+  for (const fingerDataEntry of sequentialFingerStatistics) {
     fingerDataEntry.whenWasLastKeyPressed = currentFingerPositionLastKeyPressed[fingerDataEntry.fingerNumber];
 
     if (fingerDataEntry.isCorrect) {
@@ -120,12 +119,12 @@ function calculateWhenWasLastKeyPressedSameFinger(sequentialFingerData: FingerKe
   }
 }
 
-function divideDataByFinger(sequentialFingerData: FingerKeypressData[], fignerMapLength: number) {
+function divideDataByFinger(sequentialFingerStatistics: FingerKeypressData[], fignerMapLength: number) {
   const fingerDataByFinger: FingerKeypressData[][] = [];
   for (let i = 0; i < fignerMapLength; i++) {
     fingerDataByFinger.push([]);
   }
-  for (const fingerDataEntry of sequentialFingerData) {
+  for (const fingerDataEntry of sequentialFingerStatistics) {
     fingerDataByFinger[fingerDataEntry.fingerNumber].push(fingerDataEntry);
   }
   return fingerDataByFinger;
@@ -217,10 +216,10 @@ function calculateFingerProbability(error: TypingAnalysisError, fingerMapLength:
   return fingerProbabilities;
 }
 
-function generateFingerData(alignedTargetText: string[], alignedUserTypedText: string[], fingerMap: string[][], reversedFingerMap: Map<string, number>, defaultFingerPositions: string[]) {
+function generateFingerStatistics(alignedTargetText: string[], alignedUserTypedText: string[], fingerMap: string[][], reversedFingerMap: Map<string, number>, defaultFingerPositions: string[]) {
   const currentFingerPosition: string[] = [...defaultFingerPositions];
 
-  const sequentialFingerData: FingerKeypressData[] = [];
+  const sequentialFingerStatistics: FingerKeypressData[] = [];
 
   for (let letterCounter = 0; letterCounter < alignedTargetText.length; letterCounter++) {
     let letterCounterJumpAmount = 0; // this is needed in case I have 2 placeholders in a row
@@ -285,7 +284,7 @@ function generateFingerData(alignedTargetText: string[], alignedUserTypedText: s
               whenWasLastKeyPressed: 0
             }
 
-            sequentialFingerData.push(fingerData);
+            sequentialFingerStatistics.push(fingerData);
           }
         })
 
@@ -313,7 +312,7 @@ function generateFingerData(alignedTargetText: string[], alignedUserTypedText: s
         whenWasLastKeyPressed: 0
       }
 
-      sequentialFingerData.push(fingerData);
+      sequentialFingerStatistics.push(fingerData);
 
       // update the finger position
       currentFingerPosition[reversedFingerMap.get(userTypedLetter)!] = userTypedLetter;
@@ -323,7 +322,7 @@ function generateFingerData(alignedTargetText: string[], alignedUserTypedText: s
     letterCounter += letterCounterJumpAmount;
   }
 
-  return sequentialFingerData;
+  return sequentialFingerStatistics;
 }
 
 function alignText(targetText: string[], userTypedText: string[], maxTextCorrection: number = 3): [string[], string[]] {

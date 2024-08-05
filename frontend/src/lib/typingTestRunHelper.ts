@@ -1,4 +1,4 @@
-import type { Letter, TypingTestRunData } from "../interfaces";
+import type { TypingTestRunData, Letter } from "../types/interfaces";
 
 function calculateWpm(correctCharCount: number, msTime: number) {
   return parseFloat(((correctCharCount / 4.7) * (60 / (msTime / 1000))).toFixed(2));

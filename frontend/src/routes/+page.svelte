@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../global.css';
 	import { onDestroy, onMount, setContext } from 'svelte';
-	import type { TypingContextData, TypingTestRunData, UserTypingData } from '../types/interfaces';
+	import type { TypingTestRunData } from '../types/interfaces';
 	import { analyse } from '../algo/textAnalysis';
 	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
 	import Keyboard from '../components/typingTest/keyboard.svelte';
@@ -9,7 +9,7 @@
 	import TypingTest from '../components/typingTest/typingTest.svelte';
 	import TypingResult from '../components/typingResult/typingResult.svelte';
 	import { fetchBackend } from '../lib/fetch';
-	import { getAccuracy, getWpm } from '../components/typingTestRunHelper';
+	import { getAccuracy, getWpm } from '../lib/typingTestRunHelper';
 	import { getCombinedTypingEndMode, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
 	import QuickConfigs from '../components/typingTest/quickConfigs.svelte';
 
@@ -59,19 +59,20 @@
 			}
 		}
 
-		typingContextData.displayTypingTest = false;
+		if (userData.userTypingConfig.typingMode === 'test') {
+			typingContextData.displayTypingTest = false;
+		}
 
-		// if (userData.userTypingConfig.typingMode === 'smart') {
-		// 	const updatedFingerData = analyse(
-		// 		userTypingData.fingersStatistics,
-		// 		data.targetText,
-		// 		data.userTypedText,
-		// 		userData.userTypingConfig.learnModeConfig.fingerMap,
-		// 		userData.userTypingConfig.learnModeConfig.defaultFingersPosition
-		// 	);
-		// 	console.log(updatedFingerData);
-		// 	userTypingData.fingersStatistics = updatedFingerData;
-		// }
+		if (userData.userTypingConfig.typingMode === 'smart') {
+			const updatedFingerStatistics = analyse(
+				userData.fingersStatistics,
+				data.targetText,
+				data.userTypedText,
+				userData.userTypingConfig.smartModeConfig.fingerMap,
+				userData.userTypingConfig.smartModeConfig.defaultFingersPosition
+			);
+			userData.fingersStatistics = updatedFingerStatistics;
+		}
 	}
 
 	function handleTabKeyDown(event: any) {

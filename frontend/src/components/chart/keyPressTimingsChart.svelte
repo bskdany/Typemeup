@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Chart } from 'chart.js/auto';
 	import type { Letter, TypingResultContext, TypingResultContextData, TypingTestRunData } from '../../types/interfaces';
-	import { calculateWpm, getWpm } from '../typingTestRunHelper';
+	import { calculateWpm, getWpm } from '../../lib/typingTestRunHelper';
 	import { getContext, onMount } from 'svelte';
 	import { customHighlightPlugin } from './scatterChartProgressPlugin';
 

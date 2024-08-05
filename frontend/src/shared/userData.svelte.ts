@@ -1,34 +1,16 @@
+import type { FingerStatistics } from "../types/algo";
 import type { UserTypingConfig } from "../types/interfaces";
 
+export const typingModes = ['test', 'smart'] as const;
 export const typingEndModes = ['time', 'words'] as const;
 export const typingEndWordModes = [10, 25, 50, 100];
 export const typingEndTimeModes = [15, 30, 60, 120];
 export const allTypingEndModes = ['words 10', 'words 25', 'words 50', 'words 100', 'time 15', 'time 30', 'time 60', 'time 120'];
 
-export const userData: { username: string, userTypingConfig: UserTypingConfig } = $state({
+export const userData: { username: string, userTypingConfig: UserTypingConfig, fingersStatistics: FingerStatistics[] } = $state({
   username: "",
-  userTypingConfig: {
-    errorCorrectionMode: 3,
-    typingMode: "test",
-    typingEndMode: "time",
-    typingEndTimeMode: 60,
-    typingEndWordMode: 50,
-    smartModeConfig: {
-      fingerMap: [
-        ['q', 'a', 'z'],
-        ['w', 's', 'x'],
-        ['e', 'd', 'c'],
-        ['r', 'f', 'v', 't', 'g', 'b'],
-        ['u', 'j', 'm', 'y', 'h', 'h', 'n'],
-        ['i', 'k', ','],
-        ['o', 'l', '.'],
-        ['p', ';', '/'],
-        [' '],
-        []
-      ],
-      defaultFingersPosition: ["a", "s", "d", "f", "j", "k", "l", ";", " ", ""],
-    }
-  }
+  userTypingConfig: {} as UserTypingConfig,
+  fingersStatistics: [] as FingerStatistics[]
 });
 
 export function isLoggedIn(): boolean { return userData.username?.length > 0 }
