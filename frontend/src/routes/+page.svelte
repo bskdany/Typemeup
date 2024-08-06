@@ -2,7 +2,6 @@
 	import '../global.css';
 	import { onDestroy, onMount, setContext } from 'svelte';
 	import type { TypingTestRunData } from '../types/interfaces';
-	import { analyse } from '../algo/textAnalysis';
 	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
 	import Keyboard from '../components/typingTest/keyboard.svelte';
 	import TypingProgress from '../components/typingTest/typingProgress.svelte';
@@ -13,6 +12,9 @@
 	import { getCombinedTypingEndMode, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
 	import QuickConfigs from '../components/typingTest/quickConfigs.svelte';
 	import { showToast } from '../shared/toastController.svelte';
+	import { analyse } from '../algo/analyse';
+	import type { FingerKeypressData } from '../types/algo';
+	import { computeFingersStatistics } from '../algo/combine';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -42,14 +44,18 @@
 		if (userData.userTypingConfig.typingMode === 'test') {
 			typingContextData.displayTypingTest = false;
 		} else if (userData.userTypingConfig.typingMode === 'smart') {
-			const updatedFingerStatistics = analyse(
-				userData.fingersStatistics,
+			const fingerKeyPressData: FingerKeypressData[] = analyse(
 				data.targetText,
 				data.userTypedText,
 				userData.userTypingConfig.smartModeConfig.fingerMap,
 				userData.userTypingConfig.smartModeConfig.defaultFingersPosition
 			);
-			userData.fingersStatistics = updatedFingerStatistics;
+
+			userData.fingersStatistics = computeFingersStatistics(
+				userData.fingersStatistics,
+				fingerKeyPressData,
+				userData.userTypingConfig.smartModeConfig.fingerMap
+			);
 
 			resetTypingTest();
 		}
