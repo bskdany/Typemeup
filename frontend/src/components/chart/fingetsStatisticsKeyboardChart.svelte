@@ -16,54 +16,65 @@
 		const delta = max - min;
 		value = (value / delta) * 100;
 
-		const red = Math.floor(((100 - value) * 255) / 100);
-		const green = Math.floor((value * 255) / 100);
-		return `rgb(${red}, ${green}, 0)`;
+		const blue = Math.floor((value * 200) / 100);
+		return `rgb(0, 0, ${55 + blue})`;
 	}
 
 	function buildKeyboardData(fingersStatistics: FingerStatistics[]) {
-		const destinationKeys = new Map<string, number>();
+		const destinationKeys = new Map<string, { confidence: number; color: string }>();
 
 		for (const fingerStatistics of fingersStatistics) {
 			for (const keyToKeyMovement of fingerStatistics.keyToKeyMovements) {
-				let keyValue = destinationKeys.get(keyToKeyMovement.destinationKey) ?? 0;
-				keyValue += keyToKeyMovement.confidence;
-				destinationKeys.set(keyToKeyMovement.destinationKey, keyValue);
+				let formattedDestinationKey = keyToKeyMovement.destinationKey.toUpperCase();
+				formattedDestinationKey === ' ' ? (formattedDestinationKey = 'Space') : '';
+
+				let keyData = destinationKeys.get(formattedDestinationKey) ?? { confidence: 0, color: '' };
+				keyData.confidence += keyToKeyMovement.confidence;
+				destinationKeys.set(formattedDestinationKey, keyData);
 			}
 		}
 
 		let min = Infinity;
 		let max = -Infinity;
-		for (const value of destinationKeys.values()) {
-			if (value < min) {
-				min = value;
+		for (const keyData of destinationKeys.values()) {
+			if (keyData.confidence < min) {
+				min = keyData.confidence;
 			}
-			if (value > max) {
-				max = value;
+			if (keyData.confidence > max) {
+				max = keyData.confidence;
 			}
 		}
 
-		const keyColors = new Map<string, string>();
-		for (const [key, value] of destinationKeys.entries()) {
-			keyColors.set(key, getColor(value, min, max));
+		for (const [key, keyData] of destinationKeys.entries()) {
+			destinationKeys.set(key, { confidence: keyData.confidence, color: getColor(keyData.confidence, min, max) });
 		}
 
-		return keyColors;
+		return destinationKeys;
 	}
 
 	const keyboardData = $derived(buildKeyboardData(fingersStatistics));
 	$effect(() => {
 		console.log(keyboardData);
 	});
+
+	let isKeyboardHovered: boolean = $state(false);
 </script>
 
-<div id="keyboardWrapper">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+<div id="keyboardWrapper" onmouseover={() => (isKeyboardHovered = true)} onmouseleave={() => (isKeyboardHovered = false)}>
 	{#each rows as row, index}
 		<div class="row" id="row{index}">
 			{#each row as key}
-				<div class="key" class:invisible={key === ''} style="background-color: {keyboardData.get(key.toLowerCase())}">
-					{key}
-				</div>
+				{#if !isKeyboardHovered}
+					<div class="key" class:invisible={key === ''} style="background-color: {keyboardData.get(key)?.color}">
+						{key}
+					</div>
+				{:else}
+					<div class="key" class:invisible={key === ''} style="background-color: {keyboardData.get(key)?.color}">
+						{keyboardData.get(key)?.confidence.toFixed(1) ?? key}
+					</div>
+				{/if}
 			{/each}
 		</div>
 	{/each}
