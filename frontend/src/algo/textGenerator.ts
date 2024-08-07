@@ -1,7 +1,7 @@
-import type { UserTypingData } from "../types/algo";
+import type { FingerStatistics, UserTypingData } from "../types/algo";
 import wordsFile from "../words/words.json";
 
-export function generateWordsAlgo(userTypingData: UserTypingData, howManyWords: number) {
+export function generateWordsAlgo(fingersStatistics: FingerStatistics[], fingerMap: string[][], howManyWords: number) {
   // i see that there is not 1 best way to generate words based on the statistics, 
   // there are several factors that can be looked at
   // 1. accuracy
@@ -12,7 +12,7 @@ export function generateWordsAlgo(userTypingData: UserTypingData, howManyWords: 
 
   // accuracy based word suggestion
   const fingerTrainingOrder: number[][] = [];
-  for (const FingerStatistics of userTypingData.fingersStatistics) {
+  for (const FingerStatistics of fingersStatistics) {
     fingerTrainingOrder.push([FingerStatistics.fingerNumber, FingerStatistics.accuracy]);
   }
   // TODO: Make this choose randomly between the values when they are the same 
@@ -40,7 +40,7 @@ export function generateWordsAlgo(userTypingData: UserTypingData, howManyWords: 
   // each letter will point to a list of words that contain that letter, sorted from the word
   // containing most letters to the least
   const lettersToWordsMap: Map<string, Map<string, number>> = new Map();
-  for (const fingerLetters of userTypingData.fingerMap) {
+  for (const fingerLetters of fingerMap) {
     for (const letter of fingerLetters) {
       lettersToWordsMap.set(letter, new Map());
     }
@@ -65,7 +65,7 @@ export function generateWordsAlgo(userTypingData: UserTypingData, howManyWords: 
 
   const wordsByTargetFingersContent: Map<string, number> = new Map();
   for (const finger of fingersToTrain) {
-    for (const letter of userTypingData.fingerMap[finger]) {
+    for (const letter of fingerMap[finger]) {
       for (const word of lettersToWordsMap.get(letter)?.entries() ?? []) {
         const contentPercentage: number = wordsByTargetFingersContent.get(word[0]) ?? 0;
 

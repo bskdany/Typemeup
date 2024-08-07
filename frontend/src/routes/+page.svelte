@@ -15,6 +15,7 @@
 	import { analyse } from '../algo/analyse';
 	import type { FingerKeypressData } from '../types/algo';
 	import { computeFingersStatistics } from '../algo/combine';
+	import FingetsStatisticsKeyboardChart from '../components/chart/fingetsStatisticsKeyboardChart.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -57,7 +58,9 @@
 				userData.userTypingConfig.smartModeConfig.fingerMap
 			);
 
-			resetTypingTest();
+			console.log(userData.fingersStatistics);
+
+			generateTargetText();
 		}
 
 		if (isLoggedIn()) {
@@ -109,21 +112,31 @@
 		typingTestRef?.focus();
 	}
 
-	function resetTypingTest() {
-		if (userData.userTypingConfig.typingEndMode.startsWith('time')) {
-			targetText = generateWords(100);
-		} else if (userData.userTypingConfig.typingEndMode.startsWith('words')) {
-			targetText = generateWords(parseInt(userData.userTypingConfig.typingEndMode.split(' ')[1]) ?? 10);
-			targetText = ['asdfasdfasdf'];
+	function generateTargetText() {
+		if (userData.userTypingConfig.typingMode === 'smart') {
+			targetText = generateWordsAlgo(
+				userData.fingersStatistics,
+				userData.userTypingConfig.smartModeConfig.fingerMap,
+				userData.userTypingConfig.typingEndWordMode
+			);
+		} else if (userData.userTypingConfig.typingMode === 'test') {
+			if (userData.userTypingConfig.typingEndMode.startsWith('time')) {
+				targetText = generateWords(100);
+			} else if (userData.userTypingConfig.typingEndMode.startsWith('words')) {
+				targetText = generateWords(userData.userTypingConfig.typingEndWordMode);
+			}
 		}
+
+		console.log();
 	}
 
 	$effect(() => {
 		resetTrigger;
+		userData.userTypingConfig.typingMode;
 		userData.userTypingConfig.typingEndMode;
 		userData.userTypingConfig.typingEndTimeMode;
 		userData.userTypingConfig.typingEndWordMode;
-		resetTypingTest();
+		generateTargetText();
 	});
 
 	onMount(() => {
@@ -164,7 +177,16 @@
 			/>
 		</div>
 	{/key}
-	<div id="keyboardWrapper"><Keyboard /></div>
+
+	{#if userData.userTypingConfig.typingMode === 'test'}
+		<div id="keyboardWrapper">
+			<Keyboard />
+		</div>
+	{:else if userData.userTypingConfig.typingMode === 'smart'}
+		<div id="keyboardWrapper">
+			<FingetsStatisticsKeyboardChart fingersStatistics={userData.fingersStatistics} />
+		</div>
+	{/if}
 {:else}
 	<div id="typingTestReport">
 		<TypingResult {typingTestRunData} restart={() => (typingContextData.displayTypingTest = true)} />
