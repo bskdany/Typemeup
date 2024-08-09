@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { KeyStatistic } from '../../types/algo';
 
-	const { keyStatistics, smartTrainingGoal }: { keyStatistics: Map<string, KeyStatistic>; smartTrainingGoal: 'wpm' | 'accuracy' } = $props();
+	const { keyStats, smartTrainingGoal }: { keyStats: KeyStatistic[]; smartTrainingGoal: 'wpm' | 'accuracy' } = $props();
 
-	let pressedKey: string = $state('');
 	const row0 = ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'];
 	const row1 = ['', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', ''];
 	const row2 = ['', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'", ''];
@@ -28,24 +27,27 @@
 		}
 	}
 
-	function buildKeyboardData(keysStatistics: Map<string, KeyStatistic>) {
+	function buildKeyboardData(keyStatistics: KeyStatistic[]) {
+		if (keyStatistics.length === 0) {
+			return new Map();
+		}
 		const keyboardData = new Map<string, { accuracy: number; wpm: number; color: string }>();
 
 		let min = Infinity;
 		let max = -Infinity;
-		for (const keyStatistics of keyboardData.values()) {
-			if (keyStatistics[smartTrainingGoal] < min) {
-				min = keyStatistics[smartTrainingGoal];
+		for (const keyStatistic of keyStatistics) {
+			if (keyStatistic[smartTrainingGoal] < min) {
+				min = keyStatistic[smartTrainingGoal];
 			}
-			if (keyStatistics[smartTrainingGoal] > max) {
-				max = keyStatistics[smartTrainingGoal];
+			if (keyStatistic[smartTrainingGoal] > max) {
+				max = keyStatistic[smartTrainingGoal];
 			}
 		}
 
-		for (const keyStatistic of keysStatistics.values()) {
+		for (const keyStatistic of keyStatistics) {
 			keyboardData.set(convertKeyToKeyboardFormat(keyStatistic.key), {
-				accuracy: keyStatistic.accuracy,
-				wpm: keyStatistic.wpm,
+				accuracy: parseFloat(keyStatistic?.accuracy.toFixed(1)),
+				wpm: parseFloat(keyStatistic.wpm?.toFixed(1)),
 				color: getColor(keyStatistic[smartTrainingGoal], min, max)
 			});
 		}
@@ -53,11 +55,7 @@
 		return keyboardData;
 	}
 
-	const keyboardData = $derived(buildKeyboardData(keyStatistics));
-	$effect(() => {
-		console.log(keyboardData);
-	});
-
+	let keyboardData = $derived(buildKeyboardData(keyStats));
 	let isKeyboardHovered: boolean = $state(false);
 </script>
 
@@ -112,7 +110,7 @@
 	}
 
 	.key {
-		width: auto;
+		font-size: 0.9rem;
 		min-width: 40px;
 		height: 40px;
 		background-color: transparent;

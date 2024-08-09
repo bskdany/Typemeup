@@ -1,11 +1,11 @@
 import type { TypingTestRunData, Letter } from "../types/interfaces";
 
-function calculateWpm(correctCharCount: number, msTime: number) {
-  return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2));
+function calculateWpm(correctCharCount: number, msTime: number): number {
+  return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2)) ?? 0;
 }
 
-function calculateAccuracy(correctCharCount: number, totalChartCount: number) {
-  return parseFloat(((correctCharCount / totalChartCount) * 100).toFixed(1));
+function calculateAccuracy(correctCharCount: number, totalChartCount: number): number {
+  return parseFloat(((correctCharCount / totalChartCount) * 100).toFixed(1)) ?? 0;
 }
 
 function getRawWpm(typingTestRunData: TypingTestRunData): number {

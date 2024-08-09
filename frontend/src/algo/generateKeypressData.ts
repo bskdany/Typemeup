@@ -182,8 +182,8 @@ function constructKeypressData(alignedTargetText: string[], alignedUserTypedText
 
     const fingerData: KeypressData = {
       targetKey: targetLetter,
-      pressedKey: targetLetter,
-      isCorrect: true,
+      pressedKey: userTypedLetter,
+      isCorrect: targetLetter === userTypedLetter,
       position: letterCounter,
       fingerNumber: fingerUsed,
       timeSinceLastKeypress: 0
@@ -195,8 +195,6 @@ function constructKeypressData(alignedTargetText: string[], alignedUserTypedText
 }
 
 function populateKeypressTimings(keypressData: KeypressData[], keyPressTimings: number[]) {
-  console.log(keyPressTimings)
-
   let keyPressTimingsCounter = -1;
   let lastKeypressPosition = -1;
 

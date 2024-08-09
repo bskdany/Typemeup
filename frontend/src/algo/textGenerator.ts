@@ -1,7 +1,7 @@
 import type { KeyStatistic } from "../types/algo";
 import wordsFile from "../words/words.json";
 
-function sortKeysByValue(keyStatistics: Map<string, KeyStatistic>, trainingTarget: "wpm" | "accuracy") {
+function sortKeysByValue(keyStatistics: KeyStatistic[], trainingTarget: "wpm" | "accuracy") {
   const keyOrder = [];
 
   for (const keyStatistic of keyStatistics.values()) {
@@ -40,12 +40,10 @@ function getWordsByLetterContent(allPossibleWords: string[], letters: string[]) 
   return lettersToWordsMap;
 }
 
-export function generateWordsAlgo2(keyStatistics: Map<string, KeyStatistic>, howManyWords: number, trainingTarget: "wpm" | "accuracy") {
+export function generateWordsAlgo2(keyStatistics: KeyStatistic[], howManyWords: number, trainingTarget: "wpm" | "accuracy") {
   const allPossibleWords: string[] = wordsFile.words;
   const sortedKeys = sortKeysByValue(keyStatistics, trainingTarget);
   const wordsByLetterContent = getWordsByLetterContent(allPossibleWords, sortedKeys.map(entry => entry.key));
-  console.log(sortedKeys);
-  console.log(wordsByLetterContent);
   return generateRandomWords(howManyWords);
 }
 

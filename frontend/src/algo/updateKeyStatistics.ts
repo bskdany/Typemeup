@@ -1,8 +1,8 @@
 import { calculateAccuracy, calculateWpm } from "$lib/typingTestRunHelper";
 import type { KeyStatistic, KeypressData } from "../types/algo";
 
-export function updateKeyStatistics(keyStatistics: Map<string, KeyStatistic>, keypressData: KeypressData[]) {
-  for (const keyStatistic of keyStatistics.values()) {
+export function updateKeyStatistics(keyStatistics: KeyStatistic[], keypressData: KeypressData[]) {
+  for (const keyStatistic of keyStatistics) {
     for (const keyPress of keypressData) {
       if (keyStatistic.key === keyPress.pressedKey) {
         updateKeyStatisticWithKeypressData(keyStatistic, keyPress)
@@ -24,5 +24,5 @@ function updateKeyStatisticWithKeypressData(keyStatistics: KeyStatistic, keypres
   }
 
   keyStatistics.accuracy = calculateAccuracy(keyStatistics.correctHitCount, keyStatistics.correctHitCount + keyStatistics.incorrectHitCount);
-  keyStatistics.wpm = calculateWpm(keyStatistics.correctHitCount, (keyStatistics.averageTimeToPressCorrect + keyStatistics.averageTimeToPressIncorrect) / 2);
+  keyStatistics.wpm = calculateWpm(keyStatistics.correctHitCount, (keyStatistics.averageTimeToPressCorrect + keyStatistics.averageTimeToPressIncorrect) * (keyStatistics.correctHitCount + keyStatistics.incorrectHitCount) / 2);
 }

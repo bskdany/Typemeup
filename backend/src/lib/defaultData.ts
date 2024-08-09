@@ -13,9 +13,9 @@ export const defaultUserTypingConfig = {
       ['e', 'd', 'c'],
       ['r', 'f', 'v', 't', 'g', 'b'],
       ['u', 'j', 'm', 'y', 'h', 'h', 'n'],
-      ['i', 'k', ','],
-      ['o', 'l', '.'],
-      ['p', ';', '/'],
+      ['i', 'k'],
+      ['o', 'l'],
+      ['p'],
       [' '],
       []
     ],
@@ -24,11 +24,11 @@ export const defaultUserTypingConfig = {
 }
 
 export function generateKeyStatistic(fingerMap: string[][]) {
-  const keyMap = new Map<string, KeyStatistic>();
+  const keyMap = [];
 
   for (const finger of fingerMap) {
     for (const letter of finger) {
-      keyMap.set(letter, {
+      keyMap.push({
         key: letter,
         correctHitCount: 0,
         incorrectHitCount: 0,

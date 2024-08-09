@@ -13,7 +13,7 @@
 	import QuickConfigs from '../components/typingTest/quickConfigs.svelte';
 	import { showToast } from '../shared/toastController.svelte';
 	import FingetsStatisticsKeyboardChart from '../components/chart/keyStatisticsKeyboardChart.svelte';
-	import type { KeypressData } from '../types/algo';
+	import type { KeypressData, KeyStatistic } from '../types/algo';
 	import { generateKeypressData } from '../algo/generateKeypressData';
 	import { updateKeyStatistics } from '../algo/updateKeyStatistics';
 	import { generateRandomWords, generateWordsAlgo2 } from '../algo/textGenerator';
@@ -56,6 +56,7 @@
 
 			console.log(keypressData);
 			updateKeyStatistics(userData.keyStatistics, keypressData);
+			console.log(userData.keyStatistics);
 
 			generateTargetText();
 		}
@@ -117,12 +118,9 @@
 				targetText = generateRandomWords(userData.userTypingConfig.typingEndWordMode);
 			}
 		}
-
-		console.log();
 	}
 
 	$effect(() => {
-		resetTrigger;
 		userData.userTypingConfig.typingMode;
 		userData.userTypingConfig.typingEndMode;
 		userData.userTypingConfig.typingEndTimeMode;
@@ -175,7 +173,7 @@
 		</div>
 	{:else if userData.userTypingConfig.typingMode === 'smart'}
 		<div id="keyboardWrapper">
-			<FingetsStatisticsKeyboardChart keyStatistics={userData.keyStatistics} smartTrainingGoal={'wpm'} />
+			<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} smartTrainingGoal={'wpm'} />
 		</div>
 	{/if}
 {:else}

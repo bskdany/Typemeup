@@ -28,7 +28,6 @@ export async function fetchBackend(fetch: any, endpoint: string, options?: { bod
   }
 
   try {
-    console.log(response)
     return await response.json();
   } catch (error) {
     throw new Error('Failed to parse JSON response');

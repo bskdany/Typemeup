@@ -24,11 +24,11 @@ export function splitArray<T>(array: T[], delimiter: T): T[][] {
 }
 
 export function generateKeyStatistic(fingerMap: string[][]) {
-  const keyMap = new Map<string, KeyStatistic>();
+  const keyMap = [];
 
   for (const finger of fingerMap) {
     for (const letter of finger) {
-      keyMap.set(letter, {
+      keyMap.push(letter, {
         key: letter,
         correctHitCount: 0,
         incorrectHitCount: 0,

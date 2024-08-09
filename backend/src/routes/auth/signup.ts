@@ -36,7 +36,7 @@ export const signupRoute = async (req: Request, res: Response) => {
       username,
       passwordHash,
       JSON.stringify(defaultUserTypingConfig),
-      JSON.stringify(Array.from(generateKeyStatistic(defaultUserTypingConfig.smartModeConfig.fingerMap)))
+      JSON.stringify(generateKeyStatistic(defaultUserTypingConfig.smartModeConfig.fingerMap))
     );
 
     const session = await lucia.createSession(userId, {});

@@ -8,7 +8,6 @@ export const getUserDataRoute = async (req: Request, res: Response) => {
 
     if (username) {
       const userResult = db.prepare("SELECT typing_config, key_statistics FROM user WHERE id = ?").get(res.locals.user?.id) as { typing_config: string, key_statistics: string };
-      console.log(userResult)
 
       return res.status(200).json({
         status: "success",
@@ -23,7 +22,7 @@ export const getUserDataRoute = async (req: Request, res: Response) => {
         status: "success",
         username: "",
         userTypingConfig: JSON.stringify(defaultUserTypingConfig),
-        keyStatistics: JSON.stringify(Array.from(generateKeyStatistic(defaultUserTypingConfig.smartModeConfig.fingerMap)))
+        keyStatistics: JSON.stringify(generateKeyStatistic(defaultUserTypingConfig.smartModeConfig.fingerMap))
       })
     }
 
