@@ -1,7 +1,11 @@
 import type { TypingTestRunData, Letter } from "../types/interfaces";
 
 function calculateWpm(correctCharCount: number, msTime: number) {
-  return parseFloat(((correctCharCount / 4.7) * (60 / (msTime / 1000))).toFixed(2));
+  return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2));
+}
+
+function calculateAccuracy(correctCharCount: number, totalChartCount: number) {
+  return parseFloat(((correctCharCount / totalChartCount) * 100).toFixed(1));
 }
 
 function getRawWpm(typingTestRunData: TypingTestRunData): number {
@@ -13,7 +17,7 @@ function getWpm(typingTestRunData: TypingTestRunData): number {
 }
 
 function getAccuracy(typingTestRunData: TypingTestRunData): number {
-  return parseFloat(((getCorrectCharCount(typingTestRunData) / mergeTargetTextWords(typingTestRunData.targetText).length) * 100).toFixed(1));
+  return calculateAccuracy(getCorrectCharCount(typingTestRunData), mergeTargetTextWords(typingTestRunData.targetText).length);
 }
 
 function getTime(typingTestRunData: TypingTestRunData): number {
@@ -46,4 +50,4 @@ function getWrongCharCount(typingContextData: TypingTestRunData, status: "extra"
   return getLetters(typingContextData).filter((letter) => letter.errorStatus === status).length;
 }
 
-export { calculateWpm, getRawWpm, getWpm, getAccuracy, getTime, getCorrectCharCount, getWrongCharCount };
+export { calculateWpm, calculateAccuracy, getRawWpm, getWpm, getAccuracy, getTime, getCorrectCharCount, getWrongCharCount };

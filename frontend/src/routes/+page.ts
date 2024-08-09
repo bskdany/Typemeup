@@ -9,6 +9,8 @@ export const load: PageLoad = async ({ fetch }) => {
       userData.username = data?.username;
       userData.userTypingConfig = JSON.parse(data?.userTypingConfig);
       userData.fingersStatistics = JSON.parse(data?.fingersStatistics);
+
+      console.log(userData)
     }
   }
   catch (e) {

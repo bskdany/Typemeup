@@ -1,43 +1,23 @@
-export interface UserTypingData {
-  fingersStatistics: FingerStatistics[],
-  fingerMap: string[][],
-  defaultFingersPosition: string[],
-  testsCompleted: number
-}
-
-export interface FingerKeypressData {
-  isCorrect: boolean;
-  probability: number;
-  lastFingerPosition: string;
-  targetKey: string;
-  pressedKey: string;
-  errorType: number;
-  position: number;
-  fingerNumber: number;
-  isBurts: boolean;
-  whenWasLastKeyPressed: number;
-}
-
 export interface FingerStatistics {
   fingerNumber: number,
-  keyPressData: FingerKeypressData[][],
-  keyToKeyMovements: FingerKeyToKeyMovement[],
-  totalCorrectHitCount: number,
-  totalWrongHitCount: number,
-  totalConfidence: number,
-  totalError: number,
-  accuracy: number
+  keyData: KeyData[];
 }
 
-export interface FingerKeyToKeyMovement {
-  sourceKey: string,
-  destinationKey: string,
-  confidence: number
+export interface KeyData {
+  key: string,
+  correctHitCount: number,
+  incorrectHitCount: number,
+  averageTimeToPressCorrect: number,
+  averageTimeToPressIncorrect: number,
+  accuracy: number,
+  wpm: number
 }
 
-export interface TypingAnalysisError {
-  targetKeys: string[];
-  pressedKeys: string[],
-  fingerConfiguration: string[];
-  positionIndex: number;
+export interface KeypressData {
+  fingerNumber: number;
+  targetKey: string,
+  pressedKey: string,
+  isCorrect: boolean;
+  position: number;
+  timeSinceLastKeypress: number;
 }

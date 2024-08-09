@@ -1,5 +1,3 @@
-import type { FingerStatistics, FingerKeyToKeyMovement } from "../types/algo";
-
 export function reverseFingerMap(fingerMap: string[][]) {
   let keyToFingerMap = new Map<string, number>();
 

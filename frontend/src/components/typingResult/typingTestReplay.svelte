@@ -78,7 +78,9 @@
 	<div id="mainText">
 		{#each textObject?.textObject as word, index}
 			<div class="word">
+				<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 				{#each word.letters as { text, isCorrect, isSpace, isTyped, id }}
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<span
 						onmouseover={() => {
 							typingResultContextData.activeLetterId = id;

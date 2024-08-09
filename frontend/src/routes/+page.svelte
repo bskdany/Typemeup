@@ -2,7 +2,7 @@
 	import '../global.css';
 	import { onDestroy, onMount, setContext } from 'svelte';
 	import type { TypingTestRunData } from '../types/interfaces';
-	import { generateWords, generateWordsAlgo } from '../algo/textGenerator';
+	import { generateRandomWords, generateWordsAlgo } from '../algo/textGenerator';
 	import Keyboard from '../components/typingTest/keyboard.svelte';
 	import TypingProgress from '../components/typingTest/typingProgress.svelte';
 	import TypingTest from '../components/typingTest/typingTest.svelte';
@@ -12,10 +12,10 @@
 	import { getCombinedTypingEndMode, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
 	import QuickConfigs from '../components/typingTest/quickConfigs.svelte';
 	import { showToast } from '../shared/toastController.svelte';
-	import { analyse } from '../algo/analyse';
-	import type { FingerKeypressData } from '../types/algo';
-	import { computeFingersStatistics } from '../algo/combine';
 	import FingetsStatisticsKeyboardChart from '../components/chart/fingetsStatisticsKeyboardChart.svelte';
+	import { updateFingersStatistics } from '../algo/updateFingersStatistics';
+	import type { KeypressData } from '../types/algo';
+	import { generateKeypressData } from '../algo/generateKeypressData';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -45,18 +45,17 @@
 		if (userData.userTypingConfig.typingMode === 'test') {
 			typingContextData.displayTypingTest = false;
 		} else if (userData.userTypingConfig.typingMode === 'smart') {
-			const fingerKeyPressData: FingerKeypressData[] = analyse(
+			const fingersKeyPressData: KeypressData[][] = generateKeypressData(
 				data.targetText,
 				data.userTypedText,
 				userData.userTypingConfig.smartModeConfig.fingerMap,
-				userData.userTypingConfig.smartModeConfig.defaultFingersPosition
+				userData.userTypingConfig.smartModeConfig.defaultFingersPosition,
+				data.keyPressTimings
 			);
 
-			userData.fingersStatistics = computeFingersStatistics(
-				userData.fingersStatistics,
-				fingerKeyPressData,
-				userData.userTypingConfig.smartModeConfig.fingerMap
-			);
+			console.log(fingersKeyPressData);
+
+			updateFingersStatistics(userData.fingersStatistics, fingersKeyPressData);
 
 			console.log(userData.fingersStatistics);
 
@@ -121,9 +120,9 @@
 			);
 		} else if (userData.userTypingConfig.typingMode === 'test') {
 			if (userData.userTypingConfig.typingEndMode.startsWith('time')) {
-				targetText = generateWords(100);
+				targetText = generateRandomWords(100);
 			} else if (userData.userTypingConfig.typingEndMode.startsWith('words')) {
-				targetText = generateWords(userData.userTypingConfig.typingEndWordMode);
+				targetText = generateRandomWords(userData.userTypingConfig.typingEndWordMode);
 			}
 		}
 
