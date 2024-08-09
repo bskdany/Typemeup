@@ -144,9 +144,9 @@ export function generateWordsAlgo2(keyStatistics: KeyStatistic[], howManyWords: 
 
 export function generateRandomWords(howManyWords: number): string[] {
   const words: string[] = [];
-
   for (let i = 0; i < howManyWords; i++) {
-    const index = Math.round(Math.random() * (wordsFile.length - 1));
+    const randomVal = Math.random();
+    const index = Math.round(randomVal * (wordsFile.words.length - 1));
     words.push(wordsFile.words[index])
   }
   return words;
