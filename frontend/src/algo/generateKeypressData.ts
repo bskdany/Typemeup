@@ -1,5 +1,5 @@
-import type { FingerStatistics, KeypressData } from "../types/algo";
-import { reverseFingerMap } from "./fingersStatisticsHelper";
+import type { KeypressData } from "../types/algo";
+import { reverseFingerMap } from "./utils";
 
 export function generateKeypressData(targetTextByWord: string[], userTypedText: string[], fingerMap: string[][], defaultFingerPositions: string[], keyPressTimings: number[]) {
   const reversedFingerMap = reverseFingerMap(fingerMap);
@@ -23,8 +23,7 @@ export function generateKeypressData(targetTextByWord: string[], userTypedText: 
   // step 3, doing additional processing to keypressData to get out more information
   populateKeypressTimings(keypressData, keyPressTimings);
 
-  const separatedKeypressData = separateKeypressDataByFinger(keypressData, fingerMap.length);
-  return separatedKeypressData;
+  return keypressData;
 }
 
 function alignText(targetText: string[], userTypedText: string[], maxTextCorrection: number = 3): [string[], string[]] {
@@ -213,17 +212,6 @@ function populateKeypressTimings(keypressData: KeypressData[], keyPressTimings: 
       }
     }
   }
-}
-
-function separateKeypressDataByFinger(sequentialFingerStatistics: KeypressData[], fignerMapLength: number) {
-  const separatedKeypressData: KeypressData[][] = [];
-  for (let i = 0; i < fignerMapLength; i++) {
-    separatedKeypressData.push([]);
-  }
-  for (const fingerDataEntry of sequentialFingerStatistics) {
-    separatedKeypressData[fingerDataEntry.fingerNumber].push(fingerDataEntry);
-  }
-  return separatedKeypressData;
 }
 
 function generateKeyNeighbourMap(fingerMap: string[][]) {

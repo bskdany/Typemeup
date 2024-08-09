@@ -1,6 +1,5 @@
 import Database from 'better-sqlite3';
 import { config } from './config.js';
-import { defaultUserTypingConfig } from './defaultData.js';
 
 export const db = new Database(config.db_path);
 
@@ -8,15 +7,8 @@ db.exec(`CREATE TABLE IF NOT EXISTS user (
   id TEXT NOT NULL PRIMARY KEY,
   username TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
-  typing_config DEFAULT '${JSON.stringify(defaultUserTypingConfig)}' 
-)`);
-
-db.exec(`CREATE TABLE IF NOT EXISTS user_fingers_statistics(
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  user_id TEXT NOT NULL,
-  finger_map TEXT NOT NULL,
-  default_fingers_position TEXT NOT NULL,
-  fingers_statistics TEXT NOT NULL
+  typing_config TEXT NOT NULL, 
+  key_statistics TEXT NOT NULL
 )`);
 
 db.exec(`CREATE TABLE IF NOT EXISTS session (

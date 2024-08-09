@@ -1,4 +1,4 @@
-import type { FingerStatistics } from "../types/algo";
+import type { KeyStatistic } from "../types/algo";
 import type { UserTypingConfig } from "../types/interfaces";
 
 export const typingModes = ['test', 'smart'] as const;
@@ -7,10 +7,10 @@ export const typingEndWordModes = [10, 25, 50, 100];
 export const typingEndTimeModes = [15, 30, 60, 120];
 export const allTypingEndModes = ['words 10', 'words 25', 'words 50', 'words 100', 'time 15', 'time 30', 'time 60', 'time 120'];
 
-export const userData: { username: string, userTypingConfig: UserTypingConfig, fingersStatistics: FingerStatistics[] } = $state({
+export const userData: { username: string, userTypingConfig: UserTypingConfig, keyStatistics: Map<string, KeyStatistic> } = $state({
   username: "",
   userTypingConfig: {} as UserTypingConfig,
-  fingersStatistics: [] as FingerStatistics[]
+  keyStatistics: new Map() as Map<string, KeyStatistic>
 });
 
 export function isLoggedIn(): boolean { return userData.username?.length > 0 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { reverseFingerMap } from '../../algo/fingersStatisticsHelper';
+	import { reverseFingerMap } from '../../algo/utils';
 	import { userData } from '../../shared/userData.svelte';
 
 	let pressedKey: string = $state('');

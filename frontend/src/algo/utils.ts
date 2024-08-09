@@ -1,4 +1,4 @@
-import type { FingerStatistics } from "../types/algo";
+import type { KeyStatistic } from "../types/algo";
 
 export function splitArray<T>(array: T[], delimiter: T): T[][] {
   const result: T[][] = [];
@@ -23,15 +23,31 @@ export function splitArray<T>(array: T[], delimiter: T): T[][] {
   return result;
 }
 
-export function generateEmptyFingersStatistics(fingerMap: string[][]) {
-  const fingersStatistics: FingerStatistics[] = [];
+export function generateKeyStatistic(fingerMap: string[][]) {
+  const keyMap = new Map<string, KeyStatistic>();
 
-  for (let i = 0; i < fingerMap.length; i++) {
-    fingersStatistics.push({
-      fingerNumber: i,
-      keyData: [],
-    });
+  for (const finger of fingerMap) {
+    for (const letter of finger) {
+      keyMap.set(letter, {
+        key: letter,
+        correctHitCount: 0,
+        incorrectHitCount: 0,
+        averageTimeToPressCorrect: 0,
+        averageTimeToPressIncorrect: 0,
+        accuracy: 0,
+        wpm: 0
+      })
+    }
   }
+}
 
-  return fingersStatistics;
+export function reverseFingerMap(fingerMap: string[][]) {
+  let keyToFingerMap = new Map<string, number>();
+
+  for (let fingerCounter = 0; fingerCounter < fingerMap.length; fingerCounter++) {
+    for (const letter of fingerMap[fingerCounter]) {
+      keyToFingerMap.set(letter, fingerCounter);
+    }
+  }
+  return keyToFingerMap;
 }

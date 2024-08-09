@@ -14,14 +14,12 @@ export const saveTypingTest = async (req: Request, res: Response) => {
   return res.status(200).json({ status: "success" })
 };
 
-export const saveFingersStatistics = async (req: Request, res: Response) => {
+export const saveKeyStatistic = async (req: Request, res: Response) => {
   try {
-    const fingersStatistics = req.body.fingersStatistics;
-    const fingerMap = req.body.fingerMap;
-    const defaultFingersPosition = req.body.defaultFingersPosition;
+    const keyStatistics = req.body.keyStatistics;
 
-    db.prepare("UPDATE user_fingers_statistics SET fingers_statistics = ? WHERE user_id = ? AND finger_map = ? AND default_fingers_position = ?")
-      .run(res.locals.user?.id, JSON.stringify(fingerMap), JSON.stringify(defaultFingersPosition), JSON.stringify(fingersStatistics));
+    db.prepare("UPDATE user SET key_statistics = ? WHERE id = ?")
+      .run(JSON.stringify(keyStatistics), res.locals.user?.id);
 
     return res.status(200).json({ status: "success" });
   }

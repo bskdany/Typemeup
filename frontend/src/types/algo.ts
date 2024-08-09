@@ -1,9 +1,4 @@
-export interface FingerStatistics {
-  fingerNumber: number,
-  keyData: KeyData[];
-}
-
-export interface KeyData {
+export interface KeyStatistic {
   key: string,
   correctHitCount: number,
   incorrectHitCount: number,

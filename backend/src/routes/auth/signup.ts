@@ -3,7 +3,7 @@ import { db } from "../../lib/db.js";
 import { hash } from "@node-rs/argon2";
 import { lucia } from "../../lib/auth.js";
 import { generateId } from "lucia";
-import { defaultUserTypingConfig, generateFingersStatistics } from "../../lib/defaultData.js";
+import { defaultUserTypingConfig, generateKeyStatistic } from "../../lib/defaultData.js";
 
 export const signupRoute = async (req: Request, res: Response) => {
   const username: string | null = req.body.username ?? null;
@@ -31,18 +31,12 @@ export const signupRoute = async (req: Request, res: Response) => {
   const userId = generateId(15);
 
   try {
-    db.prepare("INSERT INTO user_fingers_statistics (user_id, finger_map, default_fingers_position, fingers_statistics) VALUES (?,?,?,?)")
-      .run(
-        userId,
-        JSON.stringify(defaultUserTypingConfig.smartModeConfig.fingerMap),
-        JSON.stringify(defaultUserTypingConfig.smartModeConfig.defaultFingersPosition),
-        JSON.stringify(generateFingersStatistics(defaultUserTypingConfig.smartModeConfig.fingerMap))
-      );
-
-    db.prepare("INSERT INTO user (id, username, password) VALUES(?, ?, ?)").run(
+    db.prepare("INSERT INTO user (id, username, password, typing_config, key_statistics ) VALUES(?, ?, ?, ?, ?)").run(
       userId,
       username,
-      passwordHash
+      passwordHash,
+      JSON.stringify(defaultUserTypingConfig),
+      JSON.stringify(Array.from(generateKeyStatistic(defaultUserTypingConfig.smartModeConfig.fingerMap)))
     );
 
     const session = await lucia.createSession(userId, {});

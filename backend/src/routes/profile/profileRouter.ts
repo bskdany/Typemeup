@@ -1,6 +1,6 @@
 import express from "express";
 import { authorizeSession } from "../middleware.js";
-import { getTypingHistory, saveFingersStatistics, saveTypingTest } from "./typing.js";
+import { getTypingHistory, saveKeyStatistic, saveTypingTest } from "./typing.js";
 import { saveUserTypingConfig } from "./saveUserTypingConfig.js";
 import { getUserDataRoute } from "./getUserData.js";
 
@@ -12,5 +12,5 @@ profileRouter.use(authorizeSession);
 
 profileRouter.get('/getTypingHistory', getTypingHistory);
 profileRouter.post("/saveTypingTest", saveTypingTest);
-profileRouter.post("/saveFingersStatistics", saveFingersStatistics);
+profileRouter.post("/saveKeyStatistic", saveKeyStatistic);
 profileRouter.post("/saveUserTypingConfig", saveUserTypingConfig);

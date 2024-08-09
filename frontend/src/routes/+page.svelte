@@ -2,7 +2,7 @@
 	import '../global.css';
 	import { onDestroy, onMount, setContext } from 'svelte';
 	import type { TypingTestRunData } from '../types/interfaces';
-	import { generateRandomWords, generateWordsAlgo } from '../algo/textGenerator';
+	// import { generateRandomWords generateWordsAlgo } from '../algo/textGenerator';
 	import Keyboard from '../components/typingTest/keyboard.svelte';
 	import TypingProgress from '../components/typingTest/typingProgress.svelte';
 	import TypingTest from '../components/typingTest/typingTest.svelte';
@@ -12,10 +12,11 @@
 	import { getCombinedTypingEndMode, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
 	import QuickConfigs from '../components/typingTest/quickConfigs.svelte';
 	import { showToast } from '../shared/toastController.svelte';
-	import FingetsStatisticsKeyboardChart from '../components/chart/fingetsStatisticsKeyboardChart.svelte';
-	import { updateFingersStatistics } from '../algo/updateFingersStatistics';
+	import FingetsStatisticsKeyboardChart from '../components/chart/keyStatisticsKeyboardChart.svelte';
 	import type { KeypressData } from '../types/algo';
 	import { generateKeypressData } from '../algo/generateKeypressData';
+	import { updateKeyStatistics } from '../algo/updateKeyStatistics';
+	import { generateRandomWords, generateWordsAlgo2 } from '../algo/textGenerator';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -45,7 +46,7 @@
 		if (userData.userTypingConfig.typingMode === 'test') {
 			typingContextData.displayTypingTest = false;
 		} else if (userData.userTypingConfig.typingMode === 'smart') {
-			const fingersKeyPressData: KeypressData[][] = generateKeypressData(
+			const keypressData: KeypressData[] = generateKeypressData(
 				data.targetText,
 				data.userTypedText,
 				userData.userTypingConfig.smartModeConfig.fingerMap,
@@ -53,11 +54,8 @@
 				data.keyPressTimings
 			);
 
-			console.log(fingersKeyPressData);
-
-			updateFingersStatistics(userData.fingersStatistics, fingersKeyPressData);
-
-			console.log(userData.fingersStatistics);
+			console.log(keypressData);
+			updateKeyStatistics(userData.keyStatistics, keypressData);
 
 			generateTargetText();
 		}
@@ -85,12 +83,10 @@
 
 			if (userData.userTypingConfig.typingMode === 'smart') {
 				try {
-					fetchBackend(fetch, '/profile/saveFingersStatistics', {
+					fetchBackend(fetch, '/profile/saveKeyStatistic', {
 						method: 'POST',
 						body: {
-							fingersStatistics: userData.fingersStatistics,
-							fingerMap: userData.userTypingConfig.smartModeConfig.fingerMap,
-							defaultFingersPosition: userData.userTypingConfig.smartModeConfig.defaultFingersPosition
+							keyStatistics: Array.from(userData.keyStatistics)
 						}
 					});
 				} catch (e) {
@@ -113,11 +109,7 @@
 
 	function generateTargetText() {
 		if (userData.userTypingConfig.typingMode === 'smart') {
-			targetText = generateWordsAlgo(
-				userData.fingersStatistics,
-				userData.userTypingConfig.smartModeConfig.fingerMap,
-				userData.userTypingConfig.typingEndWordMode
-			);
+			targetText = generateWordsAlgo2(userData.keyStatistics, userData.userTypingConfig.typingEndWordMode, 'wpm');
 		} else if (userData.userTypingConfig.typingMode === 'test') {
 			if (userData.userTypingConfig.typingEndMode.startsWith('time')) {
 				targetText = generateRandomWords(100);
@@ -183,7 +175,7 @@
 		</div>
 	{:else if userData.userTypingConfig.typingMode === 'smart'}
 		<div id="keyboardWrapper">
-			<FingetsStatisticsKeyboardChart fingersStatistics={userData.fingersStatistics} />
+			<FingetsStatisticsKeyboardChart keyStatistics={userData.keyStatistics} smartTrainingGoal={'wpm'} />
 		</div>
 	{/if}
 {:else}

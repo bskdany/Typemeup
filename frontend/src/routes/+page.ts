@@ -6,9 +6,10 @@ export const load: PageLoad = async ({ fetch }) => {
   try {
     const data = await fetchBackend(fetch, "/profile/getUserData");
     if (data) {
+      console.log(data)
       userData.username = data?.username;
       userData.userTypingConfig = JSON.parse(data?.userTypingConfig);
-      userData.fingersStatistics = JSON.parse(data?.fingersStatistics);
+      userData.keyStatistics = new Map(JSON.parse(data?.keyStatistics));
 
       console.log(userData)
     }

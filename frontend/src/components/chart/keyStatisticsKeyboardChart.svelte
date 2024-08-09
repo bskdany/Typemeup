@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { FingerStatistics } from '../../types/algo';
+	import type { KeyStatistic } from '../../types/algo';
 
-	const { fingersStatistics }: { fingersStatistics: FingerStatistics[] } = $props();
+	const { keyStatistics, smartTrainingGoal }: { keyStatistics: Map<string, KeyStatistic>; smartTrainingGoal: 'wpm' | 'accuracy' } = $props();
 
 	let pressedKey: string = $state('');
 	const row0 = ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'];
@@ -20,39 +20,40 @@
 		return `rgb(0, 0, ${55 + blue})`;
 	}
 
-	function buildKeyboardData(fingersStatistics: FingerStatistics[]) {
-		const destinationKeys = new Map<string, { confidence: number; color: string }>();
-
-		for (const fingerStatistics of fingersStatistics) {
-			for (const keyToKeyMovement of fingerStatistics.keyToKeyMovements) {
-				let formattedDestinationKey = keyToKeyMovement.destinationKey.toUpperCase();
-				formattedDestinationKey === ' ' ? (formattedDestinationKey = 'Space') : '';
-
-				let keyData = destinationKeys.get(formattedDestinationKey) ?? { confidence: 0, color: '' };
-				keyData.confidence += keyToKeyMovement.confidence;
-				destinationKeys.set(formattedDestinationKey, keyData);
-			}
+	function convertKeyToKeyboardFormat(key: string) {
+		if (key === ' ') {
+			return 'Space';
+		} else {
+			return key.toUpperCase();
 		}
+	}
+
+	function buildKeyboardData(keysStatistics: Map<string, KeyStatistic>) {
+		const keyboardData = new Map<string, { accuracy: number; wpm: number; color: string }>();
 
 		let min = Infinity;
 		let max = -Infinity;
-		for (const keyData of destinationKeys.values()) {
-			if (keyData.confidence < min) {
-				min = keyData.confidence;
+		for (const keyStatistics of keyboardData.values()) {
+			if (keyStatistics[smartTrainingGoal] < min) {
+				min = keyStatistics[smartTrainingGoal];
 			}
-			if (keyData.confidence > max) {
-				max = keyData.confidence;
+			if (keyStatistics[smartTrainingGoal] > max) {
+				max = keyStatistics[smartTrainingGoal];
 			}
 		}
 
-		for (const [key, keyData] of destinationKeys.entries()) {
-			destinationKeys.set(key, { confidence: keyData.confidence, color: getColor(keyData.confidence, min, max) });
+		for (const keyStatistic of keysStatistics.values()) {
+			keyboardData.set(convertKeyToKeyboardFormat(keyStatistic.key), {
+				accuracy: keyStatistic.accuracy,
+				wpm: keyStatistic.wpm,
+				color: getColor(keyStatistic[smartTrainingGoal], min, max)
+			});
 		}
 
-		return destinationKeys;
+		return keyboardData;
 	}
 
-	const keyboardData = $derived(buildKeyboardData(fingersStatistics));
+	const keyboardData = $derived(buildKeyboardData(keyStatistics));
 	$effect(() => {
 		console.log(keyboardData);
 	});
@@ -72,7 +73,7 @@
 					</div>
 				{:else}
 					<div class="key" class:invisible={key === ''} style="background-color: {keyboardData.get(key)?.color}">
-						{keyboardData.get(key)?.confidence.toFixed(1) ?? key}
+						{keyboardData.get(key)?.[smartTrainingGoal].toFixed(1) ?? key}
 					</div>
 				{/if}
 			{/each}

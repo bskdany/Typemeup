@@ -1,4 +1,4 @@
-import { FingerKeyToKeyMovement, FingerStatistics } from "../types/algoTypes.js";
+import { KeyStatistic } from "../types/algoTypes.js";
 
 export const defaultUserTypingConfig = {
   errorCorrectionMode: 3,
@@ -23,35 +23,22 @@ export const defaultUserTypingConfig = {
   }
 }
 
-export function generateFingersStatistics(fingerMap: string[][]) {
-  const fingersStatistics: FingerStatistics[] = [];
+export function generateKeyStatistic(fingerMap: string[][]) {
+  const keyMap = new Map<string, KeyStatistic>();
 
-  for (let i = 0; i < fingerMap.length; i++) {
-
-    const fingerKeyToKeyMovement: FingerKeyToKeyMovement[] = [];
-    const keySet = fingerMap[i];
-
-    for (const sourceKey of keySet) {
-      for (const destinationKey of keySet) {
-        fingerKeyToKeyMovement.push({
-          sourceKey: sourceKey,
-          destinationKey: destinationKey,
-          confidence: 0
-        })
-      }
+  for (const finger of fingerMap) {
+    for (const letter of finger) {
+      keyMap.set(letter, {
+        key: letter,
+        correctHitCount: 0,
+        incorrectHitCount: 0,
+        averageTimeToPressCorrect: 0,
+        averageTimeToPressIncorrect: 0,
+        accuracy: 0,
+        wpm: 0
+      })
     }
-
-    fingersStatistics.push({
-      fingerNumber: i,
-      keyPressData: [],
-      keyToKeyMovements: [...fingerKeyToKeyMovement],
-      totalCorrectHitCount: 0,
-      totalWrongHitCount: 0,
-      totalConfidence: 0,
-      totalError: 0,
-      accuracy: 0
-    });
   }
 
-  return fingersStatistics;
+  return keyMap;
 }
