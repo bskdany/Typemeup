@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { lucia } from "../../lib/auth.js";
 
 export const logoutRoute = async (req: Request, res: Response) => {

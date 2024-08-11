@@ -1,5 +1,3 @@
-import type { KeyStatistic } from "../types/algo";
-
 export function splitArray<T>(array: T[], delimiter: T): T[][] {
   const result: T[][] = [];
   let currentPart: T[] = [];

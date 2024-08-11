@@ -1,4 +1,4 @@
-import type { KeyStatistic } from "../types/algo";
+import type { KeyStatistic } from "@shared/types";
 import wordsFile from "../words/words.json";
 
 function sortKeysByValue(keyStatistics: KeyStatistic[], trainingTarget: "wpm" | "accuracy") {

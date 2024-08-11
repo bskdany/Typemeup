@@ -1,4 +1,4 @@
-import { KeyStatistic } from "../types/algoTypes.js";
+import type { KeyStatistic } from "@shared/types";
 
 export const defaultUserTypingConfig = {
   errorCorrectionMode: 3,
@@ -24,18 +24,19 @@ export const defaultUserTypingConfig = {
 }
 
 export function generateKeyStatistic(fingerMap: string[][]) {
-  const keyMap = [];
+  const keyMap: KeyStatistic[] = [];
 
   for (const finger of fingerMap) {
     for (const letter of finger) {
       keyMap.push({
         key: letter,
+        totalHitCount: 0,
         correctHitCount: 0,
-        incorrectHitCount: 0,
-        averageTimeToPressCorrect: 0,
-        averageTimeToPressIncorrect: 0,
+        totalTimeToPress: 0,
+        correctTimeToPress: 0,
         accuracy: 0,
-        wpm: 0
+        wpm: 0,
+        score: 0
       })
     }
   }

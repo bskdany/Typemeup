@@ -13,10 +13,10 @@
 	import QuickConfigs from '../components/typingTest/quickConfigs.svelte';
 	import { showToast } from '../shared/toastController.svelte';
 	import FingetsStatisticsKeyboardChart from '../components/chart/keyStatisticsKeyboardChart.svelte';
-	import type { KeypressData, KeyStatistic } from '../types/algo';
 	import { generateKeypressData } from '../algo/generateKeypressData';
 	import { updateKeyStatistics } from '../algo/updateKeyStatistics';
 	import { generateRandomWords, generateWordsAlgo2 } from '../algo/textGenerator';
+	import type { KeypressData } from '@shared/types';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -173,7 +173,7 @@
 		</div>
 	{:else if userData.userTypingConfig.typingMode === 'smart'}
 		<div id="keyboardWrapper">
-			<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} smartTrainingGoal={'wpm'} />
+			<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} />
 		</div>
 	{/if}
 {:else}

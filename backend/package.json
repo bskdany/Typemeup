@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "NODE_ENV=production node dist/server.js",
-    "dev": "NODE_ENV=development npx tsx watch --env-file=../.env src/server.ts"
+    "dev": "NODE_ENV=development npx tsx watch --env-file=../.env src/server.ts",
+    "check": "npx tsc --noEmit"
   },
   "author": "",
   "license": "ISC",

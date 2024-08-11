@@ -1,5 +1,5 @@
 import { lucia } from "../lib/auth.js";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { verifyRequestOrigin } from "lucia";
 
 const devMode = async (req: Request, res: Response, next: NextFunction) => {

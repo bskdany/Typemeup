@@ -2,7 +2,7 @@ import { db } from "../../lib/db.js";
 import { verify } from "@node-rs/argon2";
 import { lucia } from "../../lib/auth.js";
 import type { DatabaseUser } from "../../lib/db.js";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 export const loginRoute = async (req: Request, res: Response) => {
   const username: string | null = req.body.username ?? null;

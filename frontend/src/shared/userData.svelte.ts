@@ -1,4 +1,4 @@
-import type { KeyStatistic } from "../types/algo";
+import type { KeyStatistic } from "@shared/types";
 import type { UserTypingConfig } from "../types/interfaces";
 
 export const typingModes = ['test', 'smart'] as const;

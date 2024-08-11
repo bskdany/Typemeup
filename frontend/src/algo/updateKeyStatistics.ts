@@ -1,5 +1,5 @@
-import { calculateAccuracy, calculateWpm } from "$lib/typingTestRunHelper";
-import type { KeyStatistic, KeypressData } from "../types/algo";
+import type { KeyStatistic, KeypressData } from "@shared/types";
+import { calculateAccuracy, calculateWpm } from "../lib/typingTestRunHelper";
 
 export function updateKeyStatistics(keyStatistics: KeyStatistic[], keypressData: KeypressData[]) {
   for (const keyStatistic of keyStatistics) {
@@ -9,20 +9,50 @@ export function updateKeyStatistics(keyStatistics: KeyStatistic[], keypressData:
       }
     }
   }
+
+  generateScores(keyStatistics);
 }
 
-function updateKeyStatisticWithKeypressData(keyStatistics: KeyStatistic, keypressData: KeypressData) {
-  const keyStatisticsTotalHitCount = keyStatistics.correctHitCount + keyStatistics.incorrectHitCount;
+function updateKeyStatisticWithKeypressData(keyStatistic: KeyStatistic, keypressData: KeypressData) {
+  keyStatistic.totalHitCount += 1;
+  keyStatistic.totalTimeToPress += keypressData.timeSinceLastKeypress;
 
   if (keypressData.isCorrect) {
-    keyStatistics.correctHitCount += 1;
-    keyStatistics.averageTimeToPressCorrect = ((keyStatistics.averageTimeToPressCorrect * keyStatisticsTotalHitCount) + keypressData.timeSinceLastKeypress) / (keyStatisticsTotalHitCount + 1);
-  }
-  else {
-    keyStatistics.incorrectHitCount += 1;
-    keyStatistics.averageTimeToPressIncorrect = ((keyStatistics.averageTimeToPressIncorrect * keyStatisticsTotalHitCount) + keypressData.timeSinceLastKeypress) / (keyStatisticsTotalHitCount + 1);
+    keyStatistic.correctHitCount += 1;
+    keyStatistic.correctTimeToPress += keypressData.timeSinceLastKeypress
   }
 
-  keyStatistics.accuracy = calculateAccuracy(keyStatistics.correctHitCount, keyStatistics.correctHitCount + keyStatistics.incorrectHitCount);
-  keyStatistics.wpm = calculateWpm(keyStatistics.correctHitCount, (keyStatistics.averageTimeToPressCorrect + keyStatistics.averageTimeToPressIncorrect) * (keyStatistics.correctHitCount + keyStatistics.incorrectHitCount) / 2);
+  keyStatistic.accuracy = calculateAccuracy(keyStatistic.correctHitCount, keyStatistic.totalHitCount);
+  keyStatistic.wpm = calculateWpm(keyStatistic.correctHitCount, keyStatistic.correctTimeToPress);
+}
+
+function normalizeValue(value: number, min: number, max: number) {
+  return (100 / (max - min)) * (value - min);
+}
+
+function generateScores(keyStatistics: KeyStatistic[]) {
+  const letterFrequency = new Map<string, number>([
+    ['a', 8.17], ['b', 1.49], ['c', 2.78], ['d', 4.25], ['e', 12.70],
+    ['f', 2.23], ['g', 2.02], ['h', 6.09], ['i', 6.97], ['j', 0.15],
+    ['k', 0.77], ['l', 4.03], ['m', 2.41], ['n', 6.75], ['o', 7.51],
+    ['p', 1.93], ['q', 0.10], ['r', 5.99], ['s', 6.33], ['t', 9.06],
+    ['u', 2.76], ['v', 0.98], ['w', 2.36], ['x', 0.15], ['y', 1.97],
+    ['z', 0.07]
+  ]);
+
+  const minWpm = Math.min(...keyStatistics.map(entry => entry.wpm));
+  const maxWpm = Math.max(...keyStatistics.map(entry => entry.wpm));
+  const minAccuracy = Math.min(...keyStatistics.map(entry => entry.accuracy));
+  const maxAccuracy = Math.max(...keyStatistics.map(entry => entry.accuracy));
+  const minTotalCount = Math.min(...keyStatistics.map(entry => (entry.totalHitCount) * (letterFrequency.get(entry.key) ?? 0)));
+  const maxTotalCount = Math.max(...keyStatistics.map(entry => (entry.totalHitCount) * (letterFrequency.get(entry.key) ?? 0)));
+
+  for (const keyStatistic of keyStatistics) {
+    const relativeWpm = normalizeValue(keyStatistic.wpm, minWpm, maxWpm);
+    const relativeAccuracy = normalizeValue(keyStatistic.accuracy, minAccuracy, maxAccuracy);
+    const relativeCount = normalizeValue(keyStatistic.totalHitCount, minTotalCount, maxTotalCount);
+
+    const score = (relativeWpm + relativeAccuracy + relativeCount) / 3;
+    keyStatistic.score = score;
+  }
 }

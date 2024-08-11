@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { db } from "../../lib/db.js";
 
 export const saveUserTypingConfig = async (req: Request, res: Response) => {

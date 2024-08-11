@@ -1,11 +1,12 @@
 export interface KeyStatistic {
   key: string,
+  totalHitCount: number,
   correctHitCount: number,
-  incorrectHitCount: number,
-  averageTimeToPressCorrect: number,
-  averageTimeToPressIncorrect: number,
+  totalTimeToPress: number,
+  correctTimeToPress: number,
   accuracy: number,
-  wpm: number
+  wpm: number,
+  score: number,
 }
 
 export interface KeypressData {

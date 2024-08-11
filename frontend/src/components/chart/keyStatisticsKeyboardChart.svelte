@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { KeyStatistic } from '../../types/algo';
+	import type { KeyStatistic } from '@shared/types';
 
-	const { keyStats, smartTrainingGoal }: { keyStats: KeyStatistic[]; smartTrainingGoal: 'wpm' | 'accuracy' } = $props();
+	const { keyStats }: { keyStats: KeyStatistic[] } = $props();
 
 	const row0 = ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'];
 	const row1 = ['', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', ''];
@@ -33,22 +33,11 @@
 		}
 		const keyboardData = new Map<string, { accuracy: number; wpm: number; color: string }>();
 
-		let min = Infinity;
-		let max = -Infinity;
-		for (const keyStatistic of keyStatistics) {
-			if (keyStatistic[smartTrainingGoal] < min) {
-				min = keyStatistic[smartTrainingGoal];
-			}
-			if (keyStatistic[smartTrainingGoal] > max) {
-				max = keyStatistic[smartTrainingGoal];
-			}
-		}
-
 		for (const keyStatistic of keyStatistics) {
 			keyboardData.set(convertKeyToKeyboardFormat(keyStatistic.key), {
-				accuracy: parseFloat(keyStatistic?.accuracy.toFixed(1)),
-				wpm: parseFloat(keyStatistic.wpm?.toFixed(1)),
-				color: getColor(keyStatistic[smartTrainingGoal], min, max)
+				accuracy: Math.round(keyStatistic.accuracy),
+				wpm: Math.round(keyStatistic.wpm),
+				color: getColor(keyStatistic.score, 0, 100)
 			});
 		}
 
@@ -71,7 +60,8 @@
 					</div>
 				{:else}
 					<div class="key" class:invisible={key === ''} style="background-color: {keyboardData.get(key)?.color}">
-						{keyboardData.get(key)?.[smartTrainingGoal].toFixed(1) ?? key}
+						{keyboardData.get(key)?.wpm ?? key}
+						{keyboardData.get(key)?.accuracy ?? ''}
 					</div>
 				{/if}
 			{/each}

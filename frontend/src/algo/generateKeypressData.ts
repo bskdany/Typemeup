@@ -1,4 +1,4 @@
-import type { KeypressData } from "../types/algo";
+import type { KeypressData } from "@shared/types";
 import { reverseFingerMap } from "./utils";
 
 export function generateKeypressData(targetTextByWord: string[], userTypedText: string[], fingerMap: string[][], defaultFingerPositions: string[], keyPressTimings: number[]) {

@@ -16,7 +16,8 @@
     "dev:backend": "cd backend && npm run dev",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "deploy": "npm run build && npm run start"
+    "deploy": "npm run build && npm run start",
+    "check": "cd backend && npm run check && cd .. && cd frontend && npm run check"
   },
   "devDependencies": {
     "concurrently": "^6.2.0"

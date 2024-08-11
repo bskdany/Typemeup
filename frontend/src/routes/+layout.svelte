@@ -3,9 +3,9 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { userData } from '../shared/userData.svelte';
-	import { fetchBackend } from '$lib/fetch';
 	import { showToast, toastList } from '../shared/toastController.svelte';
 	import Toast from '../components/common/toast.svelte';
+	import { fetchBackend } from '../lib/fetch';
 
 	let { children } = $props();
 	let currentPath = $derived($page.url.pathname);
