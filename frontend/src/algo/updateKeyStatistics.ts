@@ -27,6 +27,10 @@ function updateKeyStatisticWithKeypressData(keyStatistic: KeyStatistic, keypress
 }
 
 function normalizeValue(value: number, min: number, max: number) {
+  if (max - min === 0) {
+    console.error("Delta max and min is 0!")
+    return 0;
+  }
   return (100 / (max - min)) * (value - min);
 }
 
@@ -48,6 +52,9 @@ function generateScores(keyStatistics: KeyStatistic[]) {
   const maxTotalCount = Math.max(...keyStatistics.map(entry => (entry.totalHitCount) * (letterFrequency.get(entry.key) ?? 0)));
 
   for (const keyStatistic of keyStatistics) {
+
+
+
     const relativeWpm = normalizeValue(keyStatistic.wpm, minWpm, maxWpm);
     const relativeAccuracy = normalizeValue(keyStatistic.accuracy, minAccuracy, maxAccuracy);
     const relativeCount = normalizeValue(keyStatistic.totalHitCount, minTotalCount, maxTotalCount);

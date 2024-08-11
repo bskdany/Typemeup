@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { KeyStatistic } from '@shared/types';
+	import { get } from 'svelte/store';
 
 	const { keyStats }: { keyStats: KeyStatistic[] } = $props();
 
@@ -60,8 +61,8 @@
 					</div>
 				{:else}
 					<div class="key" class:invisible={key === ''} style="background-color: {keyboardData.get(key)?.color}">
-						{keyboardData.get(key)?.wpm ?? key}
-						{keyboardData.get(key)?.accuracy ?? ''}
+						{keyboardData.get(key) ? keyboardData.get(key).wpm : key}<br />
+						{keyboardData.get(key) ? keyboardData.get(key).accuracy + '%' : ''}
 					</div>
 				{/if}
 			{/each}
@@ -111,6 +112,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		flex-direction: column;
 		transition: border-color 0.5s linear;
 		transition: background-color 0.5s linear;
 	}

@@ -1,7 +1,12 @@
 import type { TypingTestRunData, Letter } from "../types/interfaces";
 
 function calculateWpm(correctCharCount: number, msTime: number): number {
-  return parseFloat(((correctCharCount / 5) * (60 / (msTime / 1000))).toFixed(2)) ?? 0;
+  const timeInMinutes = msTime / (60 * 1000);
+
+  if (timeInMinutes === 0) {
+    return 0;
+  }
+  return parseFloat(((correctCharCount / 5) / timeInMinutes).toFixed(2)) ?? 0;
 }
 
 function calculateAccuracy(correctCharCount: number, totalChartCount: number): number {
