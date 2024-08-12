@@ -22,6 +22,8 @@ Got any other ideas for features or just want to say hi? Join the [Discord](http
 
 ## Developing
 
+This area is work in progress, as for now `npm run dev` from the root dir should work (with all dependencies installed via npm
+
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
