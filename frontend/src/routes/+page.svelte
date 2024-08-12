@@ -49,16 +49,16 @@
 			const keypressData: KeypressData[] = generateKeypressData(
 				data.targetText,
 				data.userTypedText,
-				userData.userTypingConfig.smartModeConfig.fingerMap,
-				userData.userTypingConfig.smartModeConfig.defaultFingersPosition,
+				$state.snapshot(userData.userTypingConfig.smartModeConfig.fingerMap),
+				$state.snapshot(userData.userTypingConfig.smartModeConfig.defaultFingersPosition),
 				data.keyPressTimings
 			);
 
 			console.log(keypressData);
-			updateKeyStatistics(userData.keyStatistics, keypressData);
+			userData.keyStatistics = updateKeyStatistics($state.snapshot(userData.keyStatistics), keypressData);
 			console.log(userData.keyStatistics);
 
-			generateTargetText();
+			resetTrigger += 1;
 		}
 
 		if (isLoggedIn()) {
@@ -110,7 +110,7 @@
 
 	function generateTargetText() {
 		if (userData.userTypingConfig.typingMode === 'smart') {
-			targetText = generateWordsAlgo2(userData.keyStatistics, userData.userTypingConfig.typingEndWordMode, 'wpm');
+			targetText = generateWordsAlgo2($state.snapshot(userData.keyStatistics), userData.userTypingConfig.typingEndWordMode);
 		} else if (userData.userTypingConfig.typingMode === 'test') {
 			if (userData.userTypingConfig.typingEndMode.startsWith('time')) {
 				targetText = generateRandomWords(100);
@@ -121,6 +121,7 @@
 	}
 
 	$effect(() => {
+		resetTrigger;
 		userData.userTypingConfig.typingMode;
 		userData.userTypingConfig.typingEndMode;
 		userData.userTypingConfig.typingEndTimeMode;

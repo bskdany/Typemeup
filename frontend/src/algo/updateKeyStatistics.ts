@@ -11,6 +11,7 @@ export function updateKeyStatistics(keyStatistics: KeyStatistic[], keypressData:
   }
 
   generateScores(keyStatistics);
+  return keyStatistics;
 }
 
 function updateKeyStatisticWithKeypressData(keyStatistic: KeyStatistic, keypressData: KeypressData) {
@@ -52,8 +53,6 @@ function generateScores(keyStatistics: KeyStatistic[]) {
   const maxTotalCount = Math.max(...keyStatistics.map(entry => (entry.totalHitCount) * (letterFrequency.get(entry.key) ?? 0)));
 
   for (const keyStatistic of keyStatistics) {
-
-
 
     const relativeWpm = normalizeValue(keyStatistic.wpm, minWpm, maxWpm);
     const relativeAccuracy = normalizeValue(keyStatistic.accuracy, minAccuracy, maxAccuracy);

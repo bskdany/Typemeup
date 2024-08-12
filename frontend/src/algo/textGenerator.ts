@@ -1,146 +1,66 @@
 import type { KeyStatistic } from "@shared/types";
 import wordsFile from "../words/words.json";
+import { userData } from "../shared/userData.svelte";
 
-function sortKeysByValue(keyStatistics: KeyStatistic[], trainingTarget: "wpm" | "accuracy") {
-  const keyOrder = [];
-
-  for (const keyStatistic of keyStatistics.values()) {
-    keyOrder.push({ key: keyStatistic.key, value: keyStatistic[trainingTarget] })
-  }
-
-  keyOrder.sort((a, b) => a.value - b.value);
-  return keyOrder;
-}
-
-function getWordsByLetterContent(allPossibleWords: string[], letters: string[]) {
+function generateLettersToWordsByAffinities(allPossibleWords: string[], letters: string[]) {
   // each letter will point to a list of words that contain that letter, sorted from the word
   // containing most letters to the least
-  const lettersToWordsMap: Map<string, Map<string, number>> = new Map();
+  const lettersToWordsAffinities: Map<string, Map<string, number>> = new Map();
   for (const letter of letters) {
-    lettersToWordsMap.set(letter, new Map());
+    lettersToWordsAffinities.set(letter, new Map());
   }
 
   // COMPUTE INTENSIVE PLEASE REMOVE 
   for (const word of allPossibleWords) {
+    // calculate how many of each letter there is in a word
     const letterOccurencyMap = new Map<string, number>();
     for (const letter of word) {
       // if letter not in there then it is added and increased, else just increased
       letterOccurencyMap.set(letter, (letterOccurencyMap.get(letter) ?? 0) + 1);
     }
 
-    letterOccurencyMap.forEach((value, key) => {
-      letterOccurencyMap.set(key, value);
-    })
-
+    // transform the letter count in affinity
     letterOccurencyMap.forEach((amount, letter) => {
-      lettersToWordsMap.get(letter)?.set(word, amount);
+      // the affinity is made relative to the ideal word of size 5
+      // this is done do not give advantage to longer words that are 
+      // more likely to have the target letter
+      const affinity = (5 / word.length) * amount;
+      letterOccurencyMap.set(letter, affinity);
+      lettersToWordsAffinities.get(letter)?.set(word, affinity);
     })
   }
 
-  return lettersToWordsMap;
+  // sorting the words by affinity
+  lettersToWordsAffinities.forEach((words, letter) => {
+    const sortedWords = new Map([...words.entries()].sort((a, b) => b[1] - a[1]));
+    lettersToWordsAffinities.set(letter, sortedWords)
+
+  })
+
+  return lettersToWordsAffinities;
 }
 
-export function generateWordsAlgo2(keyStatistics: KeyStatistic[], howManyWords: number, trainingTarget: "wpm" | "accuracy") {
-  const allPossibleWords: string[] = wordsFile.words;
-  const sortedKeys = sortKeysByValue(keyStatistics, trainingTarget);
-  const wordsByLetterContent = getWordsByLetterContent(allPossibleWords, sortedKeys.map(entry => entry.key));
-  return generateRandomWords(howManyWords);
+function mergeAffinitiesByKeyWeight(lettersToWordsAffinities: Map<string, Map<string, number>>, keyStatistics: KeyStatistic[]) {
+  const mergedAffinities: Map<string, number> = new Map();
+
+  keyStatistics.forEach((keyStatistic) => {
+    lettersToWordsAffinities.get(keyStatistic.key)?.forEach((affinity, word) => {
+      mergedAffinities.set(word, affinity * keyStatistic.score + (mergedAffinities.get(word) ?? 0))
+    })
+  })
+
+  return [...mergedAffinities.entries()].sort((a, b) => a[1] - b[1]);
 }
 
+export function generateWordsAlgo2(keyStatistics: KeyStatistic[], howManyWords: number) {
+  const lettersToWordsAffinities = generateLettersToWordsByAffinities(wordsFile.words, userData.userTypingConfig.smartModeConfig.fingerMap.flat(2));
+  console.log(lettersToWordsAffinities)
 
-// export function generateWordsAlgo(keyStatistics: KeyStatistic[], fingerMap: string[][], howManyWords: number) {
-//   // i see that there is not 1 best way to generate words based on the statistics, 
-//   // there are several factors that can be looked at
-//   // 1. accuracy
-//   // 2. confidence
-//   // 3. movement averaged confidence (confidence / number of movements assigned to the finger)
+  const mergedAffinities = mergeAffinitiesByKeyWeight(lettersToWordsAffinities, keyStatistics);
+  console.log(mergedAffinities);
 
-//   const allPossibleWords: string[] = wordsFile.words;
-
-//   // accuracy based word suggestion
-//   const fingerTrainingOrder: number[][] = [];
-//   for (const KeyStatistic of keyStatistics) {
-//     fingerTrainingOrder.push([KeyStatistic.fingerNumber, KeyStatistic.accuracy]);
-//   }
-//   // TODO: Make this choose randomly between the values when they are the same 
-//   fingerTrainingOrder.sort((a, b) => {
-//     if (a[1] !== b[1]) {
-//       return a[1] - b[1];
-//     }
-//     else {
-//       return Math.random() - 0.5;
-//     }
-//   });
-
-//   const howManyFingersToTrain: number = 3;
-
-//   let fingersToTrain: number[] = [];
-//   for (let i = 0; i < howManyFingersToTrain; i++) {
-//     fingersToTrain.push(fingerTrainingOrder[i][0]);
-//   }
-
-//   // from here on I don't know what I'm doing, realistically I want to pick up the words that have 
-//   // the most letters for a specified finger, but for that I would need to compare all of them
-//   // so the smart way to do is to precompute the table, for each letter of the alphabet, but for now
-//   // lets just do this at every run
-
-//   // each letter will point to a list of words that contain that letter, sorted from the word
-//   // containing most letters to the least
-//   const lettersToWordsMap: Map<string, Map<string, number>> = new Map();
-//   for (const fingerLetters of fingerMap) {
-//     for (const letter of fingerLetters) {
-//       lettersToWordsMap.set(letter, new Map());
-//     }
-//   }
-
-//   // COMPUTE INTENSIVE PLEASE REMOVE 
-//   for (const word of allPossibleWords) {
-//     const letterOccurencyMap = new Map<string, number>();
-//     for (const letter of word) {
-//       // if letter not in there then it is added and increased, else just increased
-//       letterOccurencyMap.set(letter, (letterOccurencyMap.get(letter) ?? 0) + 1);
-//     }
-
-//     letterOccurencyMap.forEach((value, key) => {
-//       letterOccurencyMap.set(key, value);
-//     })
-
-//     letterOccurencyMap.forEach((amount, letter) => {
-//       lettersToWordsMap.get(letter)?.set(word, amount);
-//     })
-//   }
-
-//   const wordsByTargetFingersContent: Map<string, number> = new Map();
-//   for (const finger of fingersToTrain) {
-//     for (const letter of fingerMap[finger]) {
-//       for (const word of lettersToWordsMap.get(letter)?.entries() ?? []) {
-//         const contentPercentage: number = wordsByTargetFingersContent.get(word[0]) ?? 0;
-
-//         wordsByTargetFingersContent.set(word[0], contentPercentage + word[1]);
-//       }
-//     }
-//   }
-
-//   // sorting the words
-//   const wordsRankedByTargetFingerContent: [string, number][] = [];
-//   for (const entry of wordsByTargetFingersContent) {
-//     // now I weight the letter percentage with the amount of letters in the word
-//     wordsRankedByTargetFingerContent.push([entry[0], (entry[1] / entry[0].length) * entry[1]]);
-//   }
-//   wordsRankedByTargetFingerContent.sort((a, b) => -(a[1] - b[1]))
-
-//   //console.log(lettersToWordsMap)
-//   // console.log(wordsRankedByTargetFingerContent)
-//   // console.log(fingersToTrain)
-//   // console.log(fingerTrainingOrder);
-
-//   const finalWords: string[] = wordsRankedByTargetFingerContent
-//     .map(entry => entry[0])
-//     .slice(0, howManyWords)
-//     .sort(() => Math.random() - 0.5);
-
-//   return finalWords;
-// }
+  return chooseRandomFromWordlist(mergedAffinities.map(entry => entry[0]).filter((entry, index) => index < howManyWords * 2), howManyWords);
+}
 
 export function generateRandomWords(howManyWords: number): string[] {
   const words: string[] = [];
@@ -150,4 +70,14 @@ export function generateRandomWords(howManyWords: number): string[] {
     words.push(wordsFile.words[index])
   }
   return words;
+}
+
+export function chooseRandomFromWordlist(words: string[], howManyWords: number) {
+  const choosenWords: string[] = [];
+  for (let i = 0; i < howManyWords; i++) {
+    const randomVal = Math.random();
+    const index = Math.round(randomVal * (words.length - 1));
+    choosenWords.push(words[index])
+  }
+  return choosenWords;
 }
