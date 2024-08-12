@@ -2,8 +2,12 @@ import type { KeyStatistic, KeypressData } from "@shared/types";
 import { calculateAccuracy, calculateWpm } from "../lib/typingTestRunHelper";
 
 export function updateKeyStatistics(keyStatistics: KeyStatistic[], keypressData: KeypressData[]) {
+
+  // removing the first keypress as it's timeeSinceLastKeypress would be 0
+  const keypressDataOfInterest = keypressData.slice(1);
+
   for (const keyStatistic of keyStatistics) {
-    for (const keyPress of keypressData) {
+    for (const keyPress of keypressDataOfInterest) {
       if (keyStatistic.key === keyPress.targetKey || keyStatistic.key === keyPress.pressedKey) {
         // 4 possible options, 1 correct and 3 incorrect
         // target key     a  a  /  b
