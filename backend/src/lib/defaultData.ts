@@ -32,8 +32,7 @@ export function generateKeyStatistic(fingerMap: string[][]) {
         key: letter,
         totalHitCount: 0,
         correctHitCount: 0,
-        totalTimeToPress: 0,
-        correctTimeToPress: 0,
+        timeToPress: 0,
         accuracy: 0,
         wpm: 0,
         score: 0

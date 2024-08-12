@@ -54,10 +54,10 @@ function mergeAffinitiesByKeyWeight(lettersToWordsAffinities: Map<string, Map<st
 
 export function generateWordsAlgo2(keyStatistics: KeyStatistic[], howManyWords: number) {
   const lettersToWordsAffinities = generateLettersToWordsByAffinities(wordsFile.words, userData.userTypingConfig.smartModeConfig.fingerMap.flat(2));
-  console.log(lettersToWordsAffinities)
+  // console.log(lettersToWordsAffinities)
 
   const mergedAffinities = mergeAffinitiesByKeyWeight(lettersToWordsAffinities, keyStatistics);
-  console.log(mergedAffinities);
+  // console.log(mergedAffinities);
 
   return chooseRandomFromWordlist(mergedAffinities.map(entry => entry[0]).filter((entry, index) => index < howManyWords * 2), howManyWords);
 }

@@ -4,27 +4,34 @@ import { calculateAccuracy, calculateWpm } from "../lib/typingTestRunHelper";
 export function updateKeyStatistics(keyStatistics: KeyStatistic[], keypressData: KeypressData[]) {
   for (const keyStatistic of keyStatistics) {
     for (const keyPress of keypressData) {
-      if (keyStatistic.key === keyPress.pressedKey) {
-        updateKeyStatisticWithKeypressData(keyStatistic, keyPress)
+      if (keyStatistic.key === keyPress.targetKey || keyStatistic.key === keyPress.pressedKey) {
+        // 4 possible options, 1 correct and 3 incorrect
+        // target key     a  a  /  b
+        // pressed key    a  /  a  a
+
+        // case 1, correct, totalCount, correctCount and timeToPress are increased
+        // case 2, incorrect, missed the letter, a was supposed to be pressed, increase totalCount
+        // case 3, incorrect, extra letter, a is pressed but wans't supposed to, increase totalCount
+        // case 4, incorrect, wrong letter, increased totalCount for both b AND a
+
+        keyStatistic.totalHitCount += 1;
+
+        if (keyPress.isCorrect) {
+          keyStatistic.correctHitCount += 1;
+          keyStatistic.timeToPress += keyPress.timeSinceLastKeypress;
+        }
       }
     }
   }
 
-  generateScores(keyStatistics);
-  return keyStatistics;
-}
-
-function updateKeyStatisticWithKeypressData(keyStatistic: KeyStatistic, keypressData: KeypressData) {
-  keyStatistic.totalHitCount += 1;
-  keyStatistic.totalTimeToPress += keypressData.timeSinceLastKeypress;
-
-  if (keypressData.isCorrect) {
-    keyStatistic.correctHitCount += 1;
-    keyStatistic.correctTimeToPress += keypressData.timeSinceLastKeypress
+  // updating the accuracy and wpm in batch
+  for (const keyStatistic of keyStatistics) {
+    keyStatistic.accuracy = calculateAccuracy(keyStatistic.correctHitCount, keyStatistic.totalHitCount);
+    keyStatistic.wpm = calculateWpm(keyStatistic.correctHitCount, keyStatistic.timeToPress);
   }
 
-  keyStatistic.accuracy = calculateAccuracy(keyStatistic.correctHitCount, keyStatistic.totalHitCount);
-  keyStatistic.wpm = calculateWpm(keyStatistic.correctHitCount, keyStatistic.correctTimeToPress);
+  generateScores(keyStatistics);
+  return keyStatistics;
 }
 
 function normalizeValue(value: number, min: number, max: number) {
@@ -52,4 +59,11 @@ function generateScores(keyStatistics: KeyStatistic[]) {
     const score = (relativeWpm + relativeAccuracy + relativeCount) / 3;
     keyStatistic.score = score;
   }
+
+  // why this formula?
+  // The score needs to be composed of 3 things: wpm, accuracy and count
+  // The count needs to be here so that keys that are pressed less are prioritized
+  // the same logic goes for accuracy and wpm
+  // To make all the fields have the same effect on the score I normalize it's value
+  // by transforming it to a percentage where the min and max are the min and max of those fields
 }

@@ -2,8 +2,7 @@ export interface KeyStatistic {
   key: string,
   totalHitCount: number,
   correctHitCount: number,
-  totalTimeToPress: number,
-  correctTimeToPress: number,
+  timeToPress: number, // this is only incremented when the keypress is correct
   accuracy: number,
   wpm: number,
   score: number,

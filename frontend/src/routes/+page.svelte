@@ -56,7 +56,7 @@
 
 			console.log(keypressData);
 			userData.keyStatistics = updateKeyStatistics($state.snapshot(userData.keyStatistics), keypressData);
-			console.log(userData.keyStatistics);
+			// console.log(userData.keyStatistics);
 
 			resetTrigger += 1;
 		}

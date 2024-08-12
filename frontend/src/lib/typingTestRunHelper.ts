@@ -10,6 +10,9 @@ function calculateWpm(correctCharCount: number, msTime: number): number {
 }
 
 function calculateAccuracy(correctCharCount: number, totalChartCount: number): number {
+  if (totalChartCount === 0) {
+    return 0;
+  }
   return parseFloat(((correctCharCount / totalChartCount) * 100).toFixed(1)) ?? 0;
 }
 
