@@ -33,13 +33,17 @@
 			return new Map();
 		}
 		const keyboardData = new Map<string, { accuracy: number; wpm: number; color: string }>();
+		const minScore = Math.min(...keyStatistics.filter((entry) => entry.key !== ' ').map((entry) => entry.score));
+		const maxScore = Math.max(...keyStatistics.filter((entry) => entry.key !== ' ').map((entry) => entry.score));
 
 		for (const keyStatistic of keyStatistics) {
-			keyboardData.set(convertKeyToKeyboardFormat(keyStatistic.key), {
-				accuracy: Math.round(keyStatistic.accuracy),
-				wpm: Math.round(keyStatistic.wpm),
-				color: getColor(keyStatistic.score, 0, 100)
-			});
+			if (keyStatistic.key !== ' ') {
+				keyboardData.set(convertKeyToKeyboardFormat(keyStatistic.key), {
+					accuracy: Math.round(keyStatistic.accuracy),
+					wpm: Math.round(keyStatistic.wpm),
+					color: getColor(keyStatistic.score, minScore, maxScore)
+				});
+			}
 		}
 
 		return keyboardData;

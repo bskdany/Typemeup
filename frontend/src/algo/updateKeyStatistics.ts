@@ -47,21 +47,42 @@ function normalizeValue(value: number, min: number, max: number) {
 }
 
 function generateScores(keyStatistics: KeyStatistic[]) {
-  const minWpm = Math.min(...keyStatistics.map(entry => entry.wpm));
-  const maxWpm = Math.max(...keyStatistics.map(entry => entry.wpm));
-  const minAccuracy = Math.min(...keyStatistics.map(entry => entry.accuracy));
-  const maxAccuracy = Math.max(...keyStatistics.map(entry => entry.accuracy));
-  const minTotalCount = Math.min(...keyStatistics.map(entry => (entry.totalHitCount)));
-  const maxTotalCount = Math.max(...keyStatistics.map(entry => (entry.totalHitCount)));
+  // https://en.wikipedia.org/wiki/Letter_frequency
+  const lettersFrequency = new Map<string, number>([
+    ['a', 8.17], ['b', 1.49], ['c', 2.78], ['d', 4.25], ['e', 12.70],
+    ['f', 2.23], ['g', 2.02], ['h', 6.09], ['i', 6.97], ['j', 0.15],
+    ['k', 0.77], ['l', 4.03], ['m', 2.41], ['n', 6.75], ['o', 7.51],
+    ['p', 1.93], ['q', 0.10], ['r', 5.99], ['s', 6.33], ['t', 9.06],
+    ['u', 2.76], ['v', 0.98], ['w', 2.36], ['x', 0.15], ['y', 1.97],
+    ['z', 0.07]
+  ]);
+
+  // adjusting the entries frequencies
+  for (const [letter, letterFrequency] of lettersFrequency.entries()) {
+    lettersFrequency.set(letter, letterFrequency)
+  }
+
+  // calculating the min and max for each valu
+  const minWpm = Math.min(...keyStatistics.filter(entry => entry.key !== " ").map(entry => entry.wpm));
+  const maxWpm = Math.max(...keyStatistics.filter(entry => entry.key !== " ").map(entry => entry.wpm));
+  const minAccuracy = Math.min(...keyStatistics.filter(entry => entry.key !== " ").map(entry => entry.accuracy));
+  const maxAccuracy = Math.max(...keyStatistics.filter(entry => entry.key !== " ").map(entry => entry.accuracy));
+
+  // the hitCount is multiplied by 100 - letterFrequency to normalize the count
+  // the text the user types follows the lettresFrequency data, so to create a fair
+  // representation of what key is undertrained this step is needed 
+  const minTotalCount = Math.min(...keyStatistics.filter(entry => entry.key !== " ").map(entry => (entry.totalHitCount * (100 - (lettersFrequency.get(entry.key) ?? 0)))));
+  const maxTotalCount = Math.max(...keyStatistics.filter(entry => entry.key !== " ").map(entry => (entry.totalHitCount * (100 - (lettersFrequency.get(entry.key) ?? 0)))));
 
   for (const keyStatistic of keyStatistics) {
+    if (keyStatistic.key !== " ") {
+      const relativeWpm = normalizeValue(keyStatistic.wpm, minWpm, maxWpm);
+      const relativeAccuracy = normalizeValue(keyStatistic.accuracy, minAccuracy, maxAccuracy);
+      const relativeCount = normalizeValue(keyStatistic.totalHitCount * (100 - (lettersFrequency.get(keyStatistic.key) ?? 0)), minTotalCount, maxTotalCount);
 
-    const relativeWpm = normalizeValue(keyStatistic.wpm, minWpm, maxWpm);
-    const relativeAccuracy = normalizeValue(keyStatistic.accuracy, minAccuracy, maxAccuracy);
-    const relativeCount = normalizeValue(keyStatistic.totalHitCount, minTotalCount, maxTotalCount);
-
-    const score = (relativeWpm + relativeAccuracy + relativeCount) / 3;
-    keyStatistic.score = score;
+      const score = relativeWpm + relativeAccuracy + relativeCount;
+      keyStatistic.score = score;
+    }
   }
 
   // why this formula?
