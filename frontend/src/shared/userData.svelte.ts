@@ -13,6 +13,6 @@ export const userData: { username: string, userTypingConfig: UserTypingConfig, k
   keyStatistics: [] as KeyStatistic[]
 });
 
-
 export function isLoggedIn(): boolean { return userData.username?.length > 0 }
+export function isSessionFresh(): boolean { return userData.keyStatistics.length === 0 }
 export function getCombinedTypingEndMode(): string { return userData.userTypingConfig.typingEndMode + " " + (userData.userTypingConfig.typingEndMode === "time" ? userData.userTypingConfig.typingEndTimeMode : userData.userTypingConfig.typingEndWordMode) };

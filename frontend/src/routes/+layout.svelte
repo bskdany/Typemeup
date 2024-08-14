@@ -23,6 +23,9 @@
 		try {
 			await fetchBackend(fetch, '/auth/logout', { method: 'POST' });
 			userData.username = '';
+			const data = await fetchBackend(fetch, '/profile/getUserData');
+			userData.userTypingConfig = JSON.parse(data?.userTypingConfig);
+			userData.keyStatistics = JSON.parse(data?.keyStatistics);
 			goto('/account');
 		} catch (e) {
 			console.error(e);

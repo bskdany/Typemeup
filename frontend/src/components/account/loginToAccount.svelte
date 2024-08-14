@@ -6,13 +6,14 @@
 
 	let username: string = '';
 	let password: string = '';
-	// let errorMessage: any = '';
 
 	const loginToAccount = async () => {
 		try {
-			const data = await fetchBackend(fetch, '/auth/login', { method: 'POST', body: { username: username, password: password } });
-			console.log(data);
-			userData.username = data.username;
+			await fetchBackend(fetch, '/auth/login', { method: 'POST', body: { username: username, password: password } });
+			const data = await fetchBackend(fetch, '/profile/getUserData');
+			userData.username = data?.username;
+			userData.userTypingConfig = JSON.parse(data?.userTypingConfig);
+			userData.keyStatistics = JSON.parse(data?.keyStatistics);
 			goto('/profile');
 		} catch (error) {
 			showToast({ message: error as string, type: 'error' });
