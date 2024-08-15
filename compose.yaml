@@ -12,10 +12,13 @@ services:
     build:
       context: .
       dockerfile: ./frontend/Dockerfile
+      args:
+        - VITE_URL_BACKEND=${VITE_URL_BACKEND}
+        - VITE_PORT_FRONTEND=${VITE_PORT_FRONTEND}
     env_file:
       - .env
     ports:
-      - "${PORT_FRONTEND}:3000"
+      - "${VITE_PORT_FRONTEND}:3000"
 
   backend:
     build:

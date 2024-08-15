@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/backend/src/server.js",
+    "start": "node ./dist/app/src/server.js",
     "dev": "npx tsx watch --env-file=../.env src/server.ts",
     "check": "npx tsc --noEmit"
   },

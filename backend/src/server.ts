@@ -5,9 +5,9 @@ import { authRouter } from "./routes/auth/authRouter.js";
 import { devMode, validateSession } from "./routes/middleware.js";
 import { config } from "./lib/config.js";
 import cors from 'cors';
-import { url } from "inspector";
 
-console.log("Server running in " + config.env + " environment");
+console.log("PROD: " + config.is_prod);
+console.log("DOCKER: " + config.is_docker);
 console.log("Backend port: " + config.port_backend);
 console.log("Db location: " + config.db_path);
 
@@ -22,7 +22,7 @@ app.use(cors({
   credentials: true,
 }));
 
-if (config.env === "development") {
+if (!config.is_prod) {
   app.use(devMode)
 }
 

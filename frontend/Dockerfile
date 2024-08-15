@@ -10,6 +10,15 @@ FROM node:${NODE_VERSION}-alpine as base
 # Set working directory for all build stages.
 WORKDIR /usr/src/app
 
+ARG VITE_PORT_FRONTEND
+ARG VITE_URL_BACKEND
+
+# Set environment variables during the build process
+ENV VITE_PORT_FRONTEND=${VITE_PORT_FRONTEND}
+ENV VITE_URL_BACKEND=${VITE_URL_BACKEND}
+ENV VITE_TEST="FUCK YOU VITE WHY DO YOU DO THIS TO ME GOD DAMNIT"
+ENV VITE_IS_DOCKER=true
+
 ################################################################################
 # Create a stage for installing production dependencies.
 FROM base as deps
@@ -49,9 +58,6 @@ RUN npm run build
 # where the necessary files are copied from the build stage.
 FROM base as final
 
-# Use production node environment by default.
-ENV NODE_ENV production
-
 # Run the application as a non-root user.
 USER node
 
@@ -63,8 +69,6 @@ COPY frontend/package.json .
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/build ./build
 
-# Expose the port that the application listens on.
-EXPOSE 3000
 
 # Run the application.
 CMD node build

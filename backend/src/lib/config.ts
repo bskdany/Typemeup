@@ -1,22 +1,21 @@
-const env: Config["env"] = process.env.NODE_ENV as Config["env"];
-const db_path: string = env === "production" ? "/data/typemeup.sqlite" : "./typemeup_dev.sqlite";
-const port_frontend = parseInt(process.env.PORT_FRONTEND ?? "") ?? 5173;
-const port_backend = parseInt(process.env.PORT_BACKEND ?? "") ?? 3000;
-const frontend_url = env === "production" ? `https://${process.env.URL}` : `http://localhost:${port_frontend}`;
+export const isProd = process.env.NODE_ENV === "production";
+export const isDocker = process.env.IS_DOCKER === "true";
+const db_path: string = isDocker ? "/data/typemeup.sqlite" : "./typemeup_dev.sqlite";
+const port_backend = parseInt(process.env.PORT_BACKEND ?? "3000") ?? 3000;
+const frontend_url = process.env.VITE_URL_FRONTEND ?? 'http://localhost:5173';
 
 export const config: Config = {
-  env: env,
+  is_prod: isProd,
+  is_docker: isDocker,
   port_backend: port_backend,
-  port_frontend: port_frontend,
   db_path: db_path,
   frontend_url: frontend_url
-
 }
 
 export interface Config {
-  env: "production" | "development",
+  is_prod: boolean,
+  is_docker: boolean,
   port_backend: number,
-  port_frontend: number
   db_path: string,
   frontend_url: string
 }
