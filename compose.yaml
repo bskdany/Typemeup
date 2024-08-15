@@ -10,18 +10,20 @@
 services:
   frontend:
     build:
-      context: frontend
+      context: .
+      dockerfile: ./frontend/Dockerfile
     env_file:
       - .env
     ports:
-      - "4445:${PORT_FRONTEND}"
+      - "${PORT_FRONTEND}:3000"
 
   backend:
     build:
-      context: backend
+      context: .
+      dockerfile: ./backend/Dockerfile
     env_file:
       - .env
     ports:
-      - "4446:${PORT_BACKEND}"
+      - "${PORT_BACKEND}:3000"
     volumes:
-      - "./data:${PATH_TO_DB}"
+      - "${PATH_TO_DB}:/data"
