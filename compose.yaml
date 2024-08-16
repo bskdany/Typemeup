@@ -16,7 +16,7 @@ services:
         - VITE_URL_BACKEND=${VITE_URL_BACKEND}
         - VITE_PORT_FRONTEND=${VITE_PORT_FRONTEND}
     env_file:
-      - stack.env
+      - .env
     ports:
       - "${VITE_PORT_FRONTEND}:3000"
 
@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: ./backend/Dockerfile
     env_file:
-      - stack.env
+      - .env
     ports:
       - "${PORT_BACKEND}:3000"
     volumes:
