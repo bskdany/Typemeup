@@ -9,7 +9,8 @@ export const config: Config = {
   is_docker: isDocker,
   port_backend: port_backend,
   db_path: db_path,
-  frontend_url: frontend_url
+  frontend_url: frontend_url,
+  use_cors: process.env.USE_CORS ? true : false
 }
 
 export interface Config {
@@ -17,5 +18,6 @@ export interface Config {
   is_docker: boolean,
   port_backend: number,
   db_path: string,
-  frontend_url: string
+  frontend_url: string,
+  use_cors: boolean
 }

@@ -10,16 +10,18 @@ console.log("PROD: " + config.is_prod);
 console.log("DOCKER: " + config.is_docker);
 console.log("Backend port: " + config.port_backend);
 console.log("Db location: " + config.db_path);
+console.log("CORS: " + config.use_cors);
+console.log("Origin: " + config.frontend_url);
 
 const app = express();
 
-console.log(config.frontend_url)
-app.use(cors({
-  origin: config.frontend_url,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
+if (config.use_cors)
+  app.use(cors({
+    origin: config.frontend_url,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  }));
 
 app.use(express.json());
 
