@@ -22,6 +22,9 @@ if (config.use_cors)
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   }));
+else {
+  app.use(cors());
+}
 
 app.use(express.json());
 
