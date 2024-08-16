@@ -22,10 +22,9 @@ if [ ! -d "typemeup" ]; then
   CICD_CRON_JOB="*/5 * * * * /bin/bash ~/typemeup/scripts/cicd.sh >> ~/typemeup/log/cicd.log 2>&1"
   DB_BACKUP_CRON_JOB="0 0 * * * /bin/bash ~/typemeup/scripts/db_backup.sh >> ~/typemeup/log/db_backup.log 2>&1"
 
-  # Add the cron job if it doesn't exist
   (crontab -l 2>/dev/null; echo "$CICD_CRON_JOB") | crontab -
   echo "Added cicd cronjob"
-  (crontab -l 2>/dev/null; echo "$DB_BACKUPCRON_JOB") | crontab -
+  (crontab -l 2>/dev/null; echo "$DB_BACKUP_CRON_JOB") | crontab -
   echo "Added db backup cronjob"
 
   # Build and run the Docker containers
