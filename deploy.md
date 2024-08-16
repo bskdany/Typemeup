@@ -1,9 +1,3 @@
-from ./backend
-docker build . -t typemeup-backend
-docker save typemeup-backend | ssh -C mustafar docker load
+from crontab -e
 
-from ./frontend
-docker build . -t typemeup-frontend
-docker save typemeup-frontend | ssh -C mustafar docker load
-
-Deploy using docker compose
+* * * * * /bin/bash ~/typemeup/deploy.sh >> ~/typemeup/deployment.log 2>&1
