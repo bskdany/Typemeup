@@ -41,3 +41,7 @@ To create a production version of your app:
 npm run build
 ```
 
+## Deploying
+```
+curl -L https://raw.githubusercontent.com/bskdany/typemeup/main/scripts/install.sh | bash
+```
