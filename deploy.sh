@@ -8,7 +8,17 @@ if [ ! -d "typemeup" ]; then
   echo "Repository not found. Cloning for the first time..."
   git clone https://github.com/bskdany/typemeup
   cd typemeup
+
+  # creating a default sqlite instance
   mkdir db
+  cd db
+  touch typemeup_prod.sqlite
+  cd ..
+
+  # copying the env file
+  mv .env.example.prod .env
+
+  docker compose up --build
 else
   cd typemeup
   git fetch origin main
