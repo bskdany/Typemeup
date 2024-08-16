@@ -12,7 +12,6 @@ console.log("Backend port: " + config.port_backend);
 console.log("Db location: " + config.db_path);
 
 const app = express();
-app.use(express.json());
 
 console.log(config.frontend_url)
 app.use(cors({
@@ -21,6 +20,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+
+app.use(express.json());
 
 if (!config.is_prod) {
   app.use(devMode)
