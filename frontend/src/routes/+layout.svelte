@@ -53,11 +53,11 @@
 	let appBind: HTMLElement;
 	$effect(() => {
 		if (appBind) {
-			appBind.style.setProperty('--background-color', userData.colorScheme.backgroundColor.value);
-			appBind.style.setProperty('--primary-color', userData.colorScheme.primaryColor.value);
-			appBind.style.setProperty('--secondary-color', userData.colorScheme.secondaryColor.value);
-			appBind.style.setProperty('--text-color', userData.colorScheme.textColor.value);
-			appBind.style.setProperty('--accent-color', userData.colorScheme.accentColor.value);
+			appBind.style.setProperty('--background-color', userData.userTypingConfig.colorScheme.backgroundColor.value);
+			appBind.style.setProperty('--primary-color', userData.userTypingConfig.colorScheme.primaryColor.value);
+			appBind.style.setProperty('--secondary-color', userData.userTypingConfig.colorScheme.secondaryColor.value);
+			appBind.style.setProperty('--text-color', userData.userTypingConfig.colorScheme.textColor.value);
+			appBind.style.setProperty('--accent-color', userData.userTypingConfig.colorScheme.accentColor.value);
 		}
 	});
 </script>
@@ -94,14 +94,16 @@
 		</div>
 	</header>
 
-	<div style="display: flex; gap: var(--spacing-medium); justify-content:center">
-		{#if showThemePanel}
+	{#if showThemePanel}
+		<div style="display: flex; gap: var(--spacing-medium);">
 			<ThemePanel />
-		{/if}
-		<div>
-			{@render children()}
+			<div>
+				{@render children()}
+			</div>
 		</div>
-	</div>
+	{:else}
+		{@render children()}
+	{/if}
 
 	<footer></footer>
 </div>
