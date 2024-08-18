@@ -41,6 +41,8 @@ body {
   align-items: center;
   flex-direction: column;
   color: var(--secondary-color);
+  padding: 0px;
+  margin: 0px;
 }
 
 footer {
