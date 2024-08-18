@@ -5,7 +5,7 @@ import { authRouter } from "./routes/auth/authRouter.js";
 import { devMode, validateSession } from "./routes/middleware.js";
 import { config } from "./lib/config.js";
 import cors from 'cors';
-import { migrateUserTypingConfig } from "./lib/migrations/migrateTypingConfig.js";
+import { migrateUserTypingConfig } from "./lib/migrateTypingConfig.js";
 import { db } from "./lib/db.js";
 
 console.log("PROD: " + config.is_prod);
