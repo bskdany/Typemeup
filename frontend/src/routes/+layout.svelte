@@ -83,6 +83,7 @@
 				{#if currentPath !== path}
 					<button
 						onclick={() => {
+							showThemePanel = false;
 							goto(path);
 						}}
 					>
