@@ -16,3 +16,25 @@ export interface KeypressData {
   position: number;
   timeSinceLastKeypress: number;
 }
+
+export interface UserTypingConfig {
+  errorCorrectionMode: number,
+  typingMode: "test" | "smart" | "compete",
+  typingEndMode: "time" | "words",
+  typingEndTimeMode: number,
+  typingEndWordMode: number,
+  smartModeConfig: {
+    fingerMap: string[][],
+    defaultFingersPosition: string[],
+  },
+  colorScheme: ColorScheme
+}
+
+export interface ColorScheme {
+  backgroundColor: { name: string, value: string },
+  primaryColor: { name: string, value: string },
+  secondaryColor: { name: string, value: string },
+  accentColor: { name: string, value: string },
+  textColor: { name: string, value: string },
+  [key: string]: { name: string, value: string }
+}

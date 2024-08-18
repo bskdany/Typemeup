@@ -1,6 +1,6 @@
-import type { KeyStatistic } from "@shared/types";
+import type { KeyStatistic, UserTypingConfig } from "@shared/types";
 
-export const defaultUserTypingConfig = {
+export const defaultUserTypingConfig: UserTypingConfig = {
   errorCorrectionMode: 3,
   typingMode: "test",
   typingEndMode: "time",
@@ -20,6 +20,13 @@ export const defaultUserTypingConfig = {
       []
     ],
     defaultFingersPosition: ["a", "s", "d", "f", "j", "k", "l", ";", " ", ""],
+  },
+  colorScheme: {
+    backgroundColor: { name: 'Background', value: '#171d1f' },
+    primaryColor: { name: 'Primary', value: '#2c2e31' },
+    secondaryColor: { name: 'Secondary', value: '#7f6a6a' },
+    accentColor: { name: 'Accent', value: '#a8b9e4' },
+    textColor: { name: 'Text', value: '#ffffff' }
   }
 }
 
@@ -42,3 +49,5 @@ export function generateKeyStatistic(fingerMap: string[][]) {
 
   return keyMap;
 }
+
+export const defaultKeyStatitisc = generateKeyStatistic(defaultUserTypingConfig.smartModeConfig.fingerMap);

@@ -5,6 +5,8 @@ import { authRouter } from "./routes/auth/authRouter.js";
 import { devMode, validateSession } from "./routes/middleware.js";
 import { config } from "./lib/config.js";
 import cors from 'cors';
+import { migrateUserTypingConfig } from "./lib/migrations/migrateTypingConfig.js";
+import { db } from "./lib/db.js";
 
 console.log("PROD: " + config.is_prod);
 console.log("DOCKER: " + config.is_docker);
@@ -12,6 +14,9 @@ console.log("Backend port: " + config.port_backend);
 console.log("Db location: " + config.db_path);
 console.log("CORS: " + config.use_cors);
 console.log("Origin: " + config.frontend_url);
+
+// doing server migration from here for now
+migrateUserTypingConfig(db);
 
 const app = express();
 
