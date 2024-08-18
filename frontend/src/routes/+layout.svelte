@@ -94,16 +94,14 @@
 		</div>
 	</header>
 
-	{#if showThemePanel}
-		<div style="display: flex; gap: var(--spacing-medium);">
+	<div style="display: flex; gap: var(--spacing-medium); justify-content: center">
+		{#if showThemePanel}
 			<ThemePanel />
-			<div>
-				{@render children()}
-			</div>
+		{/if}
+		<div>
+			{@render children()}
 		</div>
-	{:else}
-		{@render children()}
-	{/if}
+	</div>
 
 	<footer></footer>
 </div>
