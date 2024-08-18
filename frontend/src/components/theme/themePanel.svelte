@@ -1,7 +1,17 @@
 <script lang="ts">
 	import BubbleContainer from '../../components/common/bubbleContainer.svelte';
+	import { fetchBackend } from '../../lib/fetch';
+	import { showToast } from '../../shared/toastController.svelte';
 	import { userData } from '../../shared/userData.svelte';
-	console.log(Object.values(userData.userTypingConfig.colorScheme));
+
+	async function saveConfig() {
+		try {
+			await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
+			showToast({ message: 'Color scheme saved succesfully', type: 'success' });
+		} catch (e) {
+			console.error(e);
+		}
+	}
 </script>
 
 <BubbleContainer>
@@ -15,6 +25,12 @@
 			</div>
 		{/each}
 	</div>
+
+	<button
+		onclick={async () => {
+			await saveConfig();
+		}}>Save</button
+	>
 </BubbleContainer>
 
 <style>
