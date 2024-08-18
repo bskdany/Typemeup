@@ -15,38 +15,50 @@
 	}
 </script>
 
-<BubbleContainer>
-	<div id="theme">
-		{#each Object.entries(userData.userTypingConfig.colorScheme) as [key, colorScheme]}
-			<div class="color-choser">
-				<div style="display: flex; justify-content: center; align-items:center">{colorScheme.name}</div>
-				<div class="color-display" style="background-color: {colorScheme.value};">
-					<input type="color" bind:value={userData.userTypingConfig.colorScheme[key].value} />
+<div id="themePanel">
+	<BubbleContainer>
+		<div id="themePanelContent">
+			{#each Object.entries(userData.userTypingConfig.colorScheme) as [key, colorScheme]}
+				<div class="color-choser">
+					<div style="display: flex; justify-content: center; align-items:center">{colorScheme.name}</div>
+					<div class="color-display" style="background-color: {colorScheme.value};">
+						<input type="color" bind:value={userData.userTypingConfig.colorScheme[key].value} />
+					</div>
 				</div>
+			{/each}
+			<div id="themeControl">
+				<button
+					onclick={() => {
+						userData.userTypingConfig.colorScheme = JSON.parse(JSON.stringify(defaultUserTypingConfig.colorScheme));
+					}}>Reset</button
+				>
+				<button
+					onclick={async () => {
+						await saveConfig();
+					}}>Save</button
+				>
 			</div>
-		{/each}
-	</div>
-
-	<button
-		onclick={() => {
-			userData.userTypingConfig.colorScheme = JSON.parse(JSON.stringify(defaultUserTypingConfig.colorScheme));
-		}}>Reset</button
-	>
-
-	<button
-		onclick={async () => {
-			await saveConfig();
-		}}>Save</button
-	>
-</BubbleContainer>
+		</div>
+	</BubbleContainer>
+</div>
 
 <style>
-	#theme {
+	#themePanel {
+		height: min-content;
+		width: min-content;
+	}
+
+	#themePanelContent {
 		display: flex;
 		flex-direction: column;
 		gap: var(--spacing-medium);
 		color: var(--text-color);
-		height: min-content;
+	}
+
+	#themeControl {
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
 	}
 
 	.color-choser {
