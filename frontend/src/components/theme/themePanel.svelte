@@ -1,5 +1,6 @@
 <script lang="ts">
 	import BubbleContainer from '../../components/common/bubbleContainer.svelte';
+	import { defaultUserTypingConfig } from '../../lib/defaultData';
 	import { fetchBackend } from '../../lib/fetch';
 	import { showToast } from '../../shared/toastController.svelte';
 	import { userData } from '../../shared/userData.svelte';
@@ -25,6 +26,12 @@
 			</div>
 		{/each}
 	</div>
+
+	<button
+		onclick={() => {
+			userData.userTypingConfig.colorScheme = JSON.parse(JSON.stringify(defaultUserTypingConfig.colorScheme));
+		}}>Reset</button
+	>
 
 	<button
 		onclick={async () => {
