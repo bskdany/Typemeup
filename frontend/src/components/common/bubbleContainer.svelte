@@ -17,5 +17,6 @@
 		justify-content: space-around;
 		flex-wrap: wrap;
 		width: 100%;
+		height: fit-content;
 	}
 </style>

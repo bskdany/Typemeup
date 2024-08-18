@@ -4,8 +4,8 @@
 	console.log(Object.values(userData.colorScheme));
 </script>
 
-<div id="theme">
-	<BubbleContainer>
+<BubbleContainer>
+	<div id="theme">
 		{#each Object.entries(userData.colorScheme) as [key, colorScheme]}
 			<div class="color-choser">
 				<div style="display: flex; justify-content: center; align-items:center">{colorScheme.name}</div>
@@ -14,16 +14,16 @@
 				</div>
 			</div>
 		{/each}
-	</BubbleContainer>
-</div>
+	</div>
+</BubbleContainer>
 
 <style>
 	#theme {
 		display: flex;
-		flex-wrap: wrap;
+		flex-direction: column;
 		gap: var(--spacing-medium);
 		color: var(--text-color);
-		width: min-content;
+		height: min-content;
 	}
 
 	.color-choser {
