@@ -84,3 +84,12 @@ export interface UserTypingConfig {
     defaultFingersPosition: string[],
   },
 }
+
+export interface ColorScheme {
+  backgroundColor: { name: string, value: string },
+  primaryColor: { name: string, value: string },
+  secondaryColor: { name: string, value: string },
+  accentColor: { name: string, value: string },
+  textColor: { name: string, value: string },
+  [key: string]: { name: string, value: string }
+}

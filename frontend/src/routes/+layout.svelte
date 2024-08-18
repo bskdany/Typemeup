@@ -6,9 +6,11 @@
 	import { showToast, toastList } from '../shared/toastController.svelte';
 	import Toast from '../components/common/toast.svelte';
 	import { fetchBackend } from '../lib/fetch';
+	import ThemePanel from '../components/theme/themePanel.svelte';
 
 	let { children } = $props();
 	let currentPath = $derived($page.url.pathname);
+	let showThemePanel = $state(false);
 
 	async function saveConfig() {
 		try {
@@ -32,6 +34,10 @@
 		}
 	}
 
+	function toggleThemeEditor() {
+		showThemePanel = !showThemePanel;
+	}
+
 	const navigationObject = $derived({
 		'/': 'Home',
 		'/config': 'Config',
@@ -40,11 +46,23 @@
 
 	const pageHelperButtons: { [path: string]: [string, () => void] } = {
 		'/config': ['Save', saveConfig],
-		'/profile': ['Logout', logout]
+		'/profile': ['Logout', logout],
+		'/': ['Theme', toggleThemeEditor]
 	};
+
+	let appBind: HTMLElement;
+	$effect(() => {
+		if (appBind) {
+			appBind.style.setProperty('--background-color', userData.colorScheme.backgroundColor.value);
+			appBind.style.setProperty('--primary-color', userData.colorScheme.primaryColor.value);
+			appBind.style.setProperty('--secondary-color', userData.colorScheme.secondaryColor.value);
+			appBind.style.setProperty('--text-color', userData.colorScheme.textColor.value);
+			appBind.style.setProperty('--accent-color', userData.colorScheme.accentColor.value);
+		}
+	});
 </script>
 
-<div id="app">
+<div id="app" bind:this={appBind}>
 	<div id="toastContainer">
 		{#each toastList as toast}
 			<Toast type={toast.type} message={toast.message} duration={toast.duration} />
@@ -75,7 +93,14 @@
 		</div>
 	</header>
 
-	{@render children()}
+	<div style="display: flex; gap: var(--spacing-medium); justify-content:center">
+		{#if showThemePanel}
+			<ThemePanel />
+		{/if}
+		<div>
+			{@render children()}
+		</div>
+	</div>
 
 	<footer></footer>
 </div>
@@ -84,6 +109,7 @@
 	#app {
 		width: 80%;
 		height: 100dvh;
+		background-color: var(--background-color);
 	}
 
 	header {

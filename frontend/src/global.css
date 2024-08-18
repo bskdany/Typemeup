@@ -7,12 +7,9 @@
 
 :root {
   /* Colors */
-  --primary-color: red;
-  --secondary-color: orange;
-  --background-color: green;
+  --background-color: #171d1f;
   --primary-color: #2c2e31;
   --secondary-color: rgb(127, 106, 106);
-  --background-color: #171d1f;
   --text-color: white;
   --accent-color: #a8b9e4;
 
