@@ -113,7 +113,7 @@
 			targetText = generateWordsAlgo2($state.snapshot(userData.keyStatistics), userData.userTypingConfig.typingEndWordMode);
 		} else if (userData.userTypingConfig.typingMode === 'test') {
 			if (userData.userTypingConfig.typingEndMode.startsWith('time')) {
-				targetText = generateRandomWords(100);
+				targetText = generateRandomWords(300);
 			} else if (userData.userTypingConfig.typingEndMode.startsWith('words')) {
 				targetText = generateRandomWords(userData.userTypingConfig.typingEndWordMode);
 			}
