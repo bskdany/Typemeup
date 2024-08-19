@@ -155,9 +155,7 @@
 	}
 
 	function checkIfMoveText() {
-		if (textObject.letterIndex === 0 && cursorElementPosition.y > 1 && textObject.hasMistaken === false) {
-			mainTextTranslateDistance = -cursorElementPosition.y;
-		}
+		mainTextTranslateDistance = -cursorElementPosition.y;
 	}
 
 	export function focus() {
