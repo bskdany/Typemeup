@@ -11,9 +11,9 @@ Made it to the [Svelte Community Showcase](https://svelte.dev/blog/whats-new-in-
 - smooth cursor
 - graphs with in-depth statistics and analysis of the test
 - user configs
+- theme settings
   
 ### Incoming features
-- theme settings
 - theme marketplace
 - competition mode (like 10fastfingers)
 - import progress from monkeytype
