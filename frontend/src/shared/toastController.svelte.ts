@@ -6,7 +6,7 @@ export type Toast = {
 
 export const toastList: Toast[] = $state([]);
 
-export function showToast({ message, duration = 3000, type = 'error' }: Toast) {
+export function showToast({ message, duration = 1500, type = 'error' }: Toast) {
   toastList.push({ message, duration, type });
 
   setTimeout(() => {

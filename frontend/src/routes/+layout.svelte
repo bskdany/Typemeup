@@ -130,9 +130,11 @@
 	#toastContainer {
 		position: absolute;
 		left: 50%;
+		top: var(--spacing-medium);
+		gap: var(--spacing-small);
 		transform: translateX(-50%);
 		display: flex;
-		gap: var(--spacing-medium);
+		z-index: 1000;
 		flex-direction: column;
 	}
 </style>

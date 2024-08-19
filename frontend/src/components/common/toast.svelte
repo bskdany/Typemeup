@@ -27,15 +27,16 @@
 		padding: var(--padding-medium);
 		border-radius: var(--border-radius);
 		color: var(--text-color);
+		background-color: var(--primary-color);
 		z-index: 1000;
 	}
 	.success {
-		background-color: #4caf50;
+		border: 1px solid #4caf50;
 	}
 	.error {
-		background-color: #f44336;
+		border: 1px solid #f44336;
 	}
 	.info {
-		background-color: #2196f3;
+		border: 1px solid #2196f3;
 	}
 </style>
