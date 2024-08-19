@@ -40,7 +40,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  color: var(--secondary-color);
+  color: var(--text-color);
   padding: 0px;
   margin: 0px;
 }
@@ -54,7 +54,7 @@ button {
   padding: var(--padding-medium);
   border-radius: var(--border-radius);
   background-color: var(--primary-color);
-  color: var(--secondary-color);
+  color: var(--text-color);
   border: none;
 }
 
@@ -63,7 +63,7 @@ input {
   padding: var(--padding-medium);
   border-radius: var(--border-radius);
   background-color: var(--primary-color);
-  color: white;
+  color: var(--text-color);
 }
 
 button:hover {
@@ -74,11 +74,6 @@ button:hover {
   color: var(--accent-color);
 }
 
-/* button.selected {
-  border: 1px solid #a8b9e4;
-} */
-
 .dimmedText {
-  color: white;
   opacity: 80%;
 }

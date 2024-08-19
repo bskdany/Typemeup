@@ -85,6 +85,7 @@
 		align-items: center;
 		transition: border-color 0.5s linear;
 		transition: background-color 0.5s linear;
+		color: var(--text-color);
 	}
 	.activeKey {
 		width: auto;
@@ -98,6 +99,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		color: var(--text-color);
 	}
 
 	.invisible {

@@ -2,7 +2,7 @@
 	import { Chart, ScatterController } from 'chart.js';
 	import { onMount } from 'svelte';
 	import Dropdown from '../common/dropdown.svelte';
-	import { allTypingEndModes, getCombinedTypingEndMode } from '../../shared/userData.svelte';
+	import { allTypingEndModes, getCombinedTypingEndMode, userData } from '../../shared/userData.svelte';
 	// import { allTypingEndMode, typingEndModes, userData } from '../../shared/userData.svelte';
 
 	type PastTypingTestData = {
@@ -43,8 +43,8 @@
 					data: data.map((entry, index) => {
 						return { x: index, y: entry.wpm };
 					}),
-					borderColor: '#a8b9e4',
-					backgroundColor: '#a8b9e4',
+					borderColor: userData.userTypingConfig.colorScheme.accentColor.value,
+					backgroundColor: userData.userTypingConfig.colorScheme.accentColor.value,
 					borderWidth: 2,
 					lineTension: 0.4,
 					pointRadius: 1,
@@ -58,8 +58,8 @@
 					data: wpmEma.map((entry, index) => {
 						return { x: index, y: entry };
 					}),
-					borderColor: '#a8b9e4',
-					backgroundColor: '#a8b9e4',
+					borderColor: userData.userTypingConfig.colorScheme.accentColor.value,
+					backgroundColor: userData.userTypingConfig.colorScheme.accentColor.value,
 					borderWidth: 2,
 					lineTension: 0.4,
 					pointRadius: 1,
@@ -101,8 +101,7 @@
 					legend: {
 						display: true,
 						labels: {
-							usePointStyle: true,
-							color: 'rgb(255, 99, 132)'
+							usePointStyle: true
 						}
 					}
 				},

@@ -44,8 +44,12 @@
 
 <style>
 	#themePanel {
+		position: absolute;
+		left: 0%;
+		top: 0%;
 		height: min-content;
 		width: min-content;
+		z-index: 100;
 	}
 
 	#themePanelContent {

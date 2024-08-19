@@ -4,6 +4,7 @@
 	import { calculateWpm, getWpm } from '../../lib/typingTestRunHelper';
 	import { getContext, onMount } from 'svelte';
 	import { customHighlightPlugin } from './scatterChartProgressPlugin';
+	import { userData } from '../../shared/userData.svelte';
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
 	const typingResultContext: TypingResultContext = getContext('typingResultContext');
@@ -126,8 +127,8 @@
 					label: 'Wpm',
 					type: 'line' as any,
 					data: chartWpmData,
-					borderColor: '#a8b9e4',
-					backgroundColor: '#a8b9e4',
+					borderColor: userData.userTypingConfig.colorScheme.accentColor.value,
+					backgroundColor: userData.userTypingConfig.colorScheme.accentColor.value,
 					borderWidth: 2,
 					lineTension: 0.4,
 					pointRadius: 1,
@@ -138,7 +139,7 @@
 				{
 					label: 'Correct KeyPresses',
 					data: chartKeyPressData.filter((point) => point.errorStatus === '' && point.x > 9),
-					backgroundColor: 'rgb(127, 106, 106)',
+					backgroundColor: userData.userTypingConfig.colorScheme.textColor.value,
 					pointRadius: 0,
 					hoverRadius: 0,
 					hitRadius: 0

@@ -94,14 +94,12 @@
 		</div>
 	</header>
 
-	<div style="display: flex; gap: var(--spacing-medium); justify-content: center">
-		{#if showThemePanel}
+	{#if showThemePanel}
+		<div style="position: relative">
 			<ThemePanel />
-		{/if}
-		<div>
-			{@render children()}
 		</div>
-	</div>
+	{/if}
+	{@render children()}
 
 	<footer></footer>
 </div>
@@ -131,8 +129,6 @@
 
 	#toastContainer {
 		position: absolute;
-		position: absolute;
-		/* top: var(--spacing-medium); */
 		left: 50%;
 		transform: translateX(-50%);
 		display: flex;

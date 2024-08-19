@@ -21,13 +21,13 @@
 		background-color: transparent;
 		padding: var(--padding-medium);
 		border: solid transparent;
-		color: rgb(127, 106, 106);
-		border-radius: 10px;
-		background-color: #2c2e31;
+		color: var(--text-color);
+		border-radius: var(--border-radius);
+		background-color: var(--primary-color);
 	}
 
 	#data {
-		color: #a8b9e4;
+		color: var(--accent-color);
 		white-space: pre-wrap;
 	}
 </style>

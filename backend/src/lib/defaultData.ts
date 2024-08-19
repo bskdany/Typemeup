@@ -26,7 +26,7 @@ export const defaultUserTypingConfig: UserTypingConfig = {
     primaryColor: { name: 'Primary', value: '#2c2e31' },
     secondaryColor: { name: 'Secondary', value: '#7f6a6a' },
     accentColor: { name: 'Accent', value: '#a8b9e4' },
-    textColor: { name: 'Text', value: '#ffffff' }
+    textColor: { name: 'Text', value: '#af9292' }
   }
 }
 

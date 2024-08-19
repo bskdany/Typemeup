@@ -5,7 +5,7 @@
 
 <div id="config">
 	<ErrorCorrectionModeConfig />
-	<FingerMapConfig />
+	<!-- <FingerMapConfig /> -->
 </div>
 
 <style>

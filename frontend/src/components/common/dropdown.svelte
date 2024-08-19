@@ -24,14 +24,14 @@
 
 <style>
 	.dropdown {
-		color: var(--secondary-color);
+		color: var(--text-color);
 		border: 1px solid var(--secondary-color);
 		border-radius: var(--border-radius);
 		background-color: var(--primary-color);
 		padding: var(--padding-small);
 	}
 	.option {
-		color: var(--secondary-color);
+		color: var(--text-color);
 	}
 
 	.dropdown:hover {

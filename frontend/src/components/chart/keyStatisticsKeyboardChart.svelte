@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { KeyStatistic } from '@shared/types';
 	import { get } from 'svelte/store';
+	import { userData } from '../../shared/userData.svelte';
 
 	const { keyStats }: { keyStats: KeyStatistic[] } = $props();
 
@@ -16,8 +17,18 @@
 		const delta = max - min;
 		value = (value / delta) * 100;
 
-		const blue = Math.floor((value * 200) / 100);
-		return `rgb(0, 0, ${55 + blue})`;
+		const hexColor = userData.userTypingConfig.colorScheme.accentColor.value;
+
+		const r = parseInt(hexColor.slice(1, 3), 16);
+		const g = parseInt(hexColor.slice(3, 5), 16);
+		const b = parseInt(hexColor.slice(5, 7), 16);
+
+		// Calculate the adjusted RGB values
+		const newR = Math.floor((value * r) / 100);
+		const newG = Math.floor((value * g) / 100);
+		const newB = Math.floor((value * b) / 100);
+
+		return `rgb(${newR}, ${newG}, ${newB})`;
 	}
 
 	function convertKeyToKeyboardFormat(key: string) {
@@ -119,6 +130,7 @@
 		flex-direction: column;
 		transition: border-color 0.5s linear;
 		transition: background-color 0.5s linear;
+		color: var(--text-color);
 	}
 
 	.invisible {
