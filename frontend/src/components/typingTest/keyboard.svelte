@@ -15,6 +15,10 @@
 
 	let timeout: any = null;
 
+	onMount(() => {
+		typingContextData.livePressedKey.key = '';
+	});
+
 	$effect(() => {
 		typingContextData.livePressedKey.key === ' ' ? (pressedKey = 'Space') : (pressedKey = typingContextData.livePressedKey.key);
 		typingContextData.livePressedKey.count;
