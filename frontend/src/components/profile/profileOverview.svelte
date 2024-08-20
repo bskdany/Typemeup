@@ -8,7 +8,7 @@
 </script>
 
 <BubbleContainer>
-	<div>
+	<div style="color: var(--text-color);">
 		Welcome back {userData.username}!
 	</div>
 	<div>
