@@ -53,11 +53,11 @@
 	let appBind: HTMLElement;
 	$effect(() => {
 		if (appBind) {
-			appBind.style.setProperty('--background-color', userData.userTypingConfig.colorScheme.backgroundColor.value);
-			appBind.style.setProperty('--primary-color', userData.userTypingConfig.colorScheme.primaryColor.value);
-			appBind.style.setProperty('--secondary-color', userData.userTypingConfig.colorScheme.secondaryColor.value);
-			appBind.style.setProperty('--text-color', userData.userTypingConfig.colorScheme.textColor.value);
-			appBind.style.setProperty('--accent-color', userData.userTypingConfig.colorScheme.accentColor.value);
+			appBind.style.setProperty('--background-color', userData.userTypingConfig.theme.colorScheme.backgroundColor.value);
+			appBind.style.setProperty('--primary-color', userData.userTypingConfig.theme.colorScheme.primaryColor.value);
+			appBind.style.setProperty('--secondary-color', userData.userTypingConfig.theme.colorScheme.secondaryColor.value);
+			appBind.style.setProperty('--text-color', userData.userTypingConfig.theme.colorScheme.textColor.value);
+			appBind.style.setProperty('--accent-color', userData.userTypingConfig.theme.colorScheme.accentColor.value);
 		}
 	});
 </script>

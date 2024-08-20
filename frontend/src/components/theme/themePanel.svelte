@@ -1,16 +1,40 @@
 <script lang="ts">
 	import BubbleContainer from '../../components/common/bubbleContainer.svelte';
-	import { defaultUserTypingConfig } from '../../lib/defaultData';
 	import { fetchBackend } from '../../lib/fetch';
 	import { showToast } from '../../shared/toastController.svelte';
-	import { userData } from '../../shared/userData.svelte';
+	import { isLoggedIn, userData } from '../../shared/userData.svelte';
+	import Dropdown from '../common/dropdown.svelte';
+	import { themes, defaultUserTypingConfig } from '@shared/defaultData';
+
+	let hasColorValueManuallyChanged = $state(false);
+
+	function applyPreset(presetName: keyof typeof themes | 'custom') {
+		if (presetName === 'custom') {
+			userData.userTypingConfig.theme = JSON.parse(JSON.stringify(userData.userTypingConfig.customTheme));
+		} else {
+			userData.userTypingConfig.theme.name = presetName;
+			userData.userTypingConfig.theme.colorScheme = JSON.parse(JSON.stringify(themes[presetName]));
+		}
+		hasColorValueManuallyChanged = false;
+	}
 
 	async function saveConfig() {
-		try {
-			await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
-			showToast({ message: 'Color scheme saved succesfully', type: 'success' });
-		} catch (e) {
-			console.error(e);
+		if (hasColorValueManuallyChanged) {
+			userData.userTypingConfig.customTheme = JSON.parse(JSON.stringify(userData.userTypingConfig.theme));
+			userData.userTypingConfig.theme.name = 'custom';
+		}
+
+		hasColorValueManuallyChanged = false;
+
+		if (isLoggedIn()) {
+			try {
+				await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
+				showToast({ message: 'Color scheme saved succesfully', type: 'success' });
+			} catch (e) {
+				console.error(e);
+			}
+		} else {
+			showToast({ message: 'User is not logged in', type: 'error' });
 		}
 	}
 </script>
@@ -18,18 +42,30 @@
 <div id="themePanel">
 	<BubbleContainer>
 		<div id="themePanelContent">
-			{#each Object.entries(userData.userTypingConfig.colorScheme) as [key, colorScheme]}
+			<Dropdown
+				title="Theme"
+				options={[...Object.keys(themes), 'custom']}
+				onOptionSelected={applyPreset}
+				defaultOption={userData.userTypingConfig.theme.name}
+			/>
+			{#each Object.entries(userData.userTypingConfig.theme.colorScheme) as [key, colorScheme]}
 				<div class="color-choser">
 					<div style="display: flex; justify-content: center; align-items:center">{colorScheme.name}</div>
 					<div class="color-display" style="background-color: {colorScheme.value};">
-						<input type="color" bind:value={userData.userTypingConfig.colorScheme[key].value} />
+						<input
+							type="color"
+							bind:value={userData.userTypingConfig.theme.colorScheme[key].value}
+							onchange={() => {
+								hasColorValueManuallyChanged = true;
+							}}
+						/>
 					</div>
 				</div>
 			{/each}
 			<div id="themeControl">
 				<button
 					onclick={() => {
-						userData.userTypingConfig.colorScheme = JSON.parse(JSON.stringify(defaultUserTypingConfig.colorScheme));
+						userData.userTypingConfig.theme.colorScheme = JSON.parse(JSON.stringify(defaultUserTypingConfig.theme.colorScheme));
 					}}>Reset</button
 				>
 				<button
@@ -57,12 +93,16 @@
 		flex-direction: column;
 		gap: var(--spacing-medium);
 		color: var(--text-color);
+		justify-content: center;
+		align-items: center;
 	}
 
 	#themeControl {
 		display: flex;
-		justify-content: space-around;
+		width: 100%;
+		justify-content: center;
 		align-items: center;
+		gap: var(--spacing-medium);
 	}
 
 	.color-choser {

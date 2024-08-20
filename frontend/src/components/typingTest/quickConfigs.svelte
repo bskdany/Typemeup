@@ -5,7 +5,7 @@
 <div id="configWrapper">
 	{#each typingModes as typingMode}
 		<button
-			class:selected={userData.userTypingConfig.typingMode === typingMode}
+			class:selected-text={userData.userTypingConfig.typingMode === typingMode}
 			onclick={() => {
 				userData.userTypingConfig.typingMode = typingMode;
 				typingMode === 'smart' ? (userData.userTypingConfig.typingEndMode = 'words') : '';
@@ -20,7 +20,7 @@
 	{#if userData.userTypingConfig.typingMode === 'test'}
 		{#each typingEndModes as typingEndMode}
 			<button
-				class:selected={userData.userTypingConfig.typingEndMode === typingEndMode}
+				class:selected-text={userData.userTypingConfig.typingEndMode === typingEndMode}
 				onclick={() => (userData.userTypingConfig.typingEndMode = typingEndMode)}
 			>
 				{typingEndMode}
@@ -32,7 +32,7 @@
 		{#if userData.userTypingConfig.typingEndMode === 'words'}
 			{#each typingEndWordModes as typingEndWordMode}
 				<button
-					class:selected={userData.userTypingConfig.typingEndWordMode === typingEndWordMode}
+					class:selected-text={userData.userTypingConfig.typingEndWordMode === typingEndWordMode}
 					onclick={() => (userData.userTypingConfig.typingEndWordMode = typingEndWordMode)}
 				>
 					{typingEndWordMode}
@@ -41,7 +41,7 @@
 		{:else if userData.userTypingConfig.typingEndMode === 'time'}
 			{#each typingEndTimeModes as typingEndTimeMode}
 				<button
-					class:selected={userData.userTypingConfig.typingEndTimeMode === typingEndTimeMode}
+					class:selected-text={userData.userTypingConfig.typingEndTimeMode === typingEndTimeMode}
 					onclick={() => (userData.userTypingConfig.typingEndTimeMode = typingEndTimeMode)}
 				>
 					{typingEndTimeMode}
@@ -51,7 +51,7 @@
 	{:else if userData.userTypingConfig.typingMode === 'smart'}
 		{#each typingEndWordModes as typingEndWordMode}
 			<button
-				class:selected={userData.userTypingConfig.typingEndWordMode === typingEndWordMode}
+				class:selected-text={userData.userTypingConfig.typingEndWordMode === typingEndWordMode}
 				onclick={() => (userData.userTypingConfig.typingEndWordMode = typingEndWordMode)}
 			>
 				{typingEndWordMode}
@@ -77,6 +77,6 @@
 	}
 	.separator {
 		width: 1px;
-		background-color: var(--accent-color);
+		background-color: var(--text-color);
 	}
 </style>

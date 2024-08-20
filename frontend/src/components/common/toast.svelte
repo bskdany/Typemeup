@@ -27,7 +27,7 @@
 		padding: var(--padding-medium);
 		border-radius: var(--border-radius);
 		color: var(--text-color);
-		background-color: var(--primary-color);
+		background-color: var(--secondary-color);
 		z-index: 1000;
 	}
 	.success {

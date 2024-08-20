@@ -17,7 +17,7 @@
 		const delta = max - min;
 		value = (value / delta) * 100;
 
-		const hexColor = userData.userTypingConfig.colorScheme.accentColor.value;
+		const hexColor = userData.userTypingConfig.theme.colorScheme.accentColor.value;
 
 		const r = parseInt(hexColor.slice(1, 3), 16);
 		const g = parseInt(hexColor.slice(3, 5), 16);

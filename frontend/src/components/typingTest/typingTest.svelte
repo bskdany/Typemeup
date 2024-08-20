@@ -245,7 +245,7 @@
 	#main-text {
 		display: flex;
 		flex-wrap: wrap;
-		color: var(--text-color);
+		color: var(--secondary-color);
 		width: 100%;
 		user-select: none;
 		white-space: pre-wrap;
@@ -275,7 +275,7 @@
 		font-size: 2rem;
 	}
 	.correct {
-		color: white;
+		color: var(--accent-color);
 	}
 
 	.incorrect {

@@ -1,5 +1,5 @@
 import type { Database } from 'better-sqlite3';
-import { defaultUserTypingConfig } from './defaultData.js';
+import { defaultUserTypingConfig } from '@shared/defaultData.js';
 
 export function migrateUserTypingConfig(db: Database) {
 
@@ -11,8 +11,8 @@ export function migrateUserTypingConfig(db: Database) {
     for (const user of users) {
       let config = JSON.parse(user.typing_config);
 
-      if (!config.colorScheme) {
-        config.colorScheme = defaultUserTypingConfig.colorScheme;
+      if (!config.theme) {
+        config.theme = defaultUserTypingConfig.theme
       }
 
       const updatedConfig = JSON.stringify(config);

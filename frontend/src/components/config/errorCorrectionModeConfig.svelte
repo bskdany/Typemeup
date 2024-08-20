@@ -19,7 +19,7 @@
 					{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
 						<tr style="display: flex; gap: 8px">
 							<th style="white-space: nowrap; display: flex;">{name}:</th>
-							<td class:selected={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}>{description}</td>
+							<td class:selected-text={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}>{description}</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -50,12 +50,10 @@
 	}
 
 	#title {
-		opacity: 80%;
 		font-size: 1.5rem;
 	}
 
 	#description {
-		opacity: 60%;
 		display: flex;
 		flex-direction: row;
 	}

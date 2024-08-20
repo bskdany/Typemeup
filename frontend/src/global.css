@@ -54,12 +54,12 @@ footer {
 }
 
 button {
-  background-color: transparent;
   padding: var(--padding-medium);
   border-radius: var(--border-radius);
   background-color: var(--primary-color);
   color: var(--text-color);
   border: none;
+  /* filter: drop-shadow(0px 1px 1px #000000); */
 }
 
 input {
@@ -68,12 +68,18 @@ input {
   border-radius: var(--border-radius);
   background-color: var(--primary-color);
   color: var(--text-color);
-}
-
-button:hover {
-  color: var(--accent-color);
+  background-color: var(--secondary-color);
 }
 
 .selected {
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+}
+
+button:hover:not(.selected) {
+  color: var(--accent-color);
+}
+
+.selected-text {
   color: var(--accent-color);
 }

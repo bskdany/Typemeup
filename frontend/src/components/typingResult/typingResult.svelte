@@ -56,7 +56,7 @@
 	<div id="desktop-view">
 		<BubbleContainer>"Press tab to restart"</BubbleContainer>
 	</div>
-	<button id="restartButton" onclick={restart}>Restart</button>
+	<!-- <button id="restartButton" onclick={restart}>Restart</button> -->
 </div>
 
 <style>

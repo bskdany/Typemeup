@@ -27,7 +27,14 @@ export interface UserTypingConfig {
     fingerMap: string[][],
     defaultFingersPosition: string[],
   },
-  colorScheme: ColorScheme
+  theme: {
+    name: string,
+    colorScheme: ColorScheme
+  },
+  customTheme: {
+    name: string,
+    colorScheme: ColorScheme
+  }
 }
 
 export interface ColorScheme {

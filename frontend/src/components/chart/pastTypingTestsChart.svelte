@@ -43,8 +43,8 @@
 					data: data.map((entry, index) => {
 						return { x: index, y: entry.wpm };
 					}),
-					borderColor: userData.userTypingConfig.colorScheme.accentColor.value,
-					backgroundColor: userData.userTypingConfig.colorScheme.accentColor.value,
+					borderColor: userData.userTypingConfig.theme.colorScheme.accentColor.value,
+					backgroundColor: userData.userTypingConfig.theme.colorScheme.accentColor.value,
 					borderWidth: 2,
 					lineTension: 0.4,
 					pointRadius: 1,
@@ -58,8 +58,8 @@
 					data: wpmEma.map((entry, index) => {
 						return { x: index, y: entry };
 					}),
-					borderColor: userData.userTypingConfig.colorScheme.accentColor.value,
-					backgroundColor: userData.userTypingConfig.colorScheme.accentColor.value,
+					borderColor: userData.userTypingConfig.theme.colorScheme.accentColor.value,
+					backgroundColor: userData.userTypingConfig.theme.colorScheme.accentColor.value,
 					borderWidth: 2,
 					lineTension: 0.4,
 					pointRadius: 1,
