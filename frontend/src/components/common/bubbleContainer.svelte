@@ -8,7 +8,7 @@
 
 <style>
 	#bubbleContainer {
-		background-color: var(--primary-color);
+		background-color: var(--secondary-color);
 		border-radius: var(--border-radius);
 		padding: var(--padding-medium);
 		display: flex;
@@ -17,6 +17,6 @@
 		justify-content: space-around;
 		flex-wrap: wrap;
 		width: 100%;
-		height: fit-content;
+		height: auto;
 	}
 </style>

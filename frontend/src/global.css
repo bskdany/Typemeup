@@ -45,6 +45,10 @@ body {
   margin: 0px;
 }
 
+div {
+  color: var(--text-color);
+}
+
 footer {
   display: none;
 }
@@ -72,8 +76,4 @@ button:hover {
 
 .selected {
   color: var(--accent-color);
-}
-
-.dimmedText {
-  opacity: 80%;
 }

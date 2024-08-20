@@ -123,7 +123,7 @@
 		border: solid;
 		border-width: 1px;
 		border-radius: 5px;
-		border-color: var(--primary-color);
+		border-color: var(--secondary-color);
 		display: flex;
 		justify-content: center;
 		align-items: center;

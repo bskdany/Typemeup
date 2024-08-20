@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { userData } from '../../shared/userData.svelte';
+	import BubbleContainer from '../common/bubbleContainer.svelte';
 
 	let errorCorrectionModes = {
 		0: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
@@ -9,10 +10,9 @@
 	};
 </script>
 
-<div id="container">
-	<div id="title">Error Correction Mode</div>
-
+<BubbleContainer>
 	<div id="content">
+		<div id="title">Error Correction Mode</div>
 		<div id="description">
 			<table>
 				<tbody>
@@ -35,37 +35,18 @@
 			{/each}
 		</div>
 	</div>
-</div>
+</BubbleContainer>
 
 <style>
-	#container {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-medium);
-		width: 100%;
-		background-color: transparent;
-		border: solid transparent;
-		border-radius: var(--border-radius);
-		color: var(--text-color);
-		padding: var(--padding-medium);
-		background-color: var(--primary-color);
-	}
-
-	#content {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-
 	#choiceSelection {
-		min-width: fit-content;
+		width: fit-content;
 		height: fit-content;
-		margin: var(--spacing-medium);
+		margin: var(--spacing-medium) auto var(--spacing-medium) auto;
 		border-radius: var(--border-radius);
-		background-color: var(--background-color);
+		background-color: var(--primary-color);
 		display: flex;
 		flex-direction: row;
-		justify-content: space-between;
+		justify-content: space-around;
 	}
 
 	#title {
@@ -80,7 +61,6 @@
 	}
 
 	button {
-		background-color: var(--background-color);
 		padding: calc(var(--padding-medium) + 5px) var(--padding-medium) calc(var(--padding-medium) + 5px) var(--padding-medium);
 	}
 </style>

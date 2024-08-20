@@ -23,7 +23,7 @@
 		border: solid transparent;
 		color: var(--text-color);
 		border-radius: var(--border-radius);
-		background-color: var(--primary-color);
+		background-color: var(--secondary-color);
 	}
 
 	#data {

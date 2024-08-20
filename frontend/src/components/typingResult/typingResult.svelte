@@ -4,9 +4,10 @@
 	import type { TypingResultContextData, TypingTestRunData } from '../../types/interfaces';
 	import KeyPressTimingsChart from '../chart/keyPressTimingsChart.svelte';
 	import SingleDataContainer from '../common/singleDataContainer.svelte';
-	import TextContainer from '../common/textContainer.svelte';
+	// import TextContainer from '../common/textContainer.svelte';
 	import { getWpm, getAccuracy, getRawWpm, getTime, getCorrectCharCount, getWrongCharCount } from '../../lib/typingTestRunHelper';
 	import TypingTestReplay from './typingTestReplay.svelte';
+	import BubbleContainer from '../common/bubbleContainer.svelte';
 
 	let pressTabToRestartElement: any;
 	let typingResultContextData: TypingResultContextData = $state({ activeLetterId: -1, typingTestReplayStatus: 'inactive' });
@@ -53,7 +54,7 @@
 	</div>
 
 	<div id="desktop-view">
-		<TextContainer input={'Press Tab to restart'} />
+		<BubbleContainer>"Press tab to restart"</BubbleContainer>
 	</div>
 	<button id="restartButton" onclick={restart}>Restart</button>
 </div>

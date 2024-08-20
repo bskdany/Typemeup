@@ -65,6 +65,7 @@
 <style>
 	button {
 		font-size: 1rem;
+		background-color: var(--secondary-color);
 	}
 
 	#configWrapper {
@@ -72,10 +73,10 @@
 		flex-direction: row;
 		padding: var(--padding-medium);
 		border-radius: var(--border-radius);
-		background-color: var(--primary-color);
+		background-color: var(--secondary-color);
 	}
 	.separator {
 		width: 1px;
-		background-color: var(--secondary-color);
+		background-color: var(--accent-color);
 	}
 </style>

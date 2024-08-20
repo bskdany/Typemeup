@@ -121,7 +121,7 @@
 
 	<div id="instructions">
 		<h3>How to use</h3>
-		<p class="dimmedText">
+		<p>
 			Select the finger you want to configure, then select each key it presses.<br />
 			Double click a key to mark it as the default resting position of the finger.
 		</p>

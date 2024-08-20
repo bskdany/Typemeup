@@ -27,7 +27,7 @@
 		color: var(--text-color);
 		border: 1px solid var(--secondary-color);
 		border-radius: var(--border-radius);
-		background-color: var(--primary-color);
+		background-color: var(--secondary-color);
 		padding: var(--padding-small);
 	}
 	.option {

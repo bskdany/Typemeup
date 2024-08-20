@@ -72,14 +72,13 @@
 	}
 
 	.key {
+		font-size: 0.9rem;
 		width: auto;
 		min-width: 40px;
 		height: 40px;
 		background-color: transparent;
-		border: solid;
-		border-width: 1px;
+		border: 1px solid var(--secondary-color);
 		border-radius: 5px;
-		border-color: var(--primary-color);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -88,14 +87,13 @@
 		color: var(--text-color);
 	}
 	.activeKey {
+		font-size: 0.9rem;
 		width: auto;
 		min-width: 40px;
 		height: 40px;
-		background-color: var(--primary-color);
-		border: solid;
-		border-width: 1px;
+		border: 1px solid var(--secondary-color);
+		background-color: var(--secondary-color);
 		border-radius: 5px;
-		border-color: var(--primary-color);
 		display: flex;
 		justify-content: center;
 		align-items: center;

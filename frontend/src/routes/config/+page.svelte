@@ -1,17 +1,18 @@
 <script lang="ts">
+	import BubbleContainer from '../../components/common/bubbleContainer.svelte';
 	import ErrorCorrectionModeConfig from '../../components/config/errorCorrectionModeConfig.svelte';
-	import FingerMapConfig from '../../components/config/fingerMapConfig.svelte';
 </script>
 
 <div id="config">
 	<ErrorCorrectionModeConfig />
-	<!-- <FingerMapConfig /> -->
+	<BubbleContainer>
+		<div>Work in progress</div>
+	</BubbleContainer>
 </div>
 
 <style>
 	#config {
 		display: flex;
-		flex-direction: column;
 		gap: var(--spacing-medium);
 	}
 </style>
