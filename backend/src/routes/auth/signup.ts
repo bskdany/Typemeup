@@ -3,7 +3,7 @@ import { db } from "../../lib/db.js";
 import { hash } from "@node-rs/argon2";
 import { lucia } from "../../lib/auth.js";
 import { generateId } from "lucia";
-import { defaultUserTypingConfig, generateKeyStatistic } from "@shared/defaultData.js";
+import { defaultUserTypingConfig, generateKeyStatistic } from "../../lib/defaultData.js";
 
 export const signupRoute = async (req: Request, res: Response) => {
   const username: string | null = req.body.username ?? null;

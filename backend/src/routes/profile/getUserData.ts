@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { db } from "../../lib/db.js";
-import { defaultUserTypingConfig, generateKeyStatistic } from "@shared/defaultData.js";
+import { defaultUserTypingConfig, generateKeyStatistic } from "../../lib/defaultData.js";
 
 export const getUserDataRoute = async (req: Request, res: Response) => {
   try {
