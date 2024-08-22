@@ -15,6 +15,10 @@ export function migrateUserTypingConfig(db: Database) {
         config.theme = defaultUserTypingConfig.theme
       }
 
+      if (!config.visualConfig) {
+        config.visualConfig = defaultUserTypingConfig.visualConfig
+      }
+
       const updatedConfig = JSON.stringify(config);
 
       updateStmt.run(updatedConfig, user.id);

@@ -23,6 +23,10 @@ export interface UserTypingConfig {
   typingEndMode: "time" | "words",
   typingEndTimeMode: number,
   typingEndWordMode: number,
+  visualConfig: {
+    showLiveKeypressKeyboard: boolean,
+    showSmartModeKeyboard: boolean
+  },
   smartModeConfig: {
     fingerMap: string[][],
     defaultFingersPosition: string[],

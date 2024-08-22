@@ -6,6 +6,10 @@ export const defaultUserTypingConfig: UserTypingConfig = {
   typingEndMode: "time",
   typingEndTimeMode: 60,
   typingEndWordMode: 50,
+  visualConfig: {
+    showLiveKeypressKeyboard: true,
+    showSmartModeKeyboard: true
+  },
   smartModeConfig: {
     fingerMap: [
       ['q', 'a', 'z'],

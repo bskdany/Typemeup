@@ -168,11 +168,11 @@
 		</div>
 	{/key}
 
-	{#if userData.userTypingConfig.typingMode === 'test'}
+	{#if userData.userTypingConfig.typingMode === 'test' && userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard}
 		<div id="keyboardWrapper">
 			<Keyboard />
 		</div>
-	{:else if userData.userTypingConfig.typingMode === 'smart'}
+	{:else if userData.userTypingConfig.typingMode === 'smart' && userData.userTypingConfig.visualConfig.showSmartModeKeyboard}
 		<div id="keyboardWrapper">
 			<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} />
 		</div>

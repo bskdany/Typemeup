@@ -21,6 +21,10 @@ export const defaultUserTypingConfig: UserTypingConfig = {
     ],
     defaultFingersPosition: ["a", "s", "d", "f", "j", "k", "l", ";", " ", ""],
   },
+  visualConfig: {
+    showLiveKeypressKeyboard: true,
+    showSmartModeKeyboard: true
+  },
   theme: {
     name: "default",
     colorScheme: {
