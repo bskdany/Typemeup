@@ -27,7 +27,7 @@ export function generateKeypressData(targetTextByWord: string[], userTypedText: 
 }
 
 function alignText(targetText: string[], userTypedText: string[], maxTextCorrection: number = 3): [string[], string[]] {
-  if (userTypedText[0] === "Backspace" || userTypedText[userTypedText.length] === "Backspace") {
+  if (userTypedText[0] === "backspace" || userTypedText[userTypedText.length] === "backspace") {
     throw "Logic error, user can't start or end with backspace";
   }
 
@@ -54,7 +54,7 @@ function alignText(targetText: string[], userTypedText: string[], maxTextCorrect
       targetTextCounter += 1;
       userTypedTextCounter += 1;
     }
-    else if (userTypedLetter === "Backspace") {
+    else if (userTypedLetter === "backspace") {
       alignedTargetText.push("/"); // I put the placeholder instead of the target letter because the backspace is intentional
       alignedUserText.push(userTypedLetter);
 
