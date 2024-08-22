@@ -110,6 +110,12 @@ export class TextObjectHandler {
       this.setLetterStatus(0, { isTyped: true, isCorrect: true });
       this.gotoNextLetter();
     }
+    else {
+      this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
+      setTimeout(() => {
+        this.setLetterStatus(0, { isTyped: false, isCorrect: false, errorStatus: "" });
+      }, 100);
+    }
   }
 
   handleKeyPressMode3(keyPressed: string) {
