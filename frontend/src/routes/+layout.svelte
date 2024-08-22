@@ -99,7 +99,10 @@
 			<ThemePanel />
 		</div>
 	{/if}
-	{@render children()}
+
+	<div onclick={() => (showThemePanel = false)}>
+		{@render children()}
+	</div>
 
 	<footer></footer>
 </div>
