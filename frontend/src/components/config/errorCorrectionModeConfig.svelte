@@ -3,10 +3,9 @@
 	import BubbleContainer from '../common/bubbleContainer.svelte';
 
 	let errorCorrectionModes = {
-		0: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
-		1: { name: 'Error ignore', description: 'Incorrect letters are ignored from being added' },
-		2: { name: 'Spacebar skip', description: 'Spacebar skips the word in case of error' },
-		3: { name: 'Smart', description: 'Smart error detection mode (recomended)' }
+		0: { name: 'Smart', description: 'Smart error detection mode (recomended)' },
+		1: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
+		2: { name: 'Error ignore', description: 'Incorrect letters are ignored from being added' }
 	};
 </script>
 
