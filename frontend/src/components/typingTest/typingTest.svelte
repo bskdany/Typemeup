@@ -91,11 +91,14 @@
 	}
 
 	function processKeyPress(keydown: any) {
+		console.log(keydown);
 		let pressedKey = keydown.data;
 
 		if (!pressedKey) {
 			if (keydown.inputType === 'deleteContentBackward') {
 				pressedKey = 'backspace';
+			} else if (keydown.inputType === 'deleteWordBackward') {
+				pressedKey = 'backspaceWord';
 			}
 		}
 

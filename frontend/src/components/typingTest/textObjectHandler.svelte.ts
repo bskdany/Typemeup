@@ -107,6 +107,18 @@ export class TextObjectHandler {
       this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
       this.gotoPreviousLetter();
     }
+    else if (keyPressed === "backspaceWord") {
+      if (this.getLetter(-1)?.text === " ") {
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+        this.gotoPreviousLetter();
+      }
+
+      // backspace to the previous space
+      while (this.getLetter(-1) && this.getLetter(-1)?.text !== " ") {
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+        this.gotoPreviousLetter();
+      }
+    }
 
     else if (!this.hasMistaken) {
       if (this.getLetter(0)?.text === keyPressed) {
@@ -178,6 +190,18 @@ export class TextObjectHandler {
       this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
       this.gotoPreviousLetter();
     }
+    else if (keyPressed === "backspaceWord") {
+      if (this.getLetter(-1)?.text === " ") {
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+        this.gotoPreviousLetter();
+      }
+
+      // backspace to the previous space
+      while (this.getLetter(-1) && this.getLetter(-1)?.text !== " ") {
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+        this.gotoPreviousLetter();
+      }
+    }
     else {
       if (this.hasMistaken) {
         this.setLetterStatus(0, { isTyped: true, isCorrect: false });
@@ -201,6 +225,18 @@ export class TextObjectHandler {
     else if (keyPressed === "backspace") {
       this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
       this.gotoPreviousLetter();
+    }
+    else if (keyPressed === "backspaceWord") {
+      if (this.getLetter(-1)?.text === " ") {
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+        this.gotoPreviousLetter();
+      }
+
+      // backspace to the previous space
+      while (this.getLetter(-1) && this.getLetter(-1)?.text !== " ") {
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+        this.gotoPreviousLetter();
+      }
     }
     else {
       this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
