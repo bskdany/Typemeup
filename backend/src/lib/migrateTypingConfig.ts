@@ -19,7 +19,12 @@ export function migrateUserTypingConfig(db: Database) {
         config.visualConfig = defaultUserTypingConfig.visualConfig
       }
 
+      if (config.errorCorrectionMode === 3) {
+        config.errorCorrectionMode = 0;
+      }
+
       const updatedConfig = JSON.stringify(config);
+
 
       updateStmt.run(updatedConfig, user.id);
     }

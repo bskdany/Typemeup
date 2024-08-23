@@ -1,7 +1,7 @@
 import type { KeyStatistic, UserTypingConfig } from "./types.js";
 
 export const defaultUserTypingConfig: UserTypingConfig = {
-  errorCorrectionMode: 3,
+  errorCorrectionMode: 0,
   typingMode: "test",
   typingEndMode: "time",
   typingEndTimeMode: 60,
