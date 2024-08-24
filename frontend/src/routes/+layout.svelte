@@ -48,6 +48,12 @@
 			appBind.style.setProperty('--accent-color', userData.userTypingConfig.theme.colorScheme.accentColor.value);
 		}
 	});
+
+	$effect(() => {
+		if (currentPath !== '/') {
+			showThemePanel = false;
+		}
+	});
 </script>
 
 <div id="app" bind:this={appBind}>
