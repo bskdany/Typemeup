@@ -33,7 +33,7 @@ COPY shared /usr/src/shared
 RUN --mount=type=bind,source=frontend/package.json,target=package.json \
   --mount=type=bind,source=frontend/package-lock.json,target=package-lock.json \
   --mount=type=cache,target=/root/.npm \
-  npm ci --omit=dev
+  npm ci --omit=dev --force
 
 ################################################################################
 # Create a stage for building the application.
@@ -44,7 +44,7 @@ FROM deps as build
 RUN --mount=type=bind,source=frontend/package.json,target=package.json \
   --mount=type=bind,source=frontend/package-lock.json,target=package-lock.json \
   --mount=type=cache,target=/root/.npm \
-  npm ci
+  npm ci --force
 
 # Copy the frontend source files into the image
 COPY frontend /usr/src/app
