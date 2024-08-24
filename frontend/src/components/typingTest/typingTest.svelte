@@ -91,7 +91,6 @@
 	}
 
 	function processKeyPress(keydown: any) {
-		console.log(keydown);
 		let pressedKey = keydown.data;
 
 		if (!pressedKey) {
