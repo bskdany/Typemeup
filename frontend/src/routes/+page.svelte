@@ -170,12 +170,12 @@
 				</div>
 			{/key}
 
-			{#if userData.userTypingConfig.typingMode === 'test' && userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard}
-				<div id="keyboardWrapper">
+			{#if userData.userTypingConfig.typingMode === 'test'}
+				<div id="keyboardWrapper" style={!userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard ? 'visibility: hidden;' : 'display: flex;'}>
 					<Keyboard />
 				</div>
-			{:else if userData.userTypingConfig.typingMode === 'smart' && userData.userTypingConfig.visualConfig.showSmartModeKeyboard}
-				<div id="keyboardWrapper">
+			{:else if userData.userTypingConfig.typingMode === 'smart'}
+				<div id="keyboardWrapper" style={!userData.userTypingConfig.visualConfig.showSmartModeKeyboard ? 'visibility: hidden;' : 'display: flex;'}>
 					<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} />
 				</div>
 			{/if}
