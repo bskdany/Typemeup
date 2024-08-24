@@ -80,6 +80,10 @@
 			<div id="rightHeader">
 				<button onclick={() => logout()}>Logout</button>
 			</div>
+		{:else}
+			<div id="leftHeader">
+				<button onclick={() => goto('/')}>Home</button>
+			</div>
 		{/if}
 	</header>
 
