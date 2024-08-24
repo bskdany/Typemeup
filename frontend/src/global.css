@@ -43,14 +43,12 @@ body {
   color: var(--text-color);
   padding: 0px;
   margin: 0px;
+  height: 100dvh;
+  width: 100dvw;
 }
 
 div {
   color: var(--text-color);
-}
-
-footer {
-  display: none;
 }
 
 button {
@@ -82,4 +80,9 @@ button:hover:not(.selected) {
 
 .selected-text {
   color: var(--accent-color);
+}
+
+a {
+  text-decoration: none;
+  color: var(--text-color);
 }

@@ -191,6 +191,7 @@
 	#keyboardWrapper {
 		display: flex;
 		justify-content: center;
+		/* margin-top: var(--spacing-medium); */
 	}
 	#statusBar {
 		display: flex;
@@ -199,8 +200,7 @@
 	#typingTestWrapper {
 		display: flex;
 		justify-content: center;
-		height: 30%;
-		/* width: 80%; */
+		height: fit-content;
 	}
 
 	#typingTestReport {
