@@ -39,55 +39,39 @@
 	}
 </script>
 
-<div id="themePanel">
-	<BubbleContainer>
-		<div id="themePanelContent">
-			<Dropdown
-				title="Theme"
-				options={[...Object.keys(themes), 'custom']}
-				onOptionSelected={applyPreset}
-				defaultOption={userData.userTypingConfig.theme.name}
-			/>
-			{#each Object.entries(userData.userTypingConfig.theme.colorScheme) as [key, colorScheme]}
-				<div class="color-choser">
-					<div style="display: flex; justify-content: center; align-items:center">{colorScheme.name}</div>
-					<div class="color-display" style="background-color: {colorScheme.value};">
-						<input
-							type="color"
-							bind:value={userData.userTypingConfig.theme.colorScheme[key].value}
-							onchange={() => {
-								hasColorValueManuallyChanged = true;
-							}}
-						/>
-					</div>
+<BubbleContainer>
+	<div id="themePanelContent">
+		<Dropdown title="Theme" options={[...Object.keys(themes), 'custom']} onOptionSelected={applyPreset} defaultOption={userData.userTypingConfig.theme.name} />
+		{#each Object.entries(userData.userTypingConfig.theme.colorScheme) as [key, colorScheme]}
+			<div class="color-choser">
+				<div style="display: flex; justify-content: center; align-items:center">{colorScheme.name}</div>
+				<div class="color-display" style="background-color: {colorScheme.value};">
+					<input
+						type="color"
+						bind:value={userData.userTypingConfig.theme.colorScheme[key].value}
+						onchange={() => {
+							hasColorValueManuallyChanged = true;
+						}}
+					/>
 				</div>
-			{/each}
-			<div id="themeControl">
-				<button
-					onclick={() => {
-						userData.userTypingConfig.theme.colorScheme = JSON.parse(JSON.stringify(defaultUserTypingConfig.theme.colorScheme));
-					}}>Reset</button
-				>
-				<button
-					onclick={async () => {
-						await saveConfig();
-					}}>Save</button
-				>
 			</div>
+		{/each}
+		<div id="themeControl">
+			<button
+				onclick={() => {
+					userData.userTypingConfig.theme.colorScheme = JSON.parse(JSON.stringify(defaultUserTypingConfig.theme.colorScheme));
+				}}>Reset</button
+			>
+			<button
+				onclick={async () => {
+					await saveConfig();
+				}}>Save</button
+			>
 		</div>
-	</BubbleContainer>
-</div>
+	</div>
+</BubbleContainer>
 
 <style>
-	#themePanel {
-		position: absolute;
-		left: 0%;
-		top: 0%;
-		height: min-content;
-		width: min-content;
-		z-index: 100;
-	}
-
 	#themePanelContent {
 		display: flex;
 		flex-direction: column;

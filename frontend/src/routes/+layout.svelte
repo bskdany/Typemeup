@@ -94,13 +94,12 @@
 		</div>
 	</header>
 
-	{#if showThemePanel}
-		<div style="position: relative">
-			<ThemePanel />
-		</div>
-	{/if}
-
-	<div onclick={() => (showThemePanel = false)}>
+	<div style="position: relative;">
+		{#if showThemePanel}
+			<div id="themePanel">
+				<ThemePanel />
+			</div>
+		{/if}
 		{@render children()}
 	</div>
 
@@ -208,5 +207,14 @@
 		display: flex;
 		z-index: 1000;
 		flex-direction: column;
+	}
+
+	#themePanel {
+		position: absolute;
+		left: 0%;
+		top: 0%;
+		height: min-content;
+		width: min-content;
+		z-index: 100;
 	}
 </style>

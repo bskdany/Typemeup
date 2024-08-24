@@ -140,48 +140,52 @@
 	});
 </script>
 
-{#if typingContextData.displayTypingTest}
-	<div id="configs">
-		<QuickConfigs />
-	</div>
+<div style="display: flex; flex-direction: column; height: 100%; width: 100%; justify-content: center; align-items: center;">
+	<div>
+		{#if typingContextData.displayTypingTest}
+			<div id="configs">
+				<QuickConfigs />
+			</div>
 
-	<div id="statusBar">
-		{#if typingContextData.typingTestStatus === 'started'}
-			<TypingProgress />
+			<div id="statusBar">
+				{#if typingContextData.typingTestStatus === 'started'}
+					<TypingProgress />
+				{:else}
+					<div style="visibility: hidden;"><TypingProgress /></div>
+				{/if}
+			</div>
+
+			{#key targetText}
+				<div id="typingTestWrapper">
+					<TypingTest
+						{targetText}
+						errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
+						typingEndMode={userData.userTypingConfig.typingEndMode}
+						typingEndTimeMode={userData.userTypingConfig.typingEndTimeMode}
+						typingEndWordMode={userData.userTypingConfig.typingEndWordMode}
+						testStarted={typingTestStarted}
+						testEnded={typingTestEnded}
+						bind:this={typingTestRef}
+					/>
+				</div>
+			{/key}
+
+			{#if userData.userTypingConfig.typingMode === 'test' && userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard}
+				<div id="keyboardWrapper">
+					<Keyboard />
+				</div>
+			{:else if userData.userTypingConfig.typingMode === 'smart' && userData.userTypingConfig.visualConfig.showSmartModeKeyboard}
+				<div id="keyboardWrapper">
+					<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} />
+				</div>
+			{/if}
 		{:else}
-			<div style="visibility: hidden;"><TypingProgress /></div>
+			<div id="typingTestReport">
+				<TypingResult {typingTestRunData} restart={() => (typingContextData.displayTypingTest = true)} />
+			</div>
 		{/if}
 	</div>
-
-	{#key targetText}
-		<div id="typingTestWrapper">
-			<TypingTest
-				{targetText}
-				errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
-				typingEndMode={userData.userTypingConfig.typingEndMode}
-				typingEndTimeMode={userData.userTypingConfig.typingEndTimeMode}
-				typingEndWordMode={userData.userTypingConfig.typingEndWordMode}
-				testStarted={typingTestStarted}
-				testEnded={typingTestEnded}
-				bind:this={typingTestRef}
-			/>
-		</div>
-	{/key}
-
-	{#if userData.userTypingConfig.typingMode === 'test' && userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard}
-		<div id="keyboardWrapper">
-			<Keyboard />
-		</div>
-	{:else if userData.userTypingConfig.typingMode === 'smart' && userData.userTypingConfig.visualConfig.showSmartModeKeyboard}
-		<div id="keyboardWrapper">
-			<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} />
-		</div>
-	{/if}
-{:else}
-	<div id="typingTestReport">
-		<TypingResult {typingTestRunData} restart={() => (typingContextData.displayTypingTest = true)} />
-	</div>
-{/if}
+</div>
 
 <style>
 	#configs {
@@ -191,6 +195,7 @@
 	#keyboardWrapper {
 		display: flex;
 		justify-content: center;
+		margin-top: 10%;
 		/* margin-top: var(--spacing-medium); */
 	}
 	#statusBar {
