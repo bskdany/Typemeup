@@ -180,16 +180,7 @@
 			return 70;
 		}
 
-		let firstWordY = cleanedTextObjectBind[0].getBoundingClientRect().top;
-
-		for (const wordElement of cleanedTextObjectBind) {
-			const wordHeight = wordElement.getBoundingClientRect().top;
-			if (wordHeight !== firstWordY) {
-				return Math.abs(firstWordY - wordHeight) * 3;
-			}
-		}
-
-		return 70; // just in case it doesn't find any, it doesn't really matter
+		return Math.abs(cleanedTextObjectBind[0].getBoundingClientRect().bottom - cleanedTextObjectBind[0].getBoundingClientRect().top) * 3;
 	}
 
 	$effect(() => {
@@ -242,7 +233,6 @@
 
 	#overflow-placeholder {
 		width: 100%;
-		/* height: calc(6rem); */
 		overflow: hidden;
 	}
 	#main-text {
