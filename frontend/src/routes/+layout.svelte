@@ -166,8 +166,8 @@
 
 <style>
 	#app {
-		width: 100%;
-		height: 100%;
+		min-width: 100dvw;
+		min-height: 100dvh;
 		padding: 0 10% 0 10%;
 		background-color: var(--background-color);
 		display: grid;
