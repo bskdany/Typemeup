@@ -38,18 +38,6 @@
 		showThemePanel = !showThemePanel;
 	}
 
-	const navigationObject = $derived({
-		'/': 'Home',
-		'/config': 'Config',
-		'/profile': `Profile ${userData.username}`
-	});
-
-	const pageHelperButtons: { [path: string]: [string, () => void] } = {
-		'/config': ['Save', saveConfig],
-		'/profile': ['Logout', logout],
-		'/': ['Theme', toggleThemeEditor]
-	};
-
 	let appBind: HTMLElement;
 	$effect(() => {
 		if (appBind) {
@@ -70,28 +58,29 @@
 	</div>
 
 	<header>
-		{#if currentPath in pageHelperButtons}
-			<button onclick={() => pageHelperButtons[currentPath][1]()}>
-				{pageHelperButtons[currentPath][0]}
-			</button>
-		{:else}
-			<button style="visibility: hidden;"></button>
+		{#if currentPath === '/'}
+			<div id="leftHeader">
+				<button onclick={() => toggleThemeEditor()}>Theme</button>
+			</div>
+			<div id="rightHeader">
+				<button onclick={() => goto('/config')}>Config</button>
+				<button onclick={() => goto('/profile')}>Profile</button>
+			</div>
+		{:else if currentPath === '/config'}
+			<div id="leftHeader">
+				<button onclick={() => goto('/')}>Home</button>
+			</div>
+			<div id="rightHeader">
+				<button onclick={() => saveConfig()}>Save</button>
+			</div>
+		{:else if currentPath === '/profile'}
+			<div id="leftHeader">
+				<button onclick={() => goto('/')}>Home</button>
+			</div>
+			<div id="rightHeader">
+				<button onclick={() => logout()}>Logout</button>
+			</div>
 		{/if}
-
-		<div id="globalNavigation">
-			{#each Object.entries(navigationObject) as [path, title]}
-				{#if currentPath !== path}
-					<button
-						onclick={() => {
-							showThemePanel = false;
-							goto(path);
-						}}
-					>
-						{title}
-					</button>
-				{/if}
-			{/each}
-		</div>
 	</header>
 
 	<div style="position: relative;">
@@ -190,7 +179,15 @@
 		gap: var(--spacing-medium);
 	}
 
-	#globalNavigation {
+	#leftHeader {
+		display: flex;
+		flex-direction: row;
+		justify-content: right;
+		align-items: center;
+		gap: var(--spacing-medium);
+	}
+
+	#rightHeader {
 		display: flex;
 		flex-direction: row;
 		justify-content: right;
