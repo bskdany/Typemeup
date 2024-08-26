@@ -8,19 +8,21 @@ It's definetely not easy, there is a lot of work to be done, but development is 
 ## Smart mode
 The smart mode analyses your key presses and generates a custom typing test with words that you'll most likely need to improve. It does so by creating a score for each key based on it's wpm, accuracy and the number of times you've pressed the key.
 
-## Smart text correction
+## Smart error correction
 This feature allows you to have a more accurate wpm and accuracy calculation by analizying the errors you make live.
 
-|           |target text | user typing text | accuracy%|
+|           |target text | user typed text | accuracy%|
 |-----------|------------------|------------|-----------|
 |standard correction  | hello | hllo | 25% |
-|smart corection      | hello | hllo | 75% |
+|smart correction      | hello | hllo | 75% |
 
-How? The standard correction sees the last 3 chars as incorrect, while the smart correction sees the last 3 chars as correct and a missing e between the l and o.
+The standard correction sees the last 3 chars as incorrect, it simply compares 1 by 1 what you typed with what you should've had. 
+The smart correction sees the last 3 chars as correct and a missing 'e' between the h and o, which means you made just 1 typing error.
 Give it a try and see the difference!
 
 ## Design
-Typemeup is designed to be as minimalistic as possible, while giving space for customizations. An incoming theme marketplace is work in progress, which allows you to share your theme with others without having to do a pull request (looking at you, Monkeytype).
+Typemeup is designed to be as minimalistic as possible, while giving space for customizations. 
+An incoming theme marketplace is work in progress, which allows you to share your theme with others without having to do a pull request (looking at you, Monkeytype).
 
 
 ## Competition mode
