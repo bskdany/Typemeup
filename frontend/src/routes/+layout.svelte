@@ -70,7 +70,7 @@
 			</div>
 			<div id="rightHeader">
 				<button onclick={() => goto('/config')}>Config</button>
-				<button onclick={() => goto('/profile')}>Profile</button>
+				<button onclick={() => goto('/profile')}>Profile {userData.username}</button>
 			</div>
 		{:else if currentPath === '/config'}
 			<div id="leftHeader">
