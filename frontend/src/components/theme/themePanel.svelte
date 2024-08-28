@@ -58,6 +58,8 @@
 		{/each}
 		<div id="themeControl">
 			<button
+				disabled={!hasColorValueManuallyChanged}
+				style={hasColorValueManuallyChanged ? '' : 'opacity: 0.2'}
 				onclick={() => {
 					userData.userTypingConfig.theme.colorScheme = JSON.parse(JSON.stringify(defaultUserTypingConfig.theme.colorScheme));
 				}}>Reset</button
