@@ -12,6 +12,7 @@
 	};
 
 	const { data }: { data: PastTypingTestData[] } = $props();
+	let previousFilterMode: string = ''; // this variable is needed to prevent the chart from being re-generated when the same filter is selected consecutively
 
 	function calculateEMA(data: number[], period: number): number[] {
 		if (data.length < 2) {
@@ -122,9 +123,13 @@
 	let filteredData: PastTypingTestData[] = data;
 
 	function updateTypingDataModeFilter(filterMode: string) {
+		if (filterMode === previousFilterMode) {
+			return;
+		}
+
+		previousFilterMode = filterMode;
 		filteredData = data.filter((data) => data.typingEndMode === filterMode);
 
-		var chartExist = Chart.getChart('myChart'); // <canvas> id
 		if (chart) {
 			chart.destroy();
 		}
@@ -133,7 +138,7 @@
 	}
 
 	onMount(() => {
-		generateChart(filteredData);
+		updateTypingDataModeFilter(getCombinedTypingEndMode());
 	});
 </script>
 
