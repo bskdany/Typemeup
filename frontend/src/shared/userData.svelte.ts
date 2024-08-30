@@ -15,3 +15,12 @@ export const userData: { username: string, userTypingConfig: UserTypingConfig, k
 export function isLoggedIn(): boolean { return userData.username?.length > 0 }
 export function isSessionFresh(): boolean { return userData.keyStatistics.length === 0 }
 export function getCombinedTypingEndMode(): string { return userData.userTypingConfig.typingEndMode + " " + (userData.userTypingConfig.typingEndMode === "time" ? userData.userTypingConfig.typingEndTimeMode : userData.userTypingConfig.typingEndWordMode) };
+export function hasInitialized(): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    if (userData.keyStatistics.length > 0) {
+      resolve(true);
+    } else {
+      reject(false);
+    }
+  });
+}

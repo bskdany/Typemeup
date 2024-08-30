@@ -12,6 +12,7 @@ export const load: PageLoad = async ({ fetch }) => {
         userData.keyStatistics = JSON.parse(data?.keyStatistics);
       }
       console.log(userData)
+      return { data: data };
     }
     catch (e) {
       console.error(e);
