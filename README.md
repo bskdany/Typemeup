@@ -1,5 +1,5 @@
 # Typemeup
-#### Algorithmically enhanced typing website, with a minimal look and a lot of upcoming features
+#### Cybernetically enhanced typing website, with a minimal look and a lot of upcoming features
 Made it to the [Svelte Community Showcase](https://svelte.dev/blog/whats-new-in-svelte-february-2024) !
 
 ### Features
