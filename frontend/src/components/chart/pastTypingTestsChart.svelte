@@ -137,12 +137,23 @@
 	});
 </script>
 
-<Dropdown options={allTypingEndModes} defaultOption={getCombinedTypingEndMode()} onOptionSelected={(data) => updateTypingDataModeFilter(data)} />
-<div id="chart-container">
-	<canvas bind:this={chartCanvas} id="chart"></canvas>
+<div id="chart-wrapper">
+	<Dropdown options={allTypingEndModes} defaultOption={getCombinedTypingEndMode()} onOptionSelected={(data) => updateTypingDataModeFilter(data)} />
+	<div id="chart-container">
+		<canvas bind:this={chartCanvas} id="chart"></canvas>
+	</div>
 </div>
 
 <style>
+	#chart-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+	}
+
 	#chart-container {
 		position: relative;
 		width: 90%;
