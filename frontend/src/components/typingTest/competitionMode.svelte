@@ -74,20 +74,20 @@
 <style>
 	.progress-container {
 		width: 100%;
-		background-color: #e0e0e0;
-		border-radius: 5px;
-		margin-bottom: 20px;
+		background-color: var(--primary-color);
+		border-radius: var(--border-radius);
+		margin-bottom: var(--spacing-medium);
 	}
 
 	.progress-bar {
 		height: 30px;
-		background-color: #4caf50;
-		border-radius: 5px;
+		background-color: var(--accent-color);
+		border-radius: var(--border-radius);
 		transition: width 0.5s ease-in-out;
 	}
 
 	.progress-text {
-		color: white;
+		color: var(--text-color);
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
