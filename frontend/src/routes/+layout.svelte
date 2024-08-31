@@ -83,7 +83,9 @@
 					<div class="icon-container">
 						{@html icons.profile}
 					</div>
-					{userData.username}
+					<div>
+						{userData.username}
+					</div>
 				</button>
 			</div>
 		{:else if currentPath === '/config'}
@@ -135,14 +137,14 @@
 			<div class="icon-container">
 				{@html icons.github}
 			</div>
-			github
+			<div>github</div>
 		</a>
 
 		<a href="https://discord.gg/YdcJdE4HBv" target="_blank" class="link">
 			<div class="icon-container">
 				{@html icons.discord}
 			</div>
-			discord
+			<div>discord</div>
 		</a>
 	</footer>
 </div>
@@ -218,7 +220,7 @@
 	}
 
 	.link {
-		/* color: var(--secondary-color); */
+		color: var(--secondary-color);
 		display: flex;
 		align-items: center;
 		gap: 2px;

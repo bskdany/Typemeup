@@ -10,7 +10,6 @@
 				userData.userTypingConfig.typingMode = typingMode;
 				if (typingMode === 'smart' || typingMode === 'compete') {
 					userData.userTypingConfig.typingEndMode = 'words';
-					userData.userTypingConfig.typingEndWordMode = typingMode === 'compete' ? 50 : userData.userTypingConfig.typingEndWordMode;
 				}
 			}}
 		>
@@ -18,7 +17,9 @@
 		</button>
 	{/each}
 
-	<div class="separator"></div>
+	{#if userData.userTypingConfig.typingMode !== 'compete'}
+		<div class="separator"></div>
+	{/if}
 
 	{#if userData.userTypingConfig.typingMode === 'test'}
 		{#each typingEndModes as typingEndMode}
@@ -77,6 +78,7 @@
 		padding: var(--padding-medium);
 		border-radius: var(--border-radius);
 		background-color: var(--secondary-color);
+		height: fit-content;
 	}
 	.separator {
 		width: 1px;

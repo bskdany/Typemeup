@@ -149,13 +149,13 @@
 {#await hasInitialized()}
 	<TypingTestLoad />
 {:then}
-	<div style="display: flex; flex-direction: column; height: 100%; width: 100%; justify-content: center; align-items: center;">
-		<div>
-			{#if typingContextData.displayTypingTest}
-				<div id="configs">
-					<QuickConfigs />
-				</div>
+	{#if typingContextData.displayTypingTest}
+		<div style="display: grid; grid-template-rows: 1fr 1fr 1fr; height: 100%;">
+			<div id="configs">
+				<QuickConfigs />
+			</div>
 
+			<div>
 				<div id="statusBar">
 					{#if typingContextData.typingTestStatus === 'started'}
 						<TypingProgress />
@@ -181,35 +181,35 @@
 						</div>
 					{/key}
 				{/if}
+			</div>
 
-				{#if userData.userTypingConfig.typingMode === 'test'}
-					<div id="keyboardWrapper" style={!userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard ? 'visibility: hidden;' : 'display: flex;'}>
-						<Keyboard />
-					</div>
-				{:else if userData.userTypingConfig.typingMode === 'smart'}
-					<div id="keyboardWrapper" style={!userData.userTypingConfig.visualConfig.showSmartModeKeyboard ? 'visibility: hidden;' : 'display: flex;'}>
-						<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} />
-					</div>
-				{/if}
-			{:else}
-				<div id="typingTestReport">
-					<TypingResult {typingTestRunData} restart={() => (typingContextData.displayTypingTest = true)} />
+			{#if userData.userTypingConfig.typingMode === 'test'}
+				<div id="keyboardWrapper" style={!userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard ? 'visibility: hidden;' : 'display: flex;'}>
+					<Keyboard />
+				</div>
+			{:else if userData.userTypingConfig.typingMode === 'smart'}
+				<div id="keyboardWrapper" style={!userData.userTypingConfig.visualConfig.showSmartModeKeyboard ? 'visibility: hidden;' : 'display: flex;'}>
+					<FingetsStatisticsKeyboardChart keyStats={userData.keyStatistics} />
 				</div>
 			{/if}
 		</div>
-	</div>
+	{:else}
+		<div id="typingTestReport">
+			<TypingResult {typingTestRunData} restart={() => (typingContextData.displayTypingTest = true)} />
+		</div>
+	{/if}
 {/await}
 
 <style>
 	#configs {
 		display: flex;
 		justify-content: center;
+		align-items: end;
 	}
 	#keyboardWrapper {
 		display: flex;
 		justify-content: center;
-		margin-top: 10%;
-		/* margin-top: var(--spacing-medium); */
+		align-items: start;
 	}
 	#statusBar {
 		display: flex;
