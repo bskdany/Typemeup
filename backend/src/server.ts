@@ -9,7 +9,7 @@ import { migrateUserTypingConfig } from "./lib/migrateTypingConfig.js";
 import { db } from "./lib/db.js";
 import http from 'http';
 import WebSocket, { WebSocketServer } from 'ws';
-import { handleCompetition } from './websocket/competitionHandler';
+import { handleCompetition } from './lib/competitionHandler.js';
 
 console.log("PROD: " + config.is_prod);
 console.log("DOCKER: " + config.is_docker);
