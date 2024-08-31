@@ -35,5 +35,5 @@ export async function fetchBackend(fetch: any, endpoint: string, options?: { bod
 }
 
 export function getWebSocket(path: string): WebSocket {
-  return new WebSocket(`ws://${apiUrl.replace(/^(http|https):\/\//, '')}${path}`);
+  return new WebSocket(`wss://${apiUrl.replace(/^(http|https):\/\//, '')}${path}`);
 }
