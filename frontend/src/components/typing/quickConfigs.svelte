@@ -79,6 +79,8 @@
 		border-radius: var(--border-radius);
 		background-color: var(--secondary-color);
 		height: fit-content;
+		width: fit-content;
+		margin: auto;
 	}
 	.separator {
 		width: 1px;

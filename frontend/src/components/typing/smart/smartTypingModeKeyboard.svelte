@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { KeyStatistic } from '@shared/types';
 	import { get } from 'svelte/store';
-	import { userData } from '../../shared/userData.svelte';
+	import { userData } from '../../../shared/userData.svelte';
 
 	const { keyStats }: { keyStats: KeyStatistic[] } = $props();
 
@@ -66,7 +66,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-<div id="keyboardWrapper" onmouseover={() => (isKeyboardHovered = true)} onmouseleave={() => (isKeyboardHovered = false)}>
+<div id="smartTypingModeKeyboard" onmouseover={() => (isKeyboardHovered = true)} onmouseleave={() => (isKeyboardHovered = false)}>
 	{#each rows as row, index}
 		<div class="row" id="row{index}">
 			{#each row as key}
@@ -86,12 +86,14 @@
 </div>
 
 <style>
-	#keyboardWrapper {
+	#smartTypingModeKeyboard {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		height: fit-content;
+		width: fit-content;
+		margin: auto;
 	}
 	.row {
 		display: grid;

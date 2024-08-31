@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, onMount, setContext } from 'svelte';
-	import type { TypingResultContext, TypingResultContextData } from '../../types/interfaces';
-	import { TextObjectHandler } from '../typingTest/textObjectHandler.svelte';
+	import type { TypingResultContext, TypingResultContextData } from '../../../../types/interfaces';
+	import { TextObjectHandler } from '../../textObjectHandler.svelte';
 
 	const {
 		targetText,

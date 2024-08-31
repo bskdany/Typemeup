@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { Title } from 'chart.js';
 	import { setContext } from 'svelte';
-	import type { TypingResultContextData, TypingTestRunData } from '../../types/interfaces';
-	import KeyPressTimingsChart from '../chart/keyPressTimingsChart.svelte';
-	import SingleDataContainer from '../common/singleDataContainer.svelte';
-	// import TextContainer from '../common/textContainer.svelte';
-	import { getWpm, getAccuracy, getRawWpm, getTime, getCorrectCharCount, getWrongCharCount } from '../../lib/typingTestRunHelper';
 	import TypingTestReplay from './typingTestReplay.svelte';
-	import BubbleContainer from '../common/bubbleContainer.svelte';
+	import { getWpm, getAccuracy, getRawWpm, getTime, getCorrectCharCount, getWrongCharCount } from '../../../../lib/typingTestRunHelper';
+	import type { TypingResultContextData, TypingTestRunData } from '../../../../types/interfaces';
+	import KeyPressTimingsChart from '../../../chart/keyPressTimingsChart.svelte';
+	import BubbleContainer from '../../../common/bubbleContainer.svelte';
+	import SingleDataContainer from '../../../common/singleDataContainer.svelte';
 
 	let pressTabToRestartElement: any;
 	let typingResultContextData: TypingResultContextData = $state({ activeLetterId: -1, typingTestReplayStatus: 'inactive' });
@@ -20,6 +19,10 @@
 </script>
 
 <div id="typingResult">
+	<div id="desktop-view">
+		<BubbleContainer>"Press tab to restart"</BubbleContainer>
+	</div>
+
 	<div id="topHalf">
 		<div id="dataColumn">
 			<SingleDataContainer title={'wpm'} data={getWpm(typingTestRunData)} data_rem={1.4} />
@@ -53,9 +56,6 @@
 		/>
 	</div>
 
-	<div id="desktop-view">
-		<BubbleContainer>"Press tab to restart"</BubbleContainer>
-	</div>
 	<!-- <button id="restartButton" onclick={restart}>Restart</button> -->
 </div>
 
@@ -65,13 +65,14 @@
 		flex-direction: column;
 		align-items: center;
 		gap: var(--spacing-medium);
+		width: auto;
 	}
 
 	#topHalf {
 		display: flex;
 		flex-direction: row;
 		gap: var(--spacing-medium);
-		height: 50%;
+		/* height: 50%; */
 		width: 100%;
 	}
 	#chartContainer {

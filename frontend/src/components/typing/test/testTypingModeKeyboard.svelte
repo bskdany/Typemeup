@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, getContext } from 'svelte';
-	import type { TextObject, TypingContextData, TypingContext } from '../../types/interfaces';
+	import type { TextObject, TypingContextData, TypingContext } from '../../../types/interfaces';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
@@ -33,7 +33,7 @@
 	});
 </script>
 
-<div id="keyboardWrapper">
+<div id="testTypingModeKeyboard">
 	{#each rows as row, index}
 		<div class="row" id="row{index}">
 			{#each row as key}
@@ -46,12 +46,14 @@
 </div>
 
 <style>
-	#keyboardWrapper {
+	#testTypingModeKeyboard {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		height: fit-content;
+		width: fit-content;
+		margin: auto;
 	}
 	.row {
 		display: grid;

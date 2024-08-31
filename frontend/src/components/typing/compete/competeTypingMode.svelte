@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { userData } from '../../shared/userData.svelte';
-	import TypingTest from './typingTest.svelte';
-	import type { TypingTestRunData } from '../../types/interfaces';
-	import { getWebSocket } from '../../lib/fetch';
+	import { userData } from '../../../shared/userData.svelte';
+	import TypingTest from '../typingTest.svelte';
+	import type { TypingTestRunData } from '../../../types/interfaces';
+	import { getWebSocket } from '../../../lib/fetch';
+
+	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 
 	let socket: WebSocket;
 	let competitionStatus: 'waiting' | 'inProgress' | 'finished' = 'waiting';
