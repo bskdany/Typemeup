@@ -35,8 +35,5 @@ export async function fetchBackend(fetch: any, endpoint: string, options?: { bod
 }
 
 export function getWebSocket(path: string): WebSocket {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const host = window.location.hostname;
-  const port = import.meta.env.VITE_BACKEND_PORT || '3000';
-  return new WebSocket(`${protocol}//${host}:${port}${path}`);
+  return new WebSocket(`ws://${apiUrl.replace(/^(http|https):\/\//, '')}${path}`);
 }
