@@ -18,6 +18,7 @@
 	import { generateRandomWords, generateWordsAlgo2 } from '../algo/textGenerator';
 	import type { KeypressData } from '@shared/types';
 	import TypingTestLoad from '../components/typingTest/typingTestLoad.svelte';
+	import CompetitionMode from '../components/typingTest/competitionMode.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -119,6 +120,9 @@
 			} else if (userData.userTypingConfig.typingEndMode.startsWith('words')) {
 				targetText = generateRandomWords(userData.userTypingConfig.typingEndWordMode);
 			}
+		} else if (userData.userTypingConfig.typingMode === 'compete') {
+			// Competition mode text is handled by the server
+			targetText = [];
 		}
 	}
 
@@ -160,20 +164,23 @@
 					{/if}
 				</div>
 
-				{#key targetText}
-					<div id="typingTestWrapper">
-						<TypingTest
-							{targetText}
-							errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
-							typingEndMode={userData.userTypingConfig.typingEndMode}
-							typingEndTimeMode={userData.userTypingConfig.typingEndTimeMode}
-							typingEndWordMode={userData.userTypingConfig.typingEndWordMode}
-							testStarted={typingTestStarted}
-							testEnded={typingTestEnded}
-							bind:this={typingTestRef}
-						/>
-					</div>
-				{/key}
+				{#if userData.userTypingConfig.typingMode === 'compete'}
+					<CompetitionMode />
+				{:else}
+					{#key targetText}
+						<div id="typingTestWrapper">
+							<TypingTest
+								{targetText}
+								errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
+								typingEndMode={userData.userTypingConfig.typingEndMode}
+								typingEndTimeMode={userData.userTypingConfig.typingEndTimeMode}
+								testStarted={typingTestStarted}
+								testEnded={typingTestEnded}
+								bind:this={typingTestRef}
+							/>
+						</div>
+					{/key}
+				{/if}
 
 				{#if userData.userTypingConfig.typingMode === 'test'}
 					<div id="keyboardWrapper" style={!userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard ? 'visibility: hidden;' : 'display: flex;'}>

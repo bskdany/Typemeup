@@ -7,6 +7,9 @@ import { config } from "./lib/config.js";
 import cors from 'cors';
 import { migrateUserTypingConfig } from "./lib/migrateTypingConfig.js";
 import { db } from "./lib/db.js";
+import http from 'http';
+import WebSocket, { WebSocketServer } from 'ws';
+import { handleCompetition } from './websocket/competitionHandler';
 
 console.log("PROD: " + config.is_prod);
 console.log("DOCKER: " + config.is_docker);
@@ -19,6 +22,8 @@ console.log("Origin: " + config.frontend_url);
 migrateUserTypingConfig(db);
 
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
 
 if (config.use_cors)
   app.use(cors({
@@ -42,7 +47,13 @@ app.use(validateSession);
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 
-app.listen(config.port_backend);
+wss.on('connection', (socket) => {
+  handleCompetition(socket);
+});
+
+server.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
 
 console.log("Server running on port " + config.port_backend);
 

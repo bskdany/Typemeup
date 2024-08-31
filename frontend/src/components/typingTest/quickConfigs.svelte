@@ -8,7 +8,10 @@
 			class:selected-text={userData.userTypingConfig.typingMode === typingMode}
 			onclick={() => {
 				userData.userTypingConfig.typingMode = typingMode;
-				typingMode === 'smart' ? (userData.userTypingConfig.typingEndMode = 'words') : '';
+				if (typingMode === 'smart' || typingMode === 'compete') {
+					userData.userTypingConfig.typingEndMode = 'words';
+					userData.userTypingConfig.typingEndWordMode = typingMode === 'compete' ? 50 : userData.userTypingConfig.typingEndWordMode;
+				}
 			}}
 		>
 			{typingMode}

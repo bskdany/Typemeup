@@ -1,6 +1,6 @@
 import type { KeyStatistic, UserTypingConfig } from "@shared/types";
 
-export const typingModes = ['test', 'smart'] as const;
+export const typingModes = ['test', 'smart', 'compete'] as const;
 export const typingEndModes = ['time', 'words'] as const;
 export const typingEndWordModes = [10, 25, 50, 100];
 export const typingEndTimeModes = [15, 30, 60, 120];

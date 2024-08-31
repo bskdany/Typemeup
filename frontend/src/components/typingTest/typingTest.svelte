@@ -18,18 +18,18 @@
 		targetText,
 		errorCorrectionMode,
 		typingEndMode,
-		typingEndTimeMode,
-		typingEndWordMode,
+		typingEndTimeMode = 0,
 		testStarted,
-		testEnded
+		testEnded,
+		onProgress
 	}: {
 		targetText: string[];
 		errorCorrectionMode: number;
 		typingEndMode: UserTypingConfig['typingEndMode'];
-		typingEndTimeMode: number;
-		typingEndWordMode: number;
-		testStarted: () => void;
+		typingEndTimeMode?: number;
+		testStarted?: () => void;
 		testEnded: (data: TypingTestRunData) => void;
+		onProgress?: (progress: number) => void;
 	} = $props();
 
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
@@ -90,6 +90,10 @@
 		}
 	}
 
+	function getProgress() {
+		return Math.round((textObject.globalLetterIndex / targetText.join(' ').length) * 100);
+	}
+
 	function processKeyPress(keydown: any) {
 		let pressedKey = keydown.data;
 
@@ -107,6 +111,8 @@
 		}
 
 		textObject.addKeyPressed(pressedKey);
+
+		onProgress?.(getProgress());
 
 		const msTimeSinceLastKeypress = Date.now() - msTimeAtLastKeyPress;
 		msTimeAtLastKeyPress = Date.now();
