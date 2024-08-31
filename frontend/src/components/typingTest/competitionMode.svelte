@@ -11,7 +11,7 @@
 	let targetText: string[] = [];
 
 	onMount(() => {
-		socket = getWebSocket('/compete');
+		socket = getWebSocket();
 		socket.onopen = () => {
 			socket.send(JSON.stringify({ type: 'join', userId: userData.username }));
 		};

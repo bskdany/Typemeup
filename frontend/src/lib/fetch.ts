@@ -34,6 +34,6 @@ export async function fetchBackend(fetch: any, endpoint: string, options?: { bod
   }
 }
 
-export function getWebSocket(path: string): WebSocket {
-  return new WebSocket(`wss://${apiUrl.replace(/^(http|https):\/\//, '')}${path}`);
+export function getWebSocket(): WebSocket {
+  return new WebSocket(`${import.meta.env.VITE_URL_BACKEND_WS}/compete`);
 }
