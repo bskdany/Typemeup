@@ -70,7 +70,7 @@
 					targetText={generateRandomWords(300)}
 					errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
 					typingEndMode="time"
-					typingEndTimeMode={300}
+					typingEndTimeMode={userData.userTypingConfig.typingEndTimeMode}
 					testStarted={onTypingStart}
 					testEnded={handleTypingEnd}
 					bind:this={typingTestRef}
