@@ -8,7 +8,6 @@
 	import BubbleContainer from '../../../common/bubbleContainer.svelte';
 	import SingleDataContainer from '../../../common/singleDataContainer.svelte';
 
-	let pressTabToRestartElement: any;
 	let typingResultContextData: TypingResultContextData = $state({ activeLetterId: -1, typingTestReplayStatus: 'inactive' });
 
 	setContext('typingResultContext', {
@@ -18,15 +17,18 @@
 	const { typingTestRunData, restart }: { typingTestRunData: TypingTestRunData; restart: () => void } = $props();
 </script>
 
-<div id="typingResult">
-	<div id="desktop-view">
-		<BubbleContainer>"Press tab to restart"</BubbleContainer>
-	</div>
+<div id="typingResult" class="bubble">
+	<div style="display: flex; gap: var(--spacing-medium); width: 100%;">
+		<div style="display: grid; grid-template-rows: 1fr 1fr; gap: var(--spacing-medium);">
+			<SingleDataContainer title={'wpm'} data={getWpm(typingTestRunData)} data_rem={2.5} />
+			<SingleDataContainer title={'accuracy'} data={getAccuracy(typingTestRunData) + '%'} data_rem={2.5} />
+		</div>
 
-	<div id="topHalf">
-		<div id="dataColumn">
-			<SingleDataContainer title={'wpm'} data={getWpm(typingTestRunData)} data_rem={1.4} />
-			<SingleDataContainer title={'accuracy'} data={getAccuracy(typingTestRunData) + '%'} data_rem={1.4} />
+		<div style="min-height: 100%; width: 100%;">
+			<KeyPressTimingsChart {typingTestRunData} />
+		</div>
+
+		<div style="display: flex; flex-direction: column; gap: var(--spacing-medium);">
 			<SingleDataContainer title={'raw'} data={getRawWpm(typingTestRunData)} />
 			<SingleDataContainer title={'time'} data={getTime(typingTestRunData) + ' sec'} />
 			<SingleDataContainer
@@ -42,12 +44,13 @@
 					getWrongCharCount(typingTestRunData, 'swapped')}
 			/>
 		</div>
-		<div id="chartContainer">
-			<KeyPressTimingsChart {typingTestRunData} />
-		</div>
 	</div>
 
-	<div style="width: 60%;">
+	<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacing-medium);"></div>
+
+	<button id="restartButton" onclick={restart}>Restart (or press tab!)</button>
+
+	<div style="width: 80%;">
 		<TypingTestReplay
 			targetText={typingTestRunData.targetText}
 			userTypedText={typingTestRunData.userTypedText}
@@ -55,8 +58,6 @@
 			errorCorrectionMode={typingTestRunData.errorCorrectionMode}
 		/>
 	</div>
-
-	<!-- <button id="restartButton" onclick={restart}>Restart</button> -->
 </div>
 
 <style>
@@ -66,39 +67,10 @@
 		align-items: center;
 		gap: var(--spacing-medium);
 		width: auto;
-	}
-
-	#topHalf {
-		display: flex;
-		flex-direction: row;
-		gap: var(--spacing-medium);
-		/* height: 50%; */
-		width: 100%;
-	}
-	#chartContainer {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 100%;
-		min-height: 100%;
-	}
-
-	#dataColumn {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-medium);
+		height: fit-content;
 	}
 
 	#restartButton {
 		font-size: 1rem;
-	}
-
-	@media only screen and (max-width: 767px) {
-		#desktop-view {
-			display: none;
-		}
-		#restartButton {
-			display: block;
-		}
 	}
 </style>

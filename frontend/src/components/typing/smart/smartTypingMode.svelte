@@ -65,7 +65,7 @@
 	});
 </script>
 
-<div style="display: grid; grid-template-rows: 1fr 1fr; ">
+<div style="display: grid; grid-template-rows: 1fr 2fr; ">
 	{#key [resetTrigger, userData.userTypingConfig.typingEndWordMode]}
 		<TypingTest
 			targetText={generateWordsAlgo2($state.snapshot(userData.keyStatistics), userData.userTypingConfig.typingEndWordMode)}

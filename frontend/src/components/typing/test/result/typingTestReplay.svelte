@@ -71,10 +71,6 @@
 </script>
 
 <div id="typingTestReplayContainer">
-	<div id="controlBar">
-		<button onclick={() => handlePlayPauseButton()}>{playPauseButtonText}</button>
-		<button onclick={reset}>Reset</button>
-	</div>
 	<div id="mainText">
 		{#each textObject?.textObject as word, index}
 			<div class="word">
@@ -92,6 +88,10 @@
 				{/each}
 			</div>
 		{/each}
+	</div>
+	<div id="controlBar">
+		<button onclick={() => handlePlayPauseButton()}>{playPauseButtonText}</button>
+		<button onclick={reset}>Reset</button>
 	</div>
 </div>
 

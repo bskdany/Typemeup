@@ -211,5 +211,6 @@
 		position: relative;
 		width: 90%;
 		height: 100%;
+		margin: auto;
 	}
 </style>

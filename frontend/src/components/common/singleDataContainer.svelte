@@ -14,7 +14,7 @@
 		justify-content: center;
 		align-items: center;
 
-		width: 100px;
+		width: min(100px, fit-content);
 		height: min-content;
 		white-space: nowrap;
 
@@ -23,7 +23,7 @@
 		border: solid transparent;
 		color: var(--text-color);
 		border-radius: var(--border-radius);
-		background-color: var(--secondary-color);
+		/* background-color: var(--secondary-color); */
 	}
 
 	#data {

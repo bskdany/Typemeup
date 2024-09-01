@@ -24,10 +24,23 @@
 		if (event.key === 'Tab') {
 			event.preventDefault();
 			resetTrigger += 1;
+			displayTypingTest = true;
 		}
 
 		typingTestRef?.focus();
 	}
+
+	function restart() {
+		// resetTrigger += 1;
+		displayTypingTest = false;
+		displayTypingTest = true;
+	}
+
+	$effect(() => {
+		userData.userTypingConfig.typingEndTimeMode;
+		userData.userTypingConfig.typingEndWordMode;
+		restart();
+	});
 
 	onMount(() => {
 		document.addEventListener('keydown', handleTabKeyDown);
@@ -40,9 +53,9 @@
 	});
 </script>
 
-{#if displayTypingTest}
-	<div style="display: grid; grid-template-rows: 1fr 1fr;">
-		{#key [resetTrigger, userData.userTypingConfig.typingEndMode, userData.userTypingConfig.typingEndWordMode]}
+{#key [resetTrigger, displayTypingTest]}
+	{#if displayTypingTest}
+		<div style="display: grid; grid-template-rows: 1fr 2fr;">
 			{#if userData.userTypingConfig.typingEndMode === 'words'}
 				<TypingTest
 					targetText={generateRandomWords(userData.userTypingConfig.typingEndWordMode)}
@@ -63,10 +76,10 @@
 					bind:this={typingTestRef}
 				/>
 			{/if}
-		{/key}
 
-		<TypingTestModeKeyboard />
-	</div>
-{:else}
-	<TypingTestResult {typingTestRunData} restart={() => (resetTrigger += 1)} />
-{/if}
+			<TypingTestModeKeyboard />
+		</div>
+	{:else}
+		<TypingTestResult {typingTestRunData} {restart} />
+	{/if}
+{/key}
