@@ -1,18 +1,33 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, getContext } from 'svelte';
 	import { userData } from '../../../shared/userData.svelte';
 	import TypingTest from '../typingTest.svelte';
-	import type { TypingTestRunData } from '../../../types/interfaces';
+	import type { TypingContext, TypingContextData, TypingTestRunData } from '../../../types/interfaces';
 	import { getWebSocket } from '../../../lib/fetch';
+	import CompeteTypingModeResult from './competeTypingModeResult.svelte';
+	import TypingProgress from '../typingProgress.svelte';
+	import CompeteTypingModeInvalidResult from './competeTypingModeInvalidResult.svelte';
 
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 
+	let typingTestRef: TypingTest;
 	let socket: WebSocket;
-	let competitionStatus: 'waiting' | 'inProgress' | 'finished' = 'waiting';
-	let playersProgress: { userId: string; progress: number }[] = [];
-	let targetText: string[] = [];
+	let competitionStatus: 'waiting' | 'inProgress' | 'finished' | 'terminated' = $state('waiting');
+	let playersProgress: { userId: string; progress: number }[] = $state([]);
+	let targetText: string[] = $state([]);
+	let typingTestRunData: TypingTestRunData;
+	let competitionRanking: { playerName: string; rank: number }[] = $state([]);
+	let playerName: string = $state('');
+	let playersWaiting: number = $state(0);
+	let displayTimer: boolean = $state(false);
+	let remainingTime: number = $state(30);
+
+	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
+	const typingContextData: TypingContextData = typingContext.typingContextData;
 
 	onMount(() => {
+		document.addEventListener('keydown', handleTabKeyDown);
+
 		socket = getWebSocket();
 		socket.onopen = () => {
 			socket.send(JSON.stringify({ type: 'join', userId: userData.username }));
@@ -23,6 +38,8 @@
 			switch (data.type) {
 				case 'waiting':
 					competitionStatus = 'waiting';
+					playerName = data.playerName;
+					playersWaiting = data.playersWaiting;
 					break;
 				case 'matchFound':
 					competitionStatus = 'inProgress';
@@ -32,9 +49,22 @@
 				case 'progressUpdate':
 					playersProgress = data.players;
 					break;
-				case 'competitionEnd':
+				case 'finished':
 					competitionStatus = 'finished';
-					// Handle end of competition
+					console.log(data);
+					competitionRanking = data.rankings;
+					break;
+
+				case 'terminated':
+					competitionStatus = 'terminated';
+					competitionRanking = data.rankings;
+					break;
+
+				case 'firstFinisherNotification':
+					displayTimer = true;
+					setInterval(() => {
+						remainingTime--;
+					}, 1000);
 					break;
 			}
 		};
@@ -44,6 +74,10 @@
 		if (socket) {
 			socket.close();
 		}
+
+		try {
+			document.removeEventListener('keydown', handleTabKeyDown);
+		} catch (e) {}
 	});
 
 	function handleTypingProgress(progress: number) {
@@ -51,12 +85,26 @@
 	}
 
 	function handleTypingEnd(data: TypingTestRunData) {
+		typingTestRunData = data;
+		socket.send(JSON.stringify({ type: 'progress', progress: 100 }));
 		socket.send(JSON.stringify({ type: 'finished', data }));
+		onTypingEnd(data);
+	}
+
+	function handleTabKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Tab') {
+			event.preventDefault();
+			if (competitionStatus === 'finished') {
+				competitionStatus = 'waiting';
+			}
+		}
+
+		typingTestRef?.focus();
 	}
 </script>
 
 {#if competitionStatus === 'waiting'}
-	<div>Waiting for opponents...</div>
+	<div>Waiting for opponents ({playersWaiting}/3)...</div>
 {:else if competitionStatus === 'inProgress'}
 	<div>
 		{#each playersProgress as player}
@@ -67,10 +115,30 @@
 			</div>
 		{/each}
 
-		<TypingTest {targetText} errorCorrectionMode={2} typingEndMode="words" onProgress={handleTypingProgress} testEnded={handleTypingEnd} />
+		<div style="display: flex; flex-direction: row; justify-content: space-between;">
+			{#if typingContextData.typingTestStatus === 'started'}
+				<TypingProgress />
+			{:else}
+				<div style="visibility: hidden;"><TypingProgress /></div>
+			{/if}
+			{#if displayTimer}
+				<div class="timer">{remainingTime}</div>
+			{/if}
+		</div>
+
+		<TypingTest
+			bind:this={typingTestRef}
+			{targetText}
+			errorCorrectionMode={2}
+			typingEndMode="words"
+			onProgress={handleTypingProgress}
+			testEnded={handleTypingEnd}
+		/>
 	</div>
-{:else}
-	<div>Competition finished!</div>
+{:else if competitionStatus === 'finished'}
+	<CompeteTypingModeResult {typingTestRunData} {competitionRanking} {playerName} restart={() => (competitionStatus = 'waiting')} />
+{:else if competitionStatus === 'terminated'}
+	<CompeteTypingModeInvalidResult {competitionRanking} {playerName} />
 {/if}
 
 <style>
@@ -96,5 +164,10 @@
 		height: 100%;
 		padding-right: 10px;
 		font-weight: bold;
+	}
+
+	.timer {
+		font-size: 1.5rem;
+		color: var(--accent-color);
 	}
 </style>

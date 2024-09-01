@@ -60,11 +60,6 @@
 	<div style="display: grid; grid-template-rows: 1fr 2fr; height: 100%;">
 		<div style="display: flex; flex-direction: column; justify-content: space-between;">
 			<QuickConfigs />
-			{#if typingContextData.typingTestStatus === 'started'}
-				<TypingProgress />
-			{:else}
-				<div style="visibility: hidden;"><TypingProgress /></div>
-			{/if}
 		</div>
 
 		{#if userData.userTypingConfig.typingMode === 'compete'}

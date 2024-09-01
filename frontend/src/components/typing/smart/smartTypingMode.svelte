@@ -1,16 +1,19 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, getContext } from 'svelte';
 	import TypingTest from '../typingTest.svelte';
 	import { userData } from '../../../shared/userData.svelte';
 	import { generateWordsAlgo2 } from '../../../algo/textGenerator';
-	import type { TypingTestRunData } from '../../../types/interfaces';
+	import type { TypingContext, TypingContextData, TypingTestRunData } from '../../../types/interfaces';
 	import SmartTypingModeKeyboard from './smartTypingModeKeyboard.svelte';
 	import type { KeypressData } from '@shared/types';
 	import { generateKeypressData } from '../../../algo/generateKeypressData';
 	import { updateKeyStatistics } from '../../../algo/updateKeyStatistics';
 	import { fetchBackend } from '../../../lib/fetch';
 	import { showToast } from '../../../shared/toastController.svelte';
+	import TypingProgress from '../typingProgress.svelte';
 
+	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
+	const typingContextData: TypingContextData = typingContext.typingContextData;
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 	let typingTestRef: TypingTest;
 	let resetTrigger = $state(0); // incrementing this will reset the typing test
@@ -67,14 +70,21 @@
 
 <div style="display: grid; grid-template-rows: 1fr 2fr; ">
 	{#key [resetTrigger, userData.userTypingConfig.typingEndWordMode]}
-		<TypingTest
-			targetText={generateWordsAlgo2($state.snapshot(userData.keyStatistics), userData.userTypingConfig.typingEndWordMode)}
-			errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
-			typingEndMode="words"
-			testStarted={onTypingStart}
-			testEnded={handleTypingEnd}
-			bind:this={typingTestRef}
-		/>
+		<div>
+			{#if typingContextData.typingTestStatus === 'started'}
+				<TypingProgress />
+			{:else}
+				<div style="visibility: hidden;"><TypingProgress /></div>
+			{/if}
+			<TypingTest
+				targetText={generateWordsAlgo2($state.snapshot(userData.keyStatistics), userData.userTypingConfig.typingEndWordMode)}
+				errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
+				typingEndMode="words"
+				testStarted={onTypingStart}
+				testEnded={handleTypingEnd}
+				bind:this={typingTestRef}
+			/>
+		</div>
 	{/key}
 
 	<SmartTypingModeKeyboard keyStats={$state.snapshot(userData.keyStatistics)} />

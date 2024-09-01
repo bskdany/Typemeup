@@ -1,13 +1,16 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, getContext } from 'svelte';
 	import TypingTest from '../typingTest.svelte';
 	import { userData } from '../../../shared/userData.svelte';
-	import type { TypingTestRunData } from '../../../types/interfaces';
+	import type { TypingContext, TypingContextData, TypingTestRunData } from '../../../types/interfaces';
 	import { generateRandomWords } from '../../../algo/textGenerator';
 	import TypingTestModeKeyboard from './testTypingModeKeyboard.svelte';
-	import TypingTestResult from './result/typingResult.svelte';
+	import TypingTestModeResult from './result/typingTestModeResult.svelte';
+	import TypingProgress from '../typingProgress.svelte';
 
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
+	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
+	const typingContextData: TypingContextData = typingContext.typingContextData;
 	let typingTestRef: TypingTest;
 	let resetTrigger = $state(0); // incrementing this will reset the typing test
 	let displayTypingTest = $state(true);
@@ -56,30 +59,38 @@
 {#key [resetTrigger, displayTypingTest]}
 	{#if displayTypingTest}
 		<div style="display: grid; grid-template-rows: 1fr 2fr;">
-			{#if userData.userTypingConfig.typingEndMode === 'words'}
-				<TypingTest
-					targetText={generateRandomWords(userData.userTypingConfig.typingEndWordMode)}
-					errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
-					typingEndMode="words"
-					testStarted={onTypingStart}
-					testEnded={handleTypingEnd}
-					bind:this={typingTestRef}
-				/>
-			{:else if userData.userTypingConfig.typingEndMode === 'time'}
-				<TypingTest
-					targetText={generateRandomWords(300)}
-					errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
-					typingEndMode="time"
-					typingEndTimeMode={userData.userTypingConfig.typingEndTimeMode}
-					testStarted={onTypingStart}
-					testEnded={handleTypingEnd}
-					bind:this={typingTestRef}
-				/>
-			{/if}
+			<div>
+				{#if typingContextData.typingTestStatus === 'started'}
+					<TypingProgress />
+				{:else}
+					<div style="visibility: hidden;"><TypingProgress /></div>
+				{/if}
+
+				{#if userData.userTypingConfig.typingEndMode === 'words'}
+					<TypingTest
+						targetText={generateRandomWords(userData.userTypingConfig.typingEndWordMode)}
+						errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
+						typingEndMode="words"
+						testStarted={onTypingStart}
+						testEnded={handleTypingEnd}
+						bind:this={typingTestRef}
+					/>
+				{:else if userData.userTypingConfig.typingEndMode === 'time'}
+					<TypingTest
+						targetText={generateRandomWords(300)}
+						errorCorrectionMode={userData.userTypingConfig.errorCorrectionMode}
+						typingEndMode="time"
+						typingEndTimeMode={userData.userTypingConfig.typingEndTimeMode}
+						testStarted={onTypingStart}
+						testEnded={handleTypingEnd}
+						bind:this={typingTestRef}
+					/>
+				{/if}
+			</div>
 
 			<TypingTestModeKeyboard />
 		</div>
 	{:else}
-		<TypingTestResult {typingTestRunData} {restart} />
+		<TypingTestModeResult {typingTestRunData} {restart} />
 	{/if}
 {/key}

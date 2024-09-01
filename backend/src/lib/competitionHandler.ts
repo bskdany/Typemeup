@@ -5,11 +5,15 @@ interface Player {
   socket: WebSocket;
   userId: string;
   progress: number;
+  hasFinished: boolean;
+  hasLeft: boolean;
 }
 
 const waitingPlayers: Player[] = [];
-const activeCompetitions: Map<string, Player[]> = new Map();
-const PLAYERS_PER_COMPETITION = 2;
+const activeCompetitions: Map<string, { players: Player[], hasPlayerFinished: boolean, timer: NodeJS.Timeout | null }> = new Map();
+const PLAYERS_PER_COMPETITION = 3;
+
+let playerCount = 0;
 
 export function handleCompetition(socket: WebSocket) {
   let player: Player | null = null;
@@ -19,7 +23,8 @@ export function handleCompetition(socket: WebSocket) {
 
     switch (data.type) {
       case 'join':
-        player = { socket, userId: data.userId || 'Anonymous', progress: 0 };
+        const userId = data.userId || `Player ${++playerCount}`;
+        player = { socket, userId, progress: 0, hasFinished: false, hasLeft: false };
         joinCompetition(player);
         break;
       case 'progress':
@@ -42,16 +47,29 @@ export function handleCompetition(socket: WebSocket) {
   });
 }
 
+function getCompetition(player: Player) {
+  return Array.from(activeCompetitions.entries()).find(([_, comp]) =>
+    comp.players.includes(player)
+  );
+}
+
+function updatePlayersInCompetition(competitionId: string, message: any) {
+  const competition = activeCompetitions.get(competitionId);
+  if (competition) {
+    competition.players.forEach(p => p.socket.send(JSON.stringify(message)));
+  }
+}
+
 function joinCompetition(player: Player) {
   waitingPlayers.push(player);
-
-  console.log('waitingPlayers', waitingPlayers);
 
   if (waitingPlayers.length >= PLAYERS_PER_COMPETITION) {
     const competitionPlayers = waitingPlayers.splice(0, PLAYERS_PER_COMPETITION);
     startCompetition(competitionPlayers);
   } else {
-    player.socket.send(JSON.stringify({ type: 'waiting', playersWaiting: waitingPlayers.length }));
+    for (const player of waitingPlayers) {
+      player.socket.send(JSON.stringify({ type: 'waiting', playersWaiting: waitingPlayers.length, playerName: player.userId }));
+    }
   }
 }
 
@@ -60,7 +78,7 @@ function startCompetition(players: Player[]) {
   const targetText = ['Hello', 'world'];
   const competitionId = players.map(p => p.userId).join('-');
 
-  activeCompetitions.set(competitionId, players);
+  activeCompetitions.set(competitionId, { players, hasPlayerFinished: false, timer: null });
 
   const startMessage = JSON.stringify({ type: 'matchFound', targetText, players: players.map(p => p.userId) });
   players.forEach(player => player.socket.send(startMessage));
@@ -69,58 +87,105 @@ function startCompetition(players: Player[]) {
 function updateProgress(player: Player, progress: number) {
   player.progress = progress;
 
-  const competition = Array.from(activeCompetitions.entries()).find(([_, players]) =>
-    players.includes(player)
-  );
+  const competition = getCompetition(player);
 
   if (competition) {
-    const [competitionId, players] = competition;
+    const [competitionId, comp] = competition;
     const progressUpdate = JSON.stringify({
       type: 'progressUpdate',
-      players: players.map(p => ({ userId: p.userId, progress: p.progress }))
+      players: comp.players.map(p => ({ userId: p.userId, progress: p.progress }))
     });
-    players.forEach(p => p.socket.send(progressUpdate));
+    comp.players.forEach(p => p.socket.send(progressUpdate));
   }
 }
 
 function finishCompetition(player: Player) {
-  const competition = Array.from(activeCompetitions.entries()).find(([_, players]) =>
-    players.includes(player)
-  );
+  const competition = getCompetition(player);
 
   if (competition) {
-    const [competitionId, players] = competition;
-    const rankings = players.sort((a, b) => b.progress - a.progress);
+    const [competitionId, comp] = competition;
+    player.hasFinished = true;
+
+    const rankings = comp.players.filter(p => p.hasFinished).sort((a, b) => b.progress - a.progress);
     const endMessage = JSON.stringify({
-      type: 'competitionEnd',
+      type: 'finished',
+      rankings: rankings.map((p, index) => ({ playerName: p.userId, rank: index + 1 }))
+    });
+    comp.players.forEach(p => {
+      if (p.hasFinished) {
+        p.socket.send(endMessage);
+      }
+    });
+
+    // if the player does not finish the competition in 30 seconds after the first finisher, the competition is terminated
+    if (!comp.hasPlayerFinished) {
+      comp.hasPlayerFinished = true;
+
+      comp.timer = setTimeout(() => {
+        endCompetition(competitionId);
+      }, 30000);
+
+      const notifyOthers = JSON.stringify({ type: 'firstFinisherNotification', userId: player.userId });
+      comp.players.forEach(p => {
+        if (p !== player) {
+          p.socket.send(notifyOthers);
+        }
+      });
+    }
+  }
+}
+
+function updateRankings(competitionId: string) {
+  const competition = activeCompetitions.get(competitionId);
+  if (competition) {
+    const players = competition.players;
+    const rankings = players.sort((a, b) => b.progress - a.progress);
+    const rankingsMessage = JSON.stringify({
+      type: 'rankings',
       rankings: rankings.map((p, index) => ({ userId: p.userId, rank: index + 1 }))
     });
-    players.forEach(p => p.socket.send(endMessage));
-    activeCompetitions.delete(competitionId);
+    competition.players.forEach(p => p.socket.send(rankingsMessage));
+  }
+}
+
+
+function endCompetition(competitionId: string) {
+  const competition = activeCompetitions.get(competitionId);
+  if (competition) {
+    const players = competition.players;
+    const rankings = players.sort((a, b) => b.progress - a.progress);
+    const endMessage = JSON.stringify({
+      type: 'terminated',
+      rankings: rankings.map((p, index) => ({ playerName: p.userId, rank: index + 1 }))
+    });
+    players.filter(p => !p.hasFinished).forEach(p => p.socket.send(endMessage));
   }
 }
 
 function removePlayer(player: Player) {
+  // remove player from waiting players
   const waitingIndex = waitingPlayers.findIndex(p => p === player);
   if (waitingIndex !== -1) {
     waitingPlayers.splice(waitingIndex, 1);
+    // update waiting players
+    const waitingMessage = JSON.stringify({ type: 'waiting', playersWaiting: waitingPlayers.length });
+    waitingPlayers.forEach(p => p.socket.send(waitingMessage));
     return;
   }
 
-  const competition = Array.from(activeCompetitions.entries()).find(([_, players]) =>
-    players.includes(player)
-  );
+  // remove player from active competitions
+  // const competition = Array.from(activeCompetitions.entries()).find(([_, comp]) =>
+  //   comp.players.includes(player)
+  // );
 
-  if (competition) {
-    const [competitionId, players] = competition;
-    const remainingPlayers = players.filter(p => p !== player);
-    if (remainingPlayers.length < 2) {
-      remainingPlayers.forEach(p => p.socket.send(JSON.stringify({ type: 'competitionEnd', reason: 'notEnoughPlayers' })));
-      activeCompetitions.delete(competitionId);
-    } else {
-      activeCompetitions.set(competitionId, remainingPlayers);
-      const disconnectMessage = JSON.stringify({ type: 'playerDisconnected', userId: player.userId });
-      remainingPlayers.forEach(p => p.socket.send(disconnectMessage));
-    }
-  }
+  // if (competition) {
+  //   const [competitionId, comp] = competition;
+
+  //   const remainingPlayers = comp.players.filter(p => p !== player);
+  //   if (remainingPlayers.length < 2) {
+  //     remainingPlayers.forEach(p => p.socket.send(JSON.stringify({ type: 'terminated', reason: 'notEnoughPlayers' })));
+  //     activeCompetitions.delete(competitionId);
+  //   }
+  // }
+
 }

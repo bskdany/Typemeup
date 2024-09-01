@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { Title } from 'chart.js';
 	import { setContext } from 'svelte';
-	import TypingTestReplay from './typingTestReplay.svelte';
 	import { getWpm, getAccuracy, getRawWpm, getTime, getCorrectCharCount, getWrongCharCount } from '../../../../lib/typingTestRunHelper';
 	import type { TypingResultContextData, TypingTestRunData } from '../../../../types/interfaces';
 	import KeyPressTimingsChart from '../../../chart/keyPressTimingsChart.svelte';
-	import BubbleContainer from '../../../common/bubbleContainer.svelte';
 	import SingleDataContainer from '../../../common/singleDataContainer.svelte';
+	import TypingTestReplay from './typingTestReplay.svelte';
 
 	let typingResultContextData: TypingResultContextData = $state({ activeLetterId: -1, typingTestReplayStatus: 'inactive' });
 
