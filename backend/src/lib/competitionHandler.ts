@@ -10,7 +10,7 @@ interface Player {
 }
 
 const waitingPlayers: Player[] = [];
-const activeCompetitions: Map<string, { players: Player[], hasPlayerFinished: boolean, timer: NodeJS.Timeout | null }> = new Map();
+const activeCompetitions: Map<string, { players: Player[], hasPlayerFinished: boolean, hasCountdownFinished: boolean, timer: NodeJS.Timeout | null }> = new Map();
 const PLAYERS_PER_COMPETITION = 3;
 
 let playerCount = 0;
@@ -25,7 +25,7 @@ export function handleCompetition(socket: WebSocket) {
       case 'join':
         const userId = data.userId || `Player ${++playerCount}`;
         player = { socket, userId, progress: 0, hasFinished: false, hasLeft: false };
-        joinCompetition(player);
+        joinWaitingRoom(player);
         break;
       case 'progress':
         if (player) {
@@ -60,11 +60,12 @@ function updatePlayersInCompetition(competitionId: string, message: any) {
   }
 }
 
-function joinCompetition(player: Player) {
+function joinWaitingRoom(player: Player) {
   waitingPlayers.push(player);
 
   if (waitingPlayers.length >= PLAYERS_PER_COMPETITION) {
     const competitionPlayers = waitingPlayers.splice(0, PLAYERS_PER_COMPETITION);
+    startCompetitionCountdown(competitionPlayers);
     startCompetition(competitionPlayers);
   } else {
     for (const player of waitingPlayers) {
@@ -73,15 +74,29 @@ function joinCompetition(player: Player) {
   }
 }
 
+function startCompetitionCountdown(players: Player[]) {
+  for (const player of players) {
+    player.socket.send(JSON.stringify({ type: 'startCoundown', time: 3 }));
+  }
+}
+
 function startCompetition(players: Player[]) {
   // const targetText = generateRandomWords(50);
   const targetText = ['Hello', 'world'];
   const competitionId = players.map(p => p.userId).join('-');
 
-  activeCompetitions.set(competitionId, { players, hasPlayerFinished: false, timer: null });
+  activeCompetitions.set(competitionId, { players, hasPlayerFinished: false, timer: null, hasCountdownFinished: false });
 
   const startMessage = JSON.stringify({ type: 'matchFound', targetText, players: players.map(p => p.userId) });
   players.forEach(player => player.socket.send(startMessage));
+
+  for (const player of players) {
+    player.socket.send(JSON.stringify({ type: 'startCountdown', time: 3 }));
+  }
+
+  setTimeout(() => {
+    activeCompetitions.set(competitionId, { players, hasPlayerFinished: false, timer: null, hasCountdownFinished: true });
+  }, 3000);
 }
 
 function updateProgress(player: Player, progress: number) {

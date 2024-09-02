@@ -22,7 +22,8 @@
 		typingEndTimeMode = 0,
 		testStarted,
 		testEnded,
-		onProgress
+		onProgress,
+		inputBlocked = false
 	}: {
 		targetText: string[];
 		errorCorrectionMode: number;
@@ -31,6 +32,7 @@
 		testStarted?: () => void;
 		testEnded: (data: TypingTestRunData) => void;
 		onProgress?: (progress: number) => void;
+		inputBlocked?: boolean;
 	} = $props();
 
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(targetText, errorCorrectionMode));
@@ -96,6 +98,10 @@
 	}
 
 	function processKeyPress(keydown: any) {
+		if (inputBlocked) {
+			return;
+		}
+
 		let pressedKey = keydown.data;
 
 		if (!pressedKey) {

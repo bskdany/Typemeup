@@ -1,72 +1,60 @@
 <script lang="ts">
-	import { Title } from 'chart.js';
-	import { setContext } from 'svelte';
-	import TypingTestReplay from '../test/result/typingTestReplay.svelte';
-	import { getWpm, getAccuracy, getRawWpm, getTime, getCorrectCharCount, getWrongCharCount } from '../../../lib/typingTestRunHelper';
-	import type { TypingResultContextData, TypingTestRunData } from '../../../types/interfaces';
-	import KeyPressTimingsChart from '../../chart/keyPressTimingsChart.svelte';
-	import BubbleContainer from '../../common/bubbleContainer.svelte';
 	import SingleDataContainer from '../../common/singleDataContainer.svelte';
-	import CompeteRankings from './competeRankings.svelte';
-
-	let typingResultContextData: TypingResultContextData = $state({ activeLetterId: -1, typingTestReplayStatus: 'inactive' });
-
-	setContext('typingResultContext', {
-		typingResultContextData: typingResultContextData
-	});
 
 	const {
-		typingTestRunData,
+		wpm,
+		accuracy,
 		competitionRanking,
 		playerName,
 		restart
-	}: { typingTestRunData: TypingTestRunData; competitionRanking: { playerName: string; rank: number }[]; playerName: string; restart: () => void } = $props();
+	}: { wpm: string; accuracy: string; competitionRanking: { playerName: string; rank: number }[]; playerName: string; restart: () => void } = $props();
 
-	console.log('competitionRanking', competitionRanking);
+	let playerRank = competitionRanking.find((player) => player.playerName === playerName)?.rank ?? 0;
+
+	function rankingTextFormatter(ranking: number) {
+		if (ranking === 1) {
+			return 'st';
+		} else if (ranking === 2) {
+			return 'nd';
+		} else if (ranking === 3) {
+			return 'rd';
+		} else {
+			return 'th';
+		}
+	}
 </script>
 
 <div id="typingResult" class="bubble">
-	<CompeteRankings {competitionRanking} {playerName} />
-
-	<div style="display: flex; gap: var(--spacing-medium); width: 100%;">
-		<div style="display: grid; grid-template-rows: 1fr 1fr; gap: var(--spacing-medium);">
-			<SingleDataContainer title={'wpm'} data={getWpm(typingTestRunData)} data_rem={2.5} />
-			<SingleDataContainer title={'accuracy'} data={getAccuracy(typingTestRunData) + '%'} data_rem={2.5} />
+	<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-medium); width: 100%;">
+		<div style="display: flex; flex-direction: row; align-items: center; justify-content: center">
+			<div style="font-size: 3rem; color: var(--accent-color); position: relative; bottom: 0">
+				{playerRank}
+			</div>
+			<div style="position: relative; bottom: 0;">
+				{rankingTextFormatter(playerRank)} place
+			</div>
 		</div>
 
-		<div style="min-height: 100%; width: 100%;">
-			<KeyPressTimingsChart {typingTestRunData} />
+		<div style="display: flex; flex-direction: column; gap: var(--spacing-medium); align-items: center; justify-content: center;">
+			<div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-small);">
+				{#each competitionRanking as ranking}
+					{#if ranking.playerName === playerName}
+						<div style="color: var(--accent-color);">{ranking.rank}. {ranking.playerName}</div>
+					{:else}
+						<div>{ranking.rank}. {ranking.playerName}</div>
+					{/if}
+				{/each}
+			</div>
 		</div>
 
-		<div style="display: flex; flex-direction: column; gap: var(--spacing-medium);">
-			<SingleDataContainer title={'raw'} data={getRawWpm(typingTestRunData)} />
-			<SingleDataContainer title={'time'} data={getTime(typingTestRunData) + ' sec'} />
-			<SingleDataContainer
-				title={'characters'}
-				data={getCorrectCharCount(typingTestRunData) +
-					'/' +
-					getWrongCharCount(typingTestRunData, 'wrong') +
-					'/' +
-					getWrongCharCount(typingTestRunData, 'extra') +
-					'/' +
-					getWrongCharCount(typingTestRunData, 'missed') +
-					'/' +
-					getWrongCharCount(typingTestRunData, 'swapped')}
-			/>
+		<div>
+			<SingleDataContainer title="wpm" data={wpm} data_rem={2.5} />
+			<SingleDataContainer title="accuracy" data={accuracy + '%'} data_rem={2.5} />
 		</div>
 	</div>
 
-	<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacing-medium);"></div>
-
-	<button id="restartButton" onclick={restart}>Find a new game (or press tab!)</button>
-
-	<div style="width: 80%;">
-		<TypingTestReplay
-			targetText={typingTestRunData.targetText}
-			userTypedText={typingTestRunData.userTypedText}
-			typingTestKeypressTimings={typingTestRunData.keyPressTimings}
-			errorCorrectionMode={typingTestRunData.errorCorrectionMode}
-		/>
+	<div>
+		<button onclick={() => restart()}>Find new game (or press tab!)</button>
 	</div>
 </div>
 
@@ -75,12 +63,13 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		justify-content: space-around;
 		gap: var(--spacing-medium);
 		width: auto;
 		height: fit-content;
 	}
 
-	#restartButton {
+	/* #restartButton {
 		font-size: 1rem;
-	}
+	} */
 </style>
