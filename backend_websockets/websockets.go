@@ -81,6 +81,26 @@ func handleDisconnection(conn *websocket.Conn) {
 	if player.competition != nil {
 		// player is in a competition, keeping it in BUT remove the possibility of receiving updates
 		player.receiveUpdates = false
+		log.Println("player", player.userId, "disconnected")
+
+		// if no players in the competition receive updates, remove the competition
+
+		activePlayerCount := 0
+		for _, player := range player.competition.Players {
+			if player.receiveUpdates {
+				activePlayerCount++
+			}
+		}
+
+		if activePlayerCount == 0 {
+
+			competitionId := player.competition.Id
+			// all players are safe to remove themselves from the competition
+			for _, player := range player.competition.Players {
+				player.competition = nil
+			}
+			log.Println("competition", competitionId, "removed because all players disconnected")
+		}
 	} else {
 		// player is in the waiting room, removing it
 		for i, p := range waitingPlayers {
@@ -90,10 +110,10 @@ func handleDisconnection(conn *websocket.Conn) {
 			}
 		}
 		sendWaitingRoomUpdate()
+		log.Println("player", player.userId, "disconnected and removed from waiting room")
 	}
 	delete(activePlayers, conn)
 
-	log.Println("player", player.userId, "disconnected")
 }
 
 func initializePlayer(request *WSRequest, conn *websocket.Conn) {
@@ -122,6 +142,7 @@ func joinWaitingRoom(player *Player) {
 
 	if len(waitingPlayers) >= PLAYERS_PER_COMPETITION {
 		createCompetition(waitingPlayers[0:PLAYERS_PER_COMPETITION])
+		waitingPlayers = waitingPlayers[PLAYERS_PER_COMPETITION:]
 	} else {
 		sendWaitingRoomUpdate()
 	}
