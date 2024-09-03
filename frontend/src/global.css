@@ -22,7 +22,9 @@
   --padding-medium: 11px;
 
   /* Typography */
-  --font-family-main: 'Arial', sans-serif;
+  --font-family-main: 'Courier New', Courier, monospace;
+
+  /* --font-family-main: 'Arial', sans-serif; */
   --font-size-small: 0.875rem;
   --font-size-medium: 1rem;
   --font-size-large: 1.25rem;
@@ -36,10 +38,10 @@
 html {
   min-height: 100%;
   min-width: 100%;
+  font-family: var(--font-family-main);
 }
 
 body {
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   background-color: var(--background-color);
   display: flex;
   justify-content: center;
