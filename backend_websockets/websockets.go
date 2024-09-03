@@ -28,11 +28,14 @@ type WSRequest struct {
 }
 
 type WSResponse struct {
-	Type           string   `json:"type"`
-	TargetText     []string `json:"targetText,omitempty"`
-	Players        []string `json:"players,omitempty"`
-	Progress       uint8    `json:"progress,omitempty"`
-	PlayersWaiting uint8    `json:"playersWaiting,omitempty"`
+	Type       string   `json:"type"`
+	TargetText []string `json:"targetText,omitempty"`
+	Players    []string `json:"players,omitempty"`
+	Progress   struct {
+		UserId string `json:"userId"`
+		Amount uint8  `json:"amount"`
+	} `json:"progress,omitempty"`
+	PlayersWaiting uint8 `json:"playersWaiting,omitempty"`
 }
 
 type Competition struct {
@@ -112,8 +115,8 @@ func handleDisconnection(conn *websocket.Conn) {
 		sendWaitingRoomUpdate()
 		log.Println("player", player.userId, "disconnected and removed from waiting room")
 	}
-	delete(activePlayers, conn)
 
+	delete(activePlayers, conn)
 }
 
 func initializePlayer(request *WSRequest, conn *websocket.Conn) {
@@ -177,7 +180,13 @@ func createCompetition(players []*Player) {
 
 func updateProgress(player *Player, request *WSRequest) {
 	player.progress = int(request.Progress)
-	sendMessageToCompetition(player.competition, &WSResponse{Type: "progress", Progress: uint8(player.progress)})
+
+	response := WSResponse{Type: "progress", Progress: struct {
+		UserId string `json:"userId"`
+		Amount uint8  `json:"amount"`
+	}{UserId: player.userId, Amount: uint8(player.progress)}}
+
+	sendMessageToCompetition(player.competition, &response)
 }
 
 func generateUserId() string {
@@ -215,7 +224,9 @@ func handler(writer http.ResponseWriter, request *http.Request) {
 
 			joinWaitingRoom(player)
 		case "progress":
-			updateProgress(player, &request)
+			if player != nil {
+				updateProgress(player, &request)
+			}
 		}
 
 	}

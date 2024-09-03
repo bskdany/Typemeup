@@ -13,7 +13,7 @@
 	let typingTestRef: TypingTest;
 	let socket: WebSocket;
 	let competitionStatus: 'waiting' | 'inProgress' | 'finished' | 'terminated' = $state('waiting');
-	let playersProgress: { userId: string; progress: number }[] = $state([]);
+	let playersProgress: { userId: string; progress: 0 }[] = $state([]);
 	let targetText: string[] = $state([]);
 	let typingTestRunData: TypingTestRunData;
 	let competitionRanking: { playerName: string; rank: number }[] = $state([]);
@@ -60,10 +60,16 @@
 				case 'matchFound':
 					competitionStatus = 'inProgress';
 					targetText = data.targetText;
-					playersProgress = data.players.map((userId: string) => ({ userId, progress: 0 }));
+
+					data.players.forEach((userId: string) => {
+						playersProgress.push({ userId, progress: 0 });
+					});
 					break;
-				case 'progressUpdate':
-					playersProgress = data.players;
+				case 'progress':
+					const player = playersProgress.find((player) => player.userId === data.progress.userId);
+					if (player) {
+						player.progress = data.progress.amount;
+					}
 					break;
 				case 'startCountdown':
 					startCountdown();
