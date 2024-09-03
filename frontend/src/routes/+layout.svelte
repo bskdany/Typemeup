@@ -80,12 +80,18 @@
 					</div>
 				</button>
 				<button onclick={() => goto('/profile')} class="link">
-					<div class="icon-container">
-						{@html icons.profile}
-					</div>
-					<div>
-						{userData.username}
-					</div>
+					{#if userData.username === ''}
+						<div class="icon-container">
+							{@html icons.profile}
+						</div>
+					{:else}
+						<div class="icon-container">
+							{@html icons.profile}
+						</div>
+						<div>
+							{userData.username}
+						</div>
+					{/if}
 				</button>
 			</div>
 		{:else if currentPath === '/config'}
@@ -216,6 +222,7 @@
 		height: 1rem;
 		width: 1rem;
 		align-items: center;
+		justify-content: center;
 		gap: 2px;
 	}
 
