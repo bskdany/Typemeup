@@ -125,7 +125,6 @@
 	}
 
 	.letter {
-		margin-left: 2px;
 		font-size: 1rem;
 	}
 	.correct {
