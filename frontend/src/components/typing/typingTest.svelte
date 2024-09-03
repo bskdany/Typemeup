@@ -155,7 +155,7 @@
 			const cursorPositionX = cursorElement.getBoundingClientRect().left;
 			const cursorPositionY = cursorElement.getBoundingClientRect().top;
 
-			const newCursorPositionX = targetLetterNode.getBoundingClientRect().left - 2;
+			const newCursorPositionX = targetLetterNode.getBoundingClientRect().left;
 			const newCursorPositionY = targetLetterNode.getBoundingClientRect().top;
 
 			const xOffset = newCursorPositionX - cursorPositionX;
@@ -222,7 +222,11 @@
 
 <div id="overflow-placeholder" style="height: {textHeight}px;">
 	<div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
-		<div id="cursor" style="transform: translate({$cursorElementPositionX}px, {cursorElementPosition.y}px)" bind:this={cursorElement}></div>
+		<div
+			id="cursor"
+			style="height:{textHeight / 3}px; transform: translate({$cursorElementPositionX}px, {cursorElementPosition.y}px)"
+			bind:this={cursorElement}
+		></div>
 		{#each textObject?.textObject as word, index}
 			<div class="word" bind:this={textObjectBind[index]}>
 				{#each word.letters as { text, isCorrect, isSpace, isTyped }}
@@ -258,8 +262,8 @@
 	}
 	#cursor {
 		position: absolute;
-		height: 2rem;
 		width: 2px;
+		z-index: 100;
 		background-color: var(--accent-color);
 	}
 	#wordsInput {
@@ -276,7 +280,7 @@
 		margin-top: 0%;
 	}
 	.letter {
-		margin-left: 2px;
+		/* margin-left: 2px; */
 		font-size: 2rem;
 	}
 	.correct {
