@@ -22,7 +22,8 @@
   --padding-medium: 11px;
 
   /* Typography */
-  --font-family-main: 'Courier New', Courier, monospace;
+  --font-family-main: 'Roboto Mono', 'Courier New', monospace;
+  font-weight: 400;
 
   /* --font-family-main: 'Arial', sans-serif; */
   --font-size-small: 0.875rem;
