@@ -23,7 +23,6 @@
 
   /* Typography */
   --font-family-main: 'Roboto Mono', 'Courier New', monospace;
-  font-weight: 400;
 
   /* --font-family-main: 'Arial', sans-serif; */
   --font-size-small: 0.875rem;
@@ -36,10 +35,14 @@
   --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+* {
+  font-family: var(--font-family-main);
+  font-weight: 400;
+}
+
 html {
   min-height: 100%;
   min-width: 100%;
-  font-family: var(--font-family-main);
 }
 
 body {
