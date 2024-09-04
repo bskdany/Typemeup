@@ -52,7 +52,7 @@ type WSResponse struct {
 
 type Competition struct {
 	id                   int
-	players              []*Player
+	players              map[string]*Player
 	targetText           []string
 	hasCountDownFinished bool
 	capacity             uint8
@@ -102,8 +102,15 @@ func initializePlayer(request *WSRequest, conn *websocket.Conn) {
 }
 
 func joinWaitingRoom(player *Player) {
+	// reset the player competition data
+	if player.competition != nil {
+		player.competition = nil
+		log.Println("Player", player.name, "disconnected from previous competition")
+	}
+
 	waitingPlayers = append(waitingPlayers, player)
 	log.Println("player", player.name, "joined waiting room")
+	log.Println("Players in waitlist", len(waitingPlayers))
 
 	if len(waitingPlayers) >= PLAYERS_PER_COMPETITION {
 		createCompetition(waitingPlayers[0:PLAYERS_PER_COMPETITION])
@@ -117,9 +124,14 @@ func createCompetition(players []*Player) {
 	competitionId := COMPETITION_ID
 	COMPETITION_ID++
 
+	playerMap := make(map[string]*Player, len(players))
+	for _, player := range players {
+		playerMap[player.playerId] = player
+	}
+
 	competition := Competition{
 		id:                   competitionId,
-		players:              players,
+		players:              playerMap,
 		targetText:           []string{"Hello", "world"},
 		hasCountDownFinished: false,
 		playersData:          make(map[string]*PlayerData),
@@ -167,6 +179,8 @@ func removeCompetition(competition *Competition) {
 	for _, player := range competition.players {
 		player.competition = nil
 	}
+
+	log.Println("Competition", COMPETITION_ID, "deleted")
 	COMPETITION_ID -= 1
 }
 
@@ -232,6 +246,16 @@ func playerFinished(player *Player, request *WSRequest) {
 		},
 	})
 
+	log.Println("Player", player.name, "finished the competition")
+
+	// remove player from receiving competition updates
+	delete(player.competition.players, player.playerId)
+
+	if player.competition.activePlayers == 0 {
+		removeCompetition(player.competition)
+	}
+
+	log.Println("Players in competition", len(player.competition.players))
 }
 
 func handler(writer http.ResponseWriter, request *http.Request) {
@@ -249,7 +273,7 @@ func handler(writer http.ResponseWriter, request *http.Request) {
 		var request WSRequest
 		var err = conn.ReadJSON(&request)
 		if err != nil {
-			if websocket.IsCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if websocket.IsCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure, websocket.CloseNoStatusReceived) {
 				// player disconnected
 				handleDisconnection(conn)
 				return
@@ -260,13 +284,21 @@ func handler(writer http.ResponseWriter, request *http.Request) {
 		}
 
 		switch request.Type {
-		case "join":
+		case "initialize":
 			if existingPlayers[conn] == nil {
 				// player not initialized
 				initializePlayer(&request, conn)
 				player = existingPlayers[conn]
+			} else {
+				log.Println("Illegal access to initialize")
 			}
-			joinWaitingRoom(player)
+
+		case "waitlist":
+			if player != nil {
+				joinWaitingRoom(player)
+			} else {
+				log.Println("Illegal access to waitlist, player not initialized")
+			}
 
 		case "progress":
 			if player != nil && player.competition != nil {

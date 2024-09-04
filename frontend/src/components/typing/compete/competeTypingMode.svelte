@@ -45,12 +45,23 @@
 		}, 3000);
 	}
 
+	function joinWaitlist() {
+		socket.send(JSON.stringify({ type: 'waitlist' }));
+	}
+
+	function restart() {
+		competitionStatus = 'waiting';
+		playersData = {};
+		joinWaitlist();
+	}
+
 	onMount(() => {
 		document.addEventListener('keydown', handleTabKeyDown);
 
 		socket = getWebSocket();
 		socket.onopen = () => {
-			socket.send(JSON.stringify({ type: 'join', name: userData.username }));
+			socket.send(JSON.stringify({ type: 'initialize', name: userData.username }));
+			joinWaitlist();
 		};
 
 		socket.onmessage = (event) => {
@@ -154,7 +165,7 @@
 		if (event.key === 'Tab') {
 			event.preventDefault();
 			if (competitionStatus === 'finished') {
-				competitionStatus = 'waiting';
+				restart();
 			}
 		}
 
@@ -211,7 +222,7 @@
 		{/if}
 	</div>
 {:else if competitionStatus === 'finished' || competitionStatus === 'terminated'}
-	<CompeteTypingModeResult {playersData} {playerId} restart={() => (competitionStatus = 'waiting')} />
+	<CompeteTypingModeResult {playersData} {playerId} {restart} />
 {/if}
 
 <style>

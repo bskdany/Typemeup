@@ -40,13 +40,15 @@
 
 		<div style="display: flex; flex-direction: column; gap: var(--spacing-medium); align-items: center; justify-content: center;">
 			<div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-small);">
-				{#each Object.entries(playersData) as [id, playerData]}
+				{#each Object.entries(playersData).sort(([, a], [, b]) => (a.ranking || Infinity) - (b.ranking || Infinity)) as [id, playerData]}
 					{#if playerData.ranking > 0}
 						<div style={playerId === id ? 'color: var(--accent-color);' : ''}>
 							{playerData.ranking}. {playerData.name} wpm: {playerData.wpm} accuracy: {playerData.accuracy}%
 						</div>
 					{:else}
-						{playerData.name} progress: {playerData.progress}%
+						<div>
+							{playerData.name} progress: {playerData.progress}%
+						</div>
 					{/if}
 				{/each}
 			</div>
