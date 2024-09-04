@@ -13,7 +13,7 @@ import (
 
 type Player struct {
 	socket      *websocket.Conn
-	userId      string
+	playerId    string
 	name        string
 	competition *Competition
 }
@@ -22,29 +22,29 @@ type Player struct {
 // this is beause if the player leaves the competition and starts a new one while
 // there are still users typing in the old one, the data will be wrong
 type PlayerData struct {
-	userId      string `json:"userId,omitempty"`
-	name        string `json:"name,omitempty"`
-	wpm         uint8  `json:"wpm,omitempty"`
-	accuracy    uint8  `json:"accuracy,omitempty"`
-	ranking     uint8  `json:"ranking,omitempty"`
-	progress    uint8  `json:"progress,omitempty"`
-	hasFinished bool
+	PlayerId    string `json:"playerId,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Wpm         uint8  `json:"wpm,omitempty"`
+	Accuracy    uint8  `json:"accuracy,omitempty"`
+	Ranking     uint8  `json:"ranking,omitempty"`
+	Progress    uint8  `json:"progress,omitempty"`
+	HasFinished bool
 }
 
 type WSRequest struct {
 	Type                    string
-	name                    string
-	progress                uint8
-	competitionWordsAmount  uint8
-	competitionPlayerAmount uint8
+	Name                    string
+	Progress                uint8
+	CompetitionWordsAmount  uint8
+	CompetitionPlayerAmount uint8
 }
 
 type WSResponse struct {
 	Type           string       `json:"type"`
-	targetText     []string     `json:"targetText,omitempty"`
-	userId         string       `json:"userId,omitempty"`
-	playersWaiting uint8        `json:"playersWaiting,omitempty"`
-	playersData    []PlayerData `json:"playersData,omitempty"`
+	TargetText     []string     `json:"targetText,omitempty"`
+	PlayerId       string       `json:"playerId,omitempty"`
+	PlayersWaiting uint8        `json:"playersWaiting,omitempty"`
+	PlayersData    []PlayerData `json:"playersData,omitempty"`
 }
 
 type Competition struct {
@@ -75,20 +75,20 @@ var upgrader = websocket.Upgrader{
 
 func initializePlayer(request *WSRequest, conn *websocket.Conn) {
 	player := Player{
-		socket: conn,
-		userId: uuid.NewString(),
+		socket:   conn,
+		playerId: uuid.NewString(),
 		name: func() string {
-			if request.name == "" {
+			if request.Name == "" {
 				return generatePlayerName()
 			}
-			return request.name
+			return request.Name
 		}(),
 		competition: nil,
 	}
 	// add player to active players
 	existingPlayers[conn] = &player
 
-	log.Println("Initialized player", player.userId, "with name", player.name)
+	log.Println("Initialized player", player.playerId, "with name", player.name)
 }
 
 func joinWaitingRoom(player *Player) {
@@ -120,13 +120,13 @@ func createCompetition(players []*Player) {
 	// initializing the playersData for the competition
 	playersData := make(map[string]*PlayerData, len(players))
 	for _, player := range players {
-		playersData[player.userId] = &PlayerData{
-			userId:   player.userId,
-			name:     player.name,
-			wpm:      0,
-			accuracy: 0,
-			ranking:  0,
-			progress: 0,
+		playersData[player.playerId] = &PlayerData{
+			PlayerId: player.playerId,
+			Name:     player.name,
+			Wpm:      0,
+			Accuracy: 0,
+			Ranking:  0,
+			Progress: 0,
 		}
 
 		// setting the player competition
@@ -134,17 +134,18 @@ func createCompetition(players []*Player) {
 	}
 
 	competition.playersData = playersData
-	log.Println("competition", competitionId, "created with players", playersData)
 
 	playerIdInfo := make([]PlayerData, len(players))
 	for i, player := range players {
 		playerIdInfo[i] = PlayerData{
-			userId: player.userId,
-			name:   player.name,
+			PlayerId: player.playerId,
+			Name:     player.name,
 		}
 	}
 
-	sendMessageToCompetition(&competition, &WSResponse{Type: "matchFound", targetText: competition.targetText, playersData: playerIdInfo})
+	log.Println("competition", competitionId, "created with players", playerIdInfo)
+
+	sendMessageToCompetition(&competition, &WSResponse{Type: "matchFound", TargetText: competition.targetText, PlayersData: playerIdInfo})
 
 	// handle the countdown
 	time.AfterFunc(COUNTDOWN_TIME*time.Second, func() {
@@ -191,14 +192,14 @@ func handleDisconnection(conn *websocket.Conn) {
 }
 
 func updateProgress(player *Player, request *WSRequest) {
-	player.competition.playersData[player.userId].progress = request.progress
+	player.competition.playersData[player.playerId].Progress = request.Progress
 
 	response := WSResponse{
 		Type: "progress",
-		playersData: []PlayerData{
+		PlayersData: []PlayerData{
 			{
-				userId:   player.userId,
-				progress: request.progress,
+				PlayerId: player.playerId,
+				Progress: request.Progress,
 			},
 		},
 	}
@@ -277,7 +278,7 @@ func sendMessageToCompetition(competition *Competition, response *WSResponse) {
 
 func sendWaitingRoomUpdate() {
 	for _, player := range waitingPlayers {
-		player.socket.WriteJSON(WSResponse{Type: "waiting", playersWaiting: uint8(len(waitingPlayers))})
+		player.socket.WriteJSON(WSResponse{Type: "waiting", PlayersWaiting: uint8(len(waitingPlayers))})
 	}
 }
 
