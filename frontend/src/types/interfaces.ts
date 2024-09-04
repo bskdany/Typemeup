@@ -73,4 +73,14 @@ export type PastTypingTestResult = {
   accuracy: number;
 };
 
+export type PlayerData = {
+  name: string;
+  progress: number;
+  wpm: number;
+  accuracy: number;
+  ranking: number;
+};
 
+export type PlayersData = {
+  [key: string]: PlayerData;
+}

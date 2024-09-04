@@ -2,7 +2,7 @@
 	import { onMount, onDestroy, getContext } from 'svelte';
 	import { userData } from '../../../shared/userData.svelte';
 	import TypingTest from '../typingTest.svelte';
-	import type { TypingContext, TypingContextData, TypingTestRunData } from '../../../types/interfaces';
+	import type { PlayersData, TypingContext, TypingContextData, TypingTestRunData } from '../../../types/interfaces';
 	import { getWebSocket } from '../../../lib/fetch';
 	import CompeteTypingModeResult from './competeTypingModeResult.svelte';
 	import TypingProgress from '../typingProgress.svelte';
@@ -16,17 +16,6 @@
 	let competitionStatus: 'waiting' | 'inProgress' | 'finished' | 'terminated' = $state('waiting');
 
 	// Declare the record type
-	type PlayerData = {
-		name: string;
-		progress: number;
-		wpm: number;
-		accuracy: number;
-		ranking: number;
-	};
-
-	type PlayersData = {
-		[key: string]: PlayerData;
-	};
 
 	// MAPS ARE NOT REACTIVE IN SVELTE5
 	let playersData: PlayersData = $state({});
@@ -67,6 +56,10 @@
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			switch (data.type) {
+				case 'initialized': {
+					playerId = data.playerData.playerId;
+				}
+
 				case 'waiting': {
 					competitionStatus = 'waiting';
 					playersWaiting = data.playersWaiting;
@@ -95,7 +88,6 @@
 					if (player) {
 						player.progress = data.playerData.progress;
 					}
-
 					break;
 				}
 
@@ -105,10 +97,14 @@
 				}
 
 				case 'finished': {
-					const player = data.get(data.progress.playerId);
+					console.log(data);
+					const player = playersData[data.playerData.playerId];
 					if (player) {
-						player.progress = data.progress.amount;
+						player.ranking = data.playerData.ranking;
+						player.wpm = data.playerData.wpm;
+						player.accuracy = data.playerData.accuracy;
 					}
+
 					break;
 				}
 
@@ -149,7 +145,8 @@
 	function handleTypingEnd(data: TypingTestRunData) {
 		typingTestRunData = data;
 		socket.send(JSON.stringify({ type: 'progress', progress: 100 }));
-		socket.send(JSON.stringify({ type: 'finished', data }));
+		socket.send(JSON.stringify({ type: 'finished', wpm: getWpm(data), accuracy: getAccuracy(data) }));
+		competitionStatus = 'finished';
 		onTypingEnd(data);
 	}
 

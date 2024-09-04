@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { asClassComponent } from 'svelte/legacy';
 	import SingleDataContainer from '../../common/singleDataContainer.svelte';
+	import type { PlayersData } from '../../../types/interfaces';
 
 	const {
 		playersData,
 		playerId,
 		restart
 	}: {
-		playersData: Record<string, { name: string; progress: number; wpm: number; accuracy: number; ranking: number }>;
+		playersData: PlayersData;
 		playerId: string;
 		restart: () => void;
 	} = $props();
@@ -23,6 +23,8 @@
 			return 'th';
 		}
 	}
+
+	console.log(playersData);
 </script>
 
 <div id="typingResult" class="bubble">
@@ -39,9 +41,13 @@
 		<div style="display: flex; flex-direction: column; gap: var(--spacing-medium); align-items: center; justify-content: center;">
 			<div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-small);">
 				{#each Object.entries(playersData) as [id, playerData]}
-					<div style={playerId === id ? 'color: var(--accent-color);' : ''}>
-						{playerData.ranking}. {playerData.name} wpm: {playerData.wpm} accuracy: {playerData.accuracy}
-					</div>
+					{#if playerData.ranking > 0}
+						<div style={playerId === id ? 'color: var(--accent-color);' : ''}>
+							{playerData.ranking}. {playerData.name} wpm: {playerData.wpm} accuracy: {playerData.accuracy}%
+						</div>
+					{:else}
+						{playerData.name} progress: {playerData.progress}%
+					{/if}
 				{/each}
 			</div>
 		</div>
@@ -53,6 +59,6 @@
 	</div>
 
 	<div>
-		<button on:click={restart}>Find new game (or press tab!)</button>
+		<button onclick={restart}>Find new game (or press tab!)</button>
 	</div>
 </div>

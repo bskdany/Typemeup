@@ -22,13 +22,13 @@ type Player struct {
 // this is beause if the player leaves the competition and starts a new one while
 // there are still users typing in the old one, the data will be wrong
 type PlayerData struct {
-	PlayerId    string `json:"playerId,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Wpm         uint8  `json:"wpm,omitempty"`
-	Accuracy    uint8  `json:"accuracy,omitempty"`
-	Ranking     uint8  `json:"ranking,omitempty"`
-	HasFinished bool   `json:"ranking,omitempty"`
-	Progress    uint8  `json:"progress,omitempty"`
+	PlayerId    string  `json:"playerId,omitempty"`
+	Name        string  `json:"name,omitempty"`
+	Wpm         float32 `json:"wpm"`
+	Accuracy    float32 `json:"accuracy"`
+	Ranking     uint8   `json:"ranking"`
+	HasFinished bool    `json:"hasFinished,omitempty"`
+	Progress    uint8   `json:"progress"`
 }
 
 type WSRequest struct {
@@ -37,6 +37,8 @@ type WSRequest struct {
 	Progress                uint8
 	CompetitionWordsAmount  uint8
 	CompetitionPlayerAmount uint8
+	Wpm                     float32
+	Accuracy                float32
 }
 
 type WSResponse struct {
@@ -90,6 +92,13 @@ func initializePlayer(request *WSRequest, conn *websocket.Conn) {
 	existingPlayers[conn] = &player
 
 	log.Println("Initialized player", player.playerId, "with name", player.name)
+	conn.WriteJSON(&WSResponse{
+		Type: "initialized",
+		PlayerData: PlayerData{
+			PlayerId: player.playerId,
+			Name:     player.name,
+		},
+	})
 }
 
 func joinWaitingRoom(player *Player) {
@@ -205,8 +214,23 @@ func updateProgress(player *Player, request *WSRequest) {
 	sendMessageToCompetition(player.competition, &response)
 }
 
-func playerFinished(player *Player, requests *WSRequest) {
-	sendMessageToCompetition(player.competition, &WSResponse{})
+func playerFinished(player *Player, request *WSRequest) {
+
+	player.competition.activePlayers -= 1
+	playerRanking := player.competition.capacity - player.competition.activePlayers
+
+	player.competition.playersData[player.playerId].Wpm = request.Wpm
+	player.competition.playersData[player.playerId].Accuracy = request.Accuracy
+	player.competition.playersData[player.playerId].Ranking = playerRanking
+
+	sendMessageToCompetition(player.competition, &WSResponse{Type: "finished",
+		PlayerData: PlayerData{
+			PlayerId: player.playerId,
+			Ranking:  playerRanking,
+			Wpm:      request.Wpm,
+			Accuracy: request.Accuracy,
+		},
+	})
 
 }
 
