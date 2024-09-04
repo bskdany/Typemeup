@@ -1,15 +1,16 @@
 <script lang="ts">
+	import { asClassComponent } from 'svelte/legacy';
 	import SingleDataContainer from '../../common/singleDataContainer.svelte';
 
 	const {
-		wpm,
-		accuracy,
-		competitionRanking,
-		playerName,
+		playersData,
+		playerId,
 		restart
-	}: { wpm: string; accuracy: string; competitionRanking: { playerName: string; rank: number }[]; playerName: string; restart: () => void } = $props();
-
-	let playerRank = competitionRanking.find((player) => player.playerName === playerName)?.rank ?? 0;
+	}: {
+		playersData: Record<string, { name: string; progress: number; wpm: number; accuracy: number; ranking: number }>;
+		playerId: string;
+		restart: () => void;
+	} = $props();
 
 	function rankingTextFormatter(ranking: number) {
 		if (ranking === 1) {
@@ -28,48 +29,30 @@
 	<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-medium); width: 100%;">
 		<div style="display: flex; flex-direction: row; align-items: center; justify-content: center">
 			<div style="font-size: 3rem; color: var(--accent-color); position: relative; bottom: 0">
-				{playerRank}
+				{playersData[playerId]?.ranking}
 			</div>
 			<div style="position: relative; bottom: 0;">
-				{rankingTextFormatter(playerRank)} place
+				{rankingTextFormatter(playersData[playerId]?.ranking ?? 0)} place
 			</div>
 		</div>
 
 		<div style="display: flex; flex-direction: column; gap: var(--spacing-medium); align-items: center; justify-content: center;">
 			<div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-small);">
-				{#each competitionRanking as ranking}
-					{#if ranking.playerName === playerName}
-						<div style="color: var(--accent-color);">{ranking.rank}. {ranking.playerName}</div>
-					{:else}
-						<div>{ranking.rank}. {ranking.playerName}</div>
-					{/if}
+				{#each Object.entries(playersData) as [id, playerData]}
+					<div style={playerId === id ? 'color: var(--accent-color);' : ''}>
+						{playerData.ranking}. {playerData.name} wpm: {playerData.wpm} accuracy: {playerData.accuracy}
+					</div>
 				{/each}
 			</div>
 		</div>
 
 		<div>
-			<SingleDataContainer title="wpm" data={wpm} data_rem={2.5} />
-			<SingleDataContainer title="accuracy" data={accuracy + '%'} data_rem={2.5} />
+			<SingleDataContainer title="wpm" data={playersData[playerId]?.wpm} data_rem={2.5} />
+			<SingleDataContainer title="accuracy" data={playersData[playerId]?.accuracy + '%'} data_rem={2.5} />
 		</div>
 	</div>
 
 	<div>
-		<button onclick={() => restart()}>Find new game (or press tab!)</button>
+		<button on:click={restart}>Find new game (or press tab!)</button>
 	</div>
 </div>
-
-<style>
-	#typingResult {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: space-around;
-		gap: var(--spacing-medium);
-		width: auto;
-		height: fit-content;
-	}
-
-	/* #restartButton {
-		font-size: 1rem;
-	} */
-</style>

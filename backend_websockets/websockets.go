@@ -27,8 +27,8 @@ type PlayerData struct {
 	Wpm         uint8  `json:"wpm,omitempty"`
 	Accuracy    uint8  `json:"accuracy,omitempty"`
 	Ranking     uint8  `json:"ranking,omitempty"`
+	HasFinished bool   `json:"ranking,omitempty"`
 	Progress    uint8  `json:"progress,omitempty"`
-	HasFinished bool
 }
 
 type WSRequest struct {
@@ -45,6 +45,7 @@ type WSResponse struct {
 	PlayerId       string       `json:"playerId,omitempty"`
 	PlayersWaiting uint8        `json:"playersWaiting,omitempty"`
 	PlayersData    []PlayerData `json:"playersData,omitempty"`
+	PlayerData     PlayerData   `json:"playerData,omitempty"`
 }
 
 type Competition struct {
@@ -126,7 +127,6 @@ func createCompetition(players []*Player) {
 			Wpm:      0,
 			Accuracy: 0,
 			Ranking:  0,
-			Progress: 0,
 		}
 
 		// setting the player competition
@@ -196,11 +196,9 @@ func updateProgress(player *Player, request *WSRequest) {
 
 	response := WSResponse{
 		Type: "progress",
-		PlayersData: []PlayerData{
-			{
-				PlayerId: player.playerId,
-				Progress: request.Progress,
-			},
+		PlayerData: PlayerData{
+			PlayerId: player.playerId,
+			Progress: request.Progress,
 		},
 	}
 

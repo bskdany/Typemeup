@@ -7,19 +7,35 @@
 	import CompeteTypingModeResult from './competeTypingModeResult.svelte';
 	import TypingProgress from '../typingProgress.svelte';
 	import { getAccuracy, getWpm } from '../../../lib/typingTestRunHelper';
+	import { Map } from 'svelte/reactivity';
 
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 
 	let typingTestRef: TypingTest;
 	let socket: WebSocket;
 	let competitionStatus: 'waiting' | 'inProgress' | 'finished' | 'terminated' = $state('waiting');
-	let playersProgress: { userId: string; progress: 0 }[] = $state([]);
+
+	// Declare the record type
+	type PlayerData = {
+		name: string;
+		progress: number;
+		wpm: number;
+		accuracy: number;
+		ranking: number;
+	};
+
+	type PlayersData = {
+		[key: string]: PlayerData;
+	};
+
+	// MAPS ARE NOT REACTIVE IN SVELTE5
+	let playersData: PlayersData = $state({});
+
 	let targetText: string[] = $state([]);
 	let typingTestRunData: TypingTestRunData;
-	let competitionRanking: { playerName: string; rank: number }[] = $state([]);
-	let playerName: string = $state('');
-	let playersWaiting: number = $state(0);
+	let playerId: string = $state('');
 
+	let playersWaiting: number = $state(0);
 	let displayCountdown: boolean = $state(false);
 	let displayTimer: boolean = $state(false);
 	let countdownTime: number = $state(3);
@@ -45,58 +61,73 @@
 
 		socket = getWebSocket();
 		socket.onopen = () => {
-			socket.send(JSON.stringify({ type: 'join', userId: userData.username }));
+			socket.send(JSON.stringify({ type: 'join', name: userData.username }));
 		};
 
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			switch (data.type) {
-				case 'waiting':
+				case 'waiting': {
 					competitionStatus = 'waiting';
-					console.log(playerName);
-					playerName = data.playerName;
 					playersWaiting = data.playersWaiting;
 					break;
-				case 'matchFound':
+				}
+
+				case 'matchFound': {
 					competitionStatus = 'inProgress';
 					targetText = data.targetText;
 
-					data.players.forEach((userId: string) => {
-						playersProgress.push({ userId, progress: 0 });
+					data.playersData.forEach((playerData: { name: string; playerId: string }) => {
+						playersData[playerData.playerId] = {
+							name: playerData.name,
+							progress: 0,
+							wpm: 0,
+							accuracy: 0,
+							ranking: 0
+						};
 					});
+
 					break;
-				case 'progress':
-					const player = playersProgress.find((player) => player.userId === data.progress.userId);
+				}
+
+				case 'progress': {
+					const player = playersData[data.playerData.playerId];
+					if (player) {
+						player.progress = data.playerData.progress;
+					}
+
+					break;
+				}
+
+				case 'startCountdown': {
+					startCountdown();
+					break;
+				}
+
+				case 'finished': {
+					const player = data.get(data.progress.playerId);
 					if (player) {
 						player.progress = data.progress.amount;
 					}
 					break;
-				case 'startCountdown':
-					startCountdown();
-					break;
+				}
 
-				case 'finished':
-					competitionStatus = 'finished';
-					console.log(data);
-					competitionRanking = data.rankings;
-					break;
+				// case 'terminated':
+				// 	competitionStatus = 'terminated';
+				// 	competitionRanking = data.rankings;
+				// 	break;
 
-				case 'terminated':
-					competitionStatus = 'terminated';
-					competitionRanking = data.rankings;
-					break;
+				// case 'firstFinisherNotification':
+				// 	displayTimer = true;
+				// 	const timerInterval = setInterval(() => {
+				// 		remainingTime--;
+				// 	}, 1000);
 
-				case 'firstFinisherNotification':
-					displayTimer = true;
-					const timerInterval = setInterval(() => {
-						remainingTime--;
-					}, 1000);
-
-					setTimeout(() => {
-						clearInterval(timerInterval);
-						displayTimer = false;
-					}, 30000);
-					break;
+				// 	setTimeout(() => {
+				// 		clearInterval(timerInterval);
+				// 		displayTimer = false;
+				// 	}, 30000);
+				// 	break;
 			}
 		};
 	});
@@ -138,10 +169,10 @@
 	<div>Waiting for opponents ({playersWaiting}/3)...</div>
 {:else if competitionStatus === 'inProgress'}
 	<div>
-		{#each playersProgress as player}
+		{#each Object.entries(playersData) as [id, playerData]}
 			<div class="progress-container">
-				<div class="progress-bar" style="width: {player.progress}%;">
-					<span class="progress-text">{player.userId}: {player.progress}%</span>
+				<div class="progress-bar" style="width: {playerData.progress}%;">
+					<span class="progress-text">{playerData.name}: {playerData.progress}%</span>
 				</div>
 			</div>
 		{/each}
@@ -182,16 +213,8 @@
 			/>
 		{/if}
 	</div>
-{:else if competitionStatus === 'finished'}
-	<CompeteTypingModeResult
-		wpm={getWpm(typingTestRunData).toString()}
-		accuracy={getAccuracy(typingTestRunData).toString()}
-		{competitionRanking}
-		{playerName}
-		restart={() => (competitionStatus = 'waiting')}
-	/>
-{:else if competitionStatus === 'terminated'}
-	<CompeteTypingModeResult wpm={'N/A'} accuracy={'N/A'} {competitionRanking} {playerName} restart={() => (competitionStatus = 'waiting')} />
+{:else if competitionStatus === 'finished' || competitionStatus === 'terminated'}
+	<CompeteTypingModeResult {playersData} {playerId} restart={() => (competitionStatus = 'waiting')} />
 {/if}
 
 <style>
