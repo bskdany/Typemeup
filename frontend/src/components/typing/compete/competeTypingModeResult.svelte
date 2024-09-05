@@ -24,18 +24,24 @@
 		}
 	}
 
+	console.log(playersData[playerId]?.ranking);
+	let hasPlayerFinished = $state(playersData[playerId]?.ranking > 0);
 	console.log(playersData);
 </script>
 
 <div id="typingResult" class="bubble">
 	<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-medium); width: 100%;">
 		<div style="display: flex; flex-direction: row; align-items: center; justify-content: center">
-			<div style="font-size: 3rem; color: var(--accent-color); position: relative; bottom: 0">
-				{playersData[playerId]?.ranking}
-			</div>
-			<div style="position: relative; bottom: 0;">
-				{rankingTextFormatter(playersData[playerId]?.ranking ?? 0)} place
-			</div>
+			{#if hasPlayerFinished}
+				<div style="font-size: 3rem; color: var(--accent-color); position: relative; bottom: 0">
+					{playersData[playerId]?.ranking}
+				</div>
+				<div style="position: relative; bottom: 0;">
+					{rankingTextFormatter(playersData[playerId]?.ranking ?? 0)} place
+				</div>
+			{:else}
+				<div style="font-size: 3rem; color: var(--accent-color); position: relative; bottom: 0">DNF</div>
+			{/if}
 		</div>
 
 		<div style="display: flex; flex-direction: column; gap: var(--spacing-medium); align-items: center; justify-content: center;">
@@ -55,12 +61,21 @@
 		</div>
 
 		<div>
-			<SingleDataContainer title="wpm" data={playersData[playerId]?.wpm} data_rem={2.5} />
-			<SingleDataContainer title="accuracy" data={playersData[playerId]?.accuracy + '%'} data_rem={2.5} />
+			{#if hasPlayerFinished}
+				<SingleDataContainer title="wpm" data={playersData[playerId]?.wpm} data_rem={2.5} />
+			{:else}
+				<SingleDataContainer title="wpm" data={'N/A'} data_rem={2.5} />
+			{/if}
+
+			{#if hasPlayerFinished}
+				<SingleDataContainer title="accuracy" data={playersData[playerId]?.accuracy + '%'} data_rem={2.5} />
+			{:else}
+				<SingleDataContainer title="accuracy" data={'N/A'} data_rem={2.5} />
+			{/if}
 		</div>
 	</div>
 
-	<div>
-		<button onclick={restart}>Find new game (or press tab!)</button>
+	<div style="display: flex; justify-content:center">
+		<button onclick={restart}>Find new game (or press tab)</button>
 	</div>
 </div>
