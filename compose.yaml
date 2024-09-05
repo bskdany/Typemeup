@@ -31,3 +31,8 @@ services:
       - "${PORT_BACKEND}:3000"
     volumes:
       - "${PATH_TO_DB}:/data"
+
+  backend_websockets:
+    build:
+      context: .
+      dockerfile: ./backend_websockets/Dockerfile
