@@ -34,5 +34,5 @@ services:
 
   backend_websockets:
     build:
-      context: .
-      dockerfile: ./backend_websockets/Dockerfile
+      context: ./backend_websockets
+      dockerfile: ./Dockerfile
