@@ -8,6 +8,7 @@
 	import TypingProgress from '../typingProgress.svelte';
 	import { getAccuracy, getWpm } from '../../../lib/typingTestRunHelper';
 	import { Map } from 'svelte/reactivity';
+	import type { AnymatchFn } from 'vite';
 
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 
@@ -28,14 +29,15 @@
 	let displayCountdown: boolean = $state(false);
 	let displayTimer: boolean = $state(false);
 	let countdownTime: number = $state(3);
-	let remainingTime: number = $state(30);
+	let remainingTime: number = $state(10);
+	let timeoutTimer: any;
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
 
 	function startCountdown() {
 		displayCountdown = true;
-		const countdownInterval = setInterval(() => {
+		let countdownInterval = setInterval(() => {
 			countdownTime--;
 		}, 1000);
 
@@ -45,6 +47,19 @@
 		}, 3000);
 	}
 
+	function startTimeout() {
+		console.log('AAAAAAA');
+		displayTimer = true;
+		const timerInterval = setInterval(() => {
+			remainingTime--;
+		}, 1000);
+
+		setTimeout(() => {
+			clearInterval(timerInterval);
+			displayTimer = false;
+		}, 10 * 1000);
+	}
+
 	function joinWaitlist() {
 		socket.send(JSON.stringify({ type: 'waitlist' }));
 	}
@@ -52,7 +67,32 @@
 	function restart() {
 		competitionStatus = 'waiting';
 		playersData = {};
+		countdownTime = 3;
+		remainingTime = 10;
+
 		joinWaitlist();
+	}
+
+	function handleTypingProgress(progress: number) {
+		socket.send(JSON.stringify({ type: 'progress', progress }));
+	}
+
+	function handleTypingEnd(data: TypingTestRunData) {
+		typingTestRunData = data;
+		socket.send(JSON.stringify({ type: 'progress', progress: 100 }));
+		socket.send(JSON.stringify({ type: 'finished', wpm: getWpm(data), accuracy: getAccuracy(data) }));
+		onTypingEnd(data);
+	}
+
+	function handleTabKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Tab') {
+			event.preventDefault();
+			if (competitionStatus === 'finished' || competitionStatus == 'terminated') {
+				restart();
+			}
+		}
+
+		typingTestRef?.focus();
 	}
 
 	onMount(() => {
@@ -108,7 +148,6 @@
 				}
 
 				case 'finished': {
-					console.log(data);
 					const player = playersData[data.playerData.playerId];
 					if (player) {
 						player.ranking = data.playerData.ranking;
@@ -116,25 +155,20 @@
 						player.accuracy = data.playerData.accuracy;
 					}
 
+					if (data.playerData.playerId === playerId) {
+						competitionStatus = 'finished';
+					}
+
 					break;
 				}
 
-				// case 'terminated':
-				// 	competitionStatus = 'terminated';
-				// 	competitionRanking = data.rankings;
-				// 	break;
+				case 'terminated':
+					competitionStatus = 'terminated';
+					break;
 
-				// case 'firstFinisherNotification':
-				// 	displayTimer = true;
-				// 	const timerInterval = setInterval(() => {
-				// 		remainingTime--;
-				// 	}, 1000);
-
-				// 	setTimeout(() => {
-				// 		clearInterval(timerInterval);
-				// 		displayTimer = false;
-				// 	}, 30000);
-				// 	break;
+				case 'startTimeout':
+					startTimeout();
+					break;
 			}
 		};
 	});
@@ -148,29 +182,6 @@
 			document.removeEventListener('keydown', handleTabKeyDown);
 		} catch (e) {}
 	});
-
-	function handleTypingProgress(progress: number) {
-		socket.send(JSON.stringify({ type: 'progress', progress }));
-	}
-
-	function handleTypingEnd(data: TypingTestRunData) {
-		typingTestRunData = data;
-		socket.send(JSON.stringify({ type: 'progress', progress: 100 }));
-		socket.send(JSON.stringify({ type: 'finished', wpm: getWpm(data), accuracy: getAccuracy(data) }));
-		competitionStatus = 'finished';
-		onTypingEnd(data);
-	}
-
-	function handleTabKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Tab') {
-			event.preventDefault();
-			if (competitionStatus === 'finished') {
-				restart();
-			}
-		}
-
-		typingTestRef?.focus();
-	}
 </script>
 
 {#if competitionStatus === 'waiting'}
@@ -195,6 +206,7 @@
 			{:else}
 				<div style="visibility: hidden;"><TypingProgress /></div>
 			{/if}
+
 			{#if displayTimer}
 				<div class="timer">{remainingTime}</div>
 			{/if}

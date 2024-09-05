@@ -62,6 +62,7 @@ type Competition struct {
 
 const PLAYERS_PER_COMPETITION = 2
 const COUNTDOWN_TIME = 3
+const TIMEOUT_TIME = 10
 
 var COMPETITION_ID = 0
 
@@ -104,6 +105,8 @@ func initializePlayer(request *WSRequest, conn *websocket.Conn) {
 func joinWaitingRoom(player *Player) {
 	// reset the player competition data
 	if player.competition != nil {
+		// disconnect the link between the player and the previous competition
+		delete(player.competition.players, player.playerId)
 		player.competition = nil
 		log.Println("Player", player.name, "disconnected from previous competition")
 	}
@@ -167,6 +170,7 @@ func createCompetition(players []*Player) {
 	log.Println("competition", competitionId, "created with players", playerIdInfo)
 
 	sendMessageToCompetition(&competition, &WSResponse{Type: "matchFound", TargetText: competition.targetText, PlayersData: playerIdInfo})
+	sendMessageToCompetition(&competition, &WSResponse{Type: "startCountdown"})
 
 	// handle the countdown
 	time.AfterFunc(COUNTDOWN_TIME*time.Second, func() {
@@ -192,10 +196,10 @@ func handleDisconnection(conn *websocket.Conn) {
 	}
 
 	if player.competition != nil {
-		player.competition.activePlayers -= 1
+		delete(player.competition.players, player.playerId)
 		log.Println("player", player.name, "disconnected")
 
-		if player.competition.activePlayers == 0 {
+		if len(player.competition.players) == 0 {
 			removeCompetition(player.competition)
 		}
 	} else {
@@ -230,14 +234,14 @@ func updateProgress(player *Player, request *WSRequest) {
 
 func playerFinished(player *Player, request *WSRequest) {
 
-	player.competition.activePlayers -= 1
-	playerRanking := player.competition.capacity - player.competition.activePlayers
+	competition := player.competition
+	playerRanking := competition.capacity - competition.activePlayers + 1
 
-	player.competition.playersData[player.playerId].Wpm = request.Wpm
-	player.competition.playersData[player.playerId].Accuracy = request.Accuracy
-	player.competition.playersData[player.playerId].Ranking = playerRanking
+	competition.playersData[player.playerId].Wpm = request.Wpm
+	competition.playersData[player.playerId].Accuracy = request.Accuracy
+	competition.playersData[player.playerId].Ranking = playerRanking
 
-	sendMessageToCompetition(player.competition, &WSResponse{Type: "finished",
+	sendMessageToCompetition(competition, &WSResponse{Type: "finished",
 		PlayerData: PlayerData{
 			PlayerId: player.playerId,
 			Ranking:  playerRanking,
@@ -246,16 +250,31 @@ func playerFinished(player *Player, request *WSRequest) {
 		},
 	})
 
-	log.Println("Player", player.name, "finished the competition")
+	// if the first player has finished send a countdown message to the competition
+	if competition.activePlayers == competition.capacity {
+		sendMessageToCompetition(competition, &WSResponse{
+			Type: "startTimeout",
+		})
 
-	// remove player from receiving competition updates
-	delete(player.competition.players, player.playerId)
-
-	if player.competition.activePlayers == 0 {
-		removeCompetition(player.competition)
+		// terminate the competition after the countdown
+		time.AfterFunc(TIMEOUT_TIME*time.Second, func() {
+			if len(competition.players) > 0 {
+				sendMessageToCompetition(competition, &WSResponse{
+					Type: "terminated",
+				})
+			}
+		})
 	}
 
-	log.Println("Players in competition", len(player.competition.players))
+	log.Println("Player", player.name, "finished the competition")
+
+	player.competition.activePlayers -= 1
+
+	if len(competition.players) == 0 {
+		removeCompetition(competition)
+	} else {
+		log.Println("Players in competition", len(competition.players))
+	}
 }
 
 func handler(writer http.ResponseWriter, request *http.Request) {
