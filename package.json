@@ -4,6 +4,7 @@
   "description": "An alghorithmically enhanced typing website",
   "main": "index.js",
   "scripts": {
+    "dev:backend_websockets": "cd backend_websockets && go run .",
     "install": "npm run install:frontend && npm run install:backend",
     "install:frontend": "cd frontend && npm install",
     "install:backend": "cd backend && npm install",
@@ -14,7 +15,7 @@
     "start:backend": "cd backend && npm start",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd backend && npm run dev",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:backend_websockets\"",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "deploy": "npm run build && npm run start",
     "check": "cd backend && npm run check && cd .. && cd frontend && npm run check"
