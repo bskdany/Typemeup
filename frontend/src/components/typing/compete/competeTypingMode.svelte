@@ -7,8 +7,6 @@
 	import CompeteTypingModeResult from './competeTypingModeResult.svelte';
 	import TypingProgress from '../typingProgress.svelte';
 	import { getAccuracy, getWpm } from '../../../lib/typingTestRunHelper';
-	import { Map } from 'svelte/reactivity';
-	import type { AnymatchFn } from 'vite';
 
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 
@@ -16,7 +14,9 @@
 	let socket: WebSocket;
 	let competitionStatus: 'waiting' | 'inProgress' | 'finished' | 'terminated' = $state('waiting');
 
-	// Declare the record type
+	const COUNTDOWN_TIME = 3;
+	const TIMER_TIME = 10;
+	const PLAYERS_PER_COMPETITION = 3;
 
 	// MAPS ARE NOT REACTIVE IN SVELTE5
 	let playersData: PlayersData = $state({});
@@ -24,13 +24,13 @@
 	let targetText: string[] = $state([]);
 	let typingTestRunData: TypingTestRunData;
 	let playerId: string = $state('');
+	let playerName: string = $state('');
 
 	let playersWaiting: number = $state(0);
 	let displayCountdown: boolean = $state(false);
 	let displayTimer: boolean = $state(false);
-	let countdownTime: number = $state(3);
-	let remainingTime: number = $state(10);
-	let timeoutTimer: any;
+	let countdownTime: number = $state(COUNTDOWN_TIME);
+	let remainingTime: number = $state(TIMER_TIME);
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
@@ -44,11 +44,10 @@
 		setTimeout(() => {
 			clearInterval(countdownInterval);
 			displayCountdown = false;
-		}, 3000);
+		}, COUNTDOWN_TIME * 1000);
 	}
 
 	function startTimeout() {
-		console.log('AAAAAAA');
 		displayTimer = true;
 		const timerInterval = setInterval(() => {
 			remainingTime--;
@@ -57,7 +56,7 @@
 		setTimeout(() => {
 			clearInterval(timerInterval);
 			displayTimer = false;
-		}, 10 * 1000);
+		}, TIMER_TIME * 1000);
 	}
 
 	function joinWaitlist() {
@@ -67,9 +66,8 @@
 	function restart() {
 		competitionStatus = 'waiting';
 		playersData = {};
-		countdownTime = 3;
-		remainingTime = 10;
-
+		countdownTime = COUNTDOWN_TIME;
+		remainingTime = TIMER_TIME;
 		joinWaitlist();
 	}
 
@@ -109,11 +107,37 @@
 			switch (data.type) {
 				case 'initialized': {
 					playerId = data.playerData.playerId;
+					playerName = data.playerData.playerName;
+					break;
 				}
 
 				case 'waiting': {
 					competitionStatus = 'waiting';
-					playersWaiting = data.playersWaiting;
+
+					// set the waiting players data to the playersData
+					playersData = {};
+					data.playersData.forEach((playerData: { name: string; playerId: string }) => {
+						playersData[playerData.playerId] = {
+							name: playerData.name,
+							progress: 0,
+							wpm: 0,
+							accuracy: 0,
+							ranking: 0
+						};
+					});
+
+					playersWaiting = data.playersData.length;
+
+					// add placeholder players to keep the number of playes always 3
+					for (let i = Object.keys(playersData).length; i < PLAYERS_PER_COMPETITION; i++) {
+						playersData[i] = {
+							name: '...',
+							progress: 0,
+							wpm: 0,
+							accuracy: 0,
+							ranking: 0
+						};
+					}
 					break;
 				}
 
@@ -121,6 +145,7 @@
 					competitionStatus = 'inProgress';
 					targetText = data.targetText;
 
+					playersData = {};
 					data.playersData.forEach((playerData: { name: string; playerId: string }) => {
 						playersData[playerData.playerId] = {
 							name: playerData.name,
@@ -185,16 +210,30 @@
 </script>
 
 {#if competitionStatus === 'waiting'}
-	<div>Waiting for opponents ({playersWaiting}/3)...</div>
-{:else if competitionStatus === 'inProgress'}
-	<div>
+	<div class="progress-container">
 		{#each Object.entries(playersData) as [id, playerData]}
-			<div class="progress-container">
+			<div class="player-progress">
 				<div class="progress-bar" style="width: {playerData.progress}%;">
-					<span class="progress-text">{playerData.name}: {playerData.progress}%</span>
+					<span class="progress-text">{playerData.name}</span>
 				</div>
 			</div>
 		{/each}
+		<div style="text-align: center;">Waiting for opponents ({playersWaiting}/3)...</div>
+	</div>
+{:else if competitionStatus === 'inProgress'}
+	<div>
+		<div class="progress-container">
+			{#each Object.entries(playersData) as [id, playerData]}
+				<div class="player-progress">
+					<div class="progress-bar" style="width: {playerData.progress}%;">
+						<span class="progress-text">
+							<span>{playerData.name}</span>
+							<span>{playerData.progress}%</span>
+						</span>
+					</div>
+				</div>
+			{/each}
+		</div>
 
 		<div style="display: flex; flex-direction: row; justify-content: space-between;">
 			{#if displayCountdown}
@@ -239,10 +278,15 @@
 
 <style>
 	.progress-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-medium);
+	}
+
+	.player-progress {
 		width: 100%;
 		background-color: var(--primary-color);
 		border-radius: var(--border-radius);
-		margin-bottom: var(--spacing-medium);
 	}
 
 	.progress-bar {
@@ -254,12 +298,15 @@
 
 	.progress-text {
 		color: var(--text-color);
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
 		height: 100%;
-		padding-right: 10px;
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		align-items: center;
+		gap: var(--spacing-small);
+		padding: 0 var(--spacing-small) 0 var(--spacing-small);
 		font-weight: bold;
+		text-wrap: nowrap;
 	}
 
 	.timer {

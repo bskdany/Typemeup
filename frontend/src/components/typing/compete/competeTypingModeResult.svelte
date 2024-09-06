@@ -24,9 +24,7 @@
 		}
 	}
 
-	console.log(playersData[playerId]?.ranking);
 	let hasPlayerFinished = $state(playersData[playerId]?.ranking > 0);
-	console.log(playersData);
 </script>
 
 <div id="typingResult" class="bubble">

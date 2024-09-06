@@ -60,7 +60,7 @@ type Competition struct {
 	playersData          map[string]*PlayerData
 }
 
-const PLAYERS_PER_COMPETITION = 2
+const PLAYERS_PER_COMPETITION = 3
 const COUNTDOWN_TIME = 3
 const TIMEOUT_TIME = 10
 
@@ -159,17 +159,8 @@ func createCompetition(players []*Player) {
 
 	competition.playersData = playersData
 
-	playerIdInfo := make([]PlayerData, len(players))
-	for i, player := range players {
-		playerIdInfo[i] = PlayerData{
-			PlayerId: player.playerId,
-			Name:     player.name,
-		}
-	}
-
-	log.Println("competition", competitionId, "created with players", playerIdInfo)
-
-	sendMessageToCompetition(&competition, &WSResponse{Type: "matchFound", TargetText: competition.targetText, PlayersData: playerIdInfo})
+	log.Println("competition", competitionId)
+	sendMessageToCompetition(&competition, &WSResponse{Type: "matchFound", PlayersData: *generatePlayersData(players), TargetText: competition.targetText})
 	sendMessageToCompetition(&competition, &WSResponse{Type: "startCountdown"})
 
 	// handle the countdown
@@ -351,11 +342,23 @@ func sendMessageToCompetition(competition *Competition, response *WSResponse) {
 
 func sendWaitingRoomUpdate() {
 	for _, player := range waitingPlayers {
-		player.socket.WriteJSON(WSResponse{Type: "waiting", PlayersWaiting: uint8(len(waitingPlayers))})
+		player.socket.WriteJSON(WSResponse{Type: "waiting", PlayersData: *generatePlayersData(waitingPlayers)})
 	}
 }
 
 func generatePlayerName() string {
 	nameGenerator := namegenerator.NewNameGenerator(time.Now().UnixNano())
 	return nameGenerator.Generate()
+}
+
+func generatePlayersData(players []*Player) *[]PlayerData {
+	playersData := make([]PlayerData, len(players))
+
+	for i, player := range players {
+		playersData[i] = PlayerData{
+			PlayerId: player.playerId,
+			Name:     player.name,
+		}
+	}
+	return &playersData
 }
