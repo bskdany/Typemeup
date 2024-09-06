@@ -57,6 +57,9 @@
 	});
 </script>
 
+<svelte:head>
+	<script defer src="https://analytics.bskdany.com/script.js" data-website-id={import.meta.env.VITE_ANALYTICS_ID}></script>
+</svelte:head>
 <div id="app" bind:this={appBind}>
 	<div id="toastContainer">
 		{#each toastList as toast}

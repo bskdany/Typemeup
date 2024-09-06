@@ -16,6 +16,7 @@ services:
         - VITE_URL_BACKEND=${VITE_URL_BACKEND}
         - VITE_PORT_FRONTEND=${VITE_PORT_FRONTEND}
         - VITE_URL_BACKEND_WS=${VITE_URL_BACKEND_WS}
+        - VITE_ANALYTICS_ID=${VITE_ANALYTICS_ID}
     env_file:
       - .env
     ports:
