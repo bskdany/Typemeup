@@ -58,7 +58,8 @@ body {
   min-width: 100dvw;
 }
 
-div {
+div,
+span {
   color: var(--text-color);
 }
 

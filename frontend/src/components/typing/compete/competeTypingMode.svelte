@@ -230,63 +230,67 @@
 		{#each Object.entries(playersData) as [id, playerData]}
 			<div class="player-progress">
 				<div class="progress-bar" style="width: {playerData.progress}%;">
-					<span class="progress-text">{playerData.name}</span>
+					<span class="progress-text">
+						<span style={id === playerId ? 'color: var(--accent-color);' : 'color: var(--text-color);'}>{playerData.name}</span>
+					</span>
 				</div>
 			</div>
 		{/each}
 		<div style="text-align: center;">Waiting for opponents ({playersWaiting}/3)...</div>
 	</div>
 {:else if competitionStatus === 'inProgress'}
-	<div>
+	<div style="display: flex; flex-direction: column; gap: var(--spacing-medium);">
 		<div class="progress-container">
 			{#each Object.entries(playersData) as [id, playerData]}
 				<div class="player-progress">
-					<div class="progress-bar" style="width: {playerData.progress}%;">
+					<div class="progress-bar" style="width: {playerData.progress}%; }">
 						<span class="progress-text">
-							<span>{playerData.name}</span>
-							<span>{playerData.progress}%</span>
+							<span style={id === playerId ? 'color: var(--accent-color);' : 'color: var(--text-color);'}>{playerData.name}</span>
+							<span style={id === playerId ? 'color: var(--accent-color);' : 'color: var(--text-color);'}>{playerData.progress}%</span>
 						</span>
 					</div>
 				</div>
 			{/each}
 		</div>
 
-		<div style="display: flex; flex-direction: row; justify-content: space-between;">
+		<div>
+			<div style="display: flex; flex-direction: row; justify-content: space-between;">
+				{#if displayCountdown}
+					<div class="progress-info">{countdownTime}</div>
+				{/if}
+
+				{#if typingContextData.typingTestStatus === 'started'}
+					<div class="progress-info">{typingContextData.progressWordsTyped}|25</div>
+				{:else}
+					<div style="visibility: hidden;"><TypingProgress /></div>
+				{/if}
+
+				{#if displayTimer}
+					<div class="progress-info">{remainingTime}</div>
+				{/if}
+			</div>
+
 			{#if displayCountdown}
-				<div class="progress-info">{countdownTime}</div>
-			{/if}
-
-			{#if typingContextData.typingTestStatus === 'started'}
-				<div class="progress-info">{typingContextData.progressWordsTyped}|25</div>
+				<TypingTest
+					bind:this={typingTestRef}
+					{targetText}
+					inputBlocked={true}
+					errorCorrectionMode={2}
+					typingEndMode="words"
+					onProgress={handleTypingProgress}
+					testEnded={handleTypingEnd}
+				/>
 			{:else}
-				<div style="visibility: hidden;"><TypingProgress /></div>
-			{/if}
-
-			{#if displayTimer}
-				<div class="progress-info">{remainingTime}</div>
+				<TypingTest
+					bind:this={typingTestRef}
+					{targetText}
+					errorCorrectionMode={2}
+					typingEndMode="words"
+					onProgress={handleTypingProgress}
+					testEnded={handleTypingEnd}
+				/>
 			{/if}
 		</div>
-
-		{#if displayCountdown}
-			<TypingTest
-				bind:this={typingTestRef}
-				{targetText}
-				inputBlocked={true}
-				errorCorrectionMode={2}
-				typingEndMode="words"
-				onProgress={handleTypingProgress}
-				testEnded={handleTypingEnd}
-			/>
-		{:else}
-			<TypingTest
-				bind:this={typingTestRef}
-				{targetText}
-				errorCorrectionMode={2}
-				typingEndMode="words"
-				onProgress={handleTypingProgress}
-				testEnded={handleTypingEnd}
-			/>
-		{/if}
 	</div>
 {:else if competitionStatus === 'finished' || competitionStatus === 'terminated'}
 	<CompeteTypingModeResult {playersData} {playerId} {restart} />
@@ -301,15 +305,15 @@
 
 	.player-progress {
 		width: 100%;
-		background-color: var(--primary-color);
+		background-color: var(--secondary-color);
 		border-radius: var(--border-radius);
 	}
 
 	.progress-bar {
 		height: 30px;
-		background-color: var(--accent-color);
 		border-radius: var(--border-radius);
 		transition: width 0.5s ease-in-out;
+		background-color: var(--primary-color);
 	}
 
 	.progress-text {
