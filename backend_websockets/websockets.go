@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand/v2"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -43,7 +46,7 @@ type WSRequest struct {
 
 type WSResponse struct {
 	Type           string       `json:"type"`
-	TargetText     []string     `json:"targetText,omitempty"`
+	TargetText     [25]string   `json:"targetText,omitempty"`
 	PlayerId       string       `json:"playerId,omitempty"`
 	PlayersWaiting uint8        `json:"playersWaiting,omitempty"`
 	PlayersData    []PlayerData `json:"playersData,omitempty"`
@@ -53,7 +56,7 @@ type WSResponse struct {
 type Competition struct {
 	id                   int
 	players              map[string]*Player
-	targetText           []string
+	targetText           [25]string
 	hasCountDownFinished bool
 	capacity             uint8
 	activePlayers        uint8
@@ -135,7 +138,7 @@ func createCompetition(players []*Player) {
 	competition := Competition{
 		id:                   competitionId,
 		players:              playerMap,
-		targetText:           []string{"Hello", "world"},
+		targetText:           *generateWords(),
 		hasCountDownFinished: false,
 		playersData:          make(map[string]*PlayerData),
 		capacity:             PLAYERS_PER_COMPETITION,
@@ -361,4 +364,29 @@ func generatePlayersData(players []*Player) *[]PlayerData {
 		}
 	}
 	return &playersData
+}
+
+func generateWords() *[25]string {
+	file, err := os.ReadFile("./words.json")
+	if err == nil {
+		fmt.Println(err)
+	}
+
+	type WordsFile struct {
+		Words []string `json:"words"`
+	}
+
+	wordsFile := WordsFile{}
+
+	json.Unmarshal(file, &wordsFile)
+
+	var generatedWords [25]string
+
+	for i := 0; i < 25; i++ {
+		randomIndex := rand.IntN(len(wordsFile.Words))
+		generatedWords[i] = wordsFile.Words[randomIndex]
+	}
+
+	return &generatedWords
+
 }

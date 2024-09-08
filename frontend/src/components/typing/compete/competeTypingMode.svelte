@@ -7,6 +7,9 @@
 	import CompeteTypingModeResult from './competeTypingModeResult.svelte';
 	import TypingProgress from '../typingProgress.svelte';
 	import { getAccuracy, getWpm } from '../../../lib/typingTestRunHelper';
+	import ProfileOverview from '../../profile/profileOverview.svelte';
+	import { compile } from 'svelte/compiler';
+	import TypingTestLoad from '../typingTestLoad.svelte';
 
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 
@@ -250,17 +253,17 @@
 
 		<div style="display: flex; flex-direction: row; justify-content: space-between;">
 			{#if displayCountdown}
-				<div class="timer">{countdownTime}</div>
+				<div class="progress-info">{countdownTime}</div>
 			{/if}
 
 			{#if typingContextData.typingTestStatus === 'started'}
-				<TypingProgress />
+				<div class="progress-info">{typingContextData.progressWordsTyped}|25</div>
 			{:else}
 				<div style="visibility: hidden;"><TypingProgress /></div>
 			{/if}
 
 			{#if displayTimer}
-				<div class="timer">{remainingTime}</div>
+				<div class="progress-info">{remainingTime}</div>
 			{/if}
 		</div>
 
@@ -322,7 +325,7 @@
 		text-wrap: nowrap;
 	}
 
-	.timer {
+	.progress-info {
 		font-size: 1.5rem;
 		color: var(--accent-color);
 	}
