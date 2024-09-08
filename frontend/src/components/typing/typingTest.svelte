@@ -88,7 +88,9 @@
 				textObject: JSON.parse(JSON.stringify(textObject.textObject)), // deep copy
 				errorCorrectionMode: errorCorrectionMode,
 				timeStarted: timeStarted,
-				timeEnded: new Date().toISOString()
+				timeEnded: new Date().toISOString(),
+				correctKeyPresses: textObject.correctKeyPresses,
+				totalKeyPresses: textObject.totalKeyPresses
 			});
 		}
 	}

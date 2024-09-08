@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Title } from 'chart.js';
 	import { setContext } from 'svelte';
-	import { getWpm, getAccuracy, getRawWpm, getTime, getCorrectCharCount, getWrongCharCount } from '../../../../lib/typingTestRunHelper';
+	import { getWpm, getAccuracy, getRawWpm, getTime, getWrongCharCount } from '../../../../lib/typingTestRunHelper';
 	import type { TypingResultContextData, TypingTestRunData } from '../../../../types/interfaces';
 	import KeyPressTimingsChart from '../../../chart/keyPressTimingsChart.svelte';
 	import SingleDataContainer from '../../../common/singleDataContainer.svelte';
@@ -32,7 +32,7 @@
 			<SingleDataContainer title={'time'} data={getTime(typingTestRunData) + ' sec'} />
 			<SingleDataContainer
 				title={'characters'}
-				data={getCorrectCharCount(typingTestRunData) +
+				data={typingTestRunData.correctKeyPresses +
 					'/' +
 					getWrongCharCount(typingTestRunData, 'wrong') +
 					'/' +

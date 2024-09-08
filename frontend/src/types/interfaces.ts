@@ -60,6 +60,8 @@ export interface TypingTestRunData {
   errorCorrectionMode: number;
   timeStarted: string;
   timeEnded: string;
+  correctKeyPresses: number,
+  totalKeyPresses: number;
 }
 
 export type PastTypingTestResult = {

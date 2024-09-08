@@ -7,6 +7,8 @@ export class TextObjectHandler {
   wordIndex: number = 0;
   letterIndex: number = 0;
   globalLetterIndex: number = 0;
+  correctKeyPresses: number = 0;
+  totalKeyPresses: number = 0;
 
   hasMistaken: boolean;
   wrongInputBuffer: string[];
@@ -21,11 +23,10 @@ export class TextObjectHandler {
   errorHandlingMode: number;
 
   constructor(targetText: string[], errorHandlingMode: number) {
-    // this.wordIndex = $state(0);
-    // this.letterIndex = $state(0);
-    // this.globalLetterIndex = $state(0);
     this.hasMistaken = false;
     this.wrongInputBuffer = [];
+    this.correctKeyPresses = 0;
+    this.totalKeyPresses = 0;
 
     this.targetText = targetText;
     this.userTypedText = [];
@@ -123,43 +124,65 @@ export class TextObjectHandler {
     else if (!this.hasMistaken) {
       if (this.getLetter(0)?.text === keyPressed) {
         this.setLetterStatus(0, { isTyped: true, isCorrect: true });
+        this.correctKeyPresses += 1;
       } else {
         this.wrongInputBuffer.push(keyPressed);
         this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
         this.hasMistaken = true;
       }
       this.gotoNextLetter();
+      this.totalKeyPresses += 1;
     }
     else {
-      // handling mistake detection and correction logic
+      // Handling mistake detection and correction logic
+      // There are 4 possible scenarios, extra letter, miss-click, missed letter and burst
 
       // 1. Extra letter
       if (keyPressed == this.getLetter(-1)?.text) {
+
+        // check if the user swapped the order of two letters
+        // target text      a b c d e f
+        //                       X 
+        // typed text       a b d c e f
         if (this.wrongInputBuffer[0] == this.getLetter(0)?.text) {
           this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "swapped" });
           this.setLetterStatus(-1, { errorStatus: "swapped" });
-          // console.log("Swapped order of last two keys");
           this.gotoNextLetter();
+          this.totalKeyPresses += 1;
         }
+        // target text    a b c d d e
+        //                | |  \
+        // typed text     a b x c d e
         else {
-          this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "extra" });
-          // this.setLetterStatus(0, true, true);
-          // console.log("Extra key pressed. Pressed " + this.wrongInputBuffer[0] + " instead of " + this.getLetter(-1).text);
-          // this.gotoPreviousLetter();
+          // in this situation the user made 1 mistake only, which is pressing x when it should've pressed c
+          // because of this there is no point of counting the next error, when the user pressed c instead of d
+          this.correctKeyPresses += 1;
+          this.totalKeyPresses += 1;
         }
+
+        this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "extra" });
+
         this.hasMistaken = false
         this.wrongInputBuffer = [];
       }
-      // previous letter was miss-clicked
+      // 2. Miss-click
+      // target text        a b c d e f
+      //                          |
+      // typed text         a b c g e f
       else if (keyPressed == this.getLetter(0)?.text) {
         this.setLetterStatus(0, { isTyped: true, isCorrect: true });
         this.setLetterStatus(-1, { errorStatus: "wrong" })
-        // console.log("Miss click. Pressed " + this.wrongInputBuffer[0] + " instead of " + this.getLetter(-1).text);
         this.hasMistaken = false;
         this.wrongInputBuffer = [];
         this.gotoNextLetter();
+
+        this.correctKeyPresses += 1;
+        this.totalKeyPresses += 1;
       }
-      // 3. Missed a letter
+      // 3. Missed letter 
+      // target text      a b c d e f
+      //                         / 
+      // typed text       a b c e e f
       else if (this.wrongInputBuffer[0] == this.getLetter(0)?.text) {
         this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "missed" });
         this.setLetterStatus(0, { isTyped: true, isCorrect: true });
@@ -167,7 +190,9 @@ export class TextObjectHandler {
         this.gotoNextLetter();
         this.gotoNextLetter();
 
-        // console.log("Missed a key");
+        this.correctKeyPresses += 1;
+        this.totalKeyPresses += 1;
+
         this.hasMistaken = false;
         this.wrongInputBuffer = [];
       }
@@ -175,9 +200,8 @@ export class TextObjectHandler {
         // TODO: I can make a better detection method for a wider range of words
         // when this burts happens,
         this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
-        // console.error("Text burst");
-        // console.log(this.wrongInputBuffer);
         this.gotoNextLetter();
+        this.totalKeyPresses += 1;
       }
     }
   }
@@ -208,19 +232,25 @@ export class TextObjectHandler {
       }
       else if (keyPressed === this.getLetter(0)?.text) {
         this.setLetterStatus(0, { isTyped: true, isCorrect: true });
+        this.correctKeyPresses += 1;
       }
       else {
         this.setLetterStatus(0, { isTyped: true, isCorrect: false });
         this.hasMistaken = true;
       }
       this.gotoNextLetter();
+      this.totalKeyPresses += 1;
     }
   }
 
   handleKeyPressMode2(keyPressed: string) {
     if (this.getLetter(0)?.text === keyPressed) {
       this.setLetterStatus(0, { isTyped: true, isCorrect: true });
-      this.gotoNextLetter();
+      const success = this.gotoNextLetter();
+      if (success) {
+        this.correctKeyPresses += 1;
+        this.totalKeyPresses += 1;
+      }
     }
     else if (keyPressed === "backspace") {
       this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
@@ -240,6 +270,7 @@ export class TextObjectHandler {
     }
     else {
       this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
+      this.totalKeyPresses += 1;
       setTimeout(() => {
         this.setLetterStatus(0, { isTyped: false, isCorrect: false, errorStatus: "" });
       }, 100);
