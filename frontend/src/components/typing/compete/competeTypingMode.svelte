@@ -65,7 +65,7 @@
 
 	function restart() {
 		competitionStatus = 'waiting';
-		playersData = {};
+		initializePlayersData();
 		countdownTime = COUNTDOWN_TIME;
 		remainingTime = TIMER_TIME;
 		joinWaitlist();
@@ -93,7 +93,20 @@
 		typingTestRef?.focus();
 	}
 
+	function initializePlayersData() {
+		for (let i = Object.keys(playersData).length; i < PLAYERS_PER_COMPETITION; i++) {
+			playersData[i] = {
+				name: '...',
+				progress: 0,
+				wpm: 0,
+				accuracy: 0,
+				ranking: 0
+			};
+		}
+	}
+
 	onMount(() => {
+		initializePlayersData();
 		document.addEventListener('keydown', handleTabKeyDown);
 
 		socket = getWebSocket();
