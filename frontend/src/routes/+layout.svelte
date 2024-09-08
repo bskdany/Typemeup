@@ -176,6 +176,7 @@
 	}
 
 	footer {
+		font-size: 0.8rem;
 		height: 50px;
 		display: flex;
 		justify-content: center;
