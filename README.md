@@ -12,10 +12,10 @@ Made it to the [Svelte Community Showcase](https://svelte.dev/blog/whats-new-in-
 - graphs with in-depth statistics and analysis of the test
 - user configs
 - theme settings
+- competition mode
   
 ### Incoming features
 - theme marketplace
-- competition mode (like 10fastfingers)
 - import progress from monkeytype
 
 Got any other ideas for features or just want to say hi? Join the [Discord](https://discord.gg/YdcJdE4HBv)!
