@@ -13,14 +13,14 @@
 	let currentPath = $derived($page.url.pathname);
 	let showThemePanel = $state(false);
 
-	async function saveConfig() {
-		try {
-			await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
-			showToast({ message: 'Config saved succesfully', type: 'success' });
-		} catch (e) {
-			console.error(e);
-		}
-	}
+	// async function saveConfig() {
+	// 	try {
+	// 		await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
+	// 		showToast({ message: 'Config saved succesfully', type: 'success' });
+	// 	} catch (e) {
+	// 		console.error(e);
+	// 	}
+	// }
 
 	async function logout() {
 		try {
@@ -104,9 +104,6 @@
 						{@html icons.home}
 					</div>
 				</button>
-			</div>
-			<div id="rightHeader">
-				<button onclick={() => saveConfig()}>Save</button>
 			</div>
 		{:else if currentPath === '/profile'}
 			<div id="leftHeader">

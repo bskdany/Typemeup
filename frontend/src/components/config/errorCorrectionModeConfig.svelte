@@ -1,12 +1,23 @@
 <script lang="ts">
 	import { userData } from '../../shared/userData.svelte';
 	import BubbleContainer from '../common/bubbleContainer.svelte';
+	import { showToast } from '../../shared/toastController.svelte';
+	import { fetchBackend } from '../../lib/fetch';
 
 	let errorCorrectionModes = {
 		0: { name: 'Smart', description: 'Smart error detection mode (recomended)' },
 		1: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
 		2: { name: 'Error ignore', description: 'Incorrect letters are ignored from being added' }
 	};
+
+	async function saveConfig() {
+		try {
+			await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
+			showToast({ message: 'Config saved succesfully', type: 'success' });
+		} catch (e) {
+			console.error(e);
+		}
+	}
 </script>
 
 <BubbleContainer>
@@ -29,7 +40,10 @@
 			{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
 				<button
 					class:selected={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}
-					onclick={() => (userData.userTypingConfig.errorCorrectionMode = parseInt(modeNumber))}>{name}</button
+					onclick={async () => {
+						userData.userTypingConfig.errorCorrectionMode = parseInt(modeNumber);
+						await saveConfig();
+					}}>{name}</button
 				>
 			{/each}
 		</div>

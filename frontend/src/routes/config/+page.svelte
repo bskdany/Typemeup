@@ -3,6 +3,17 @@
 	import ToggleOption from '../../components/common/toggleOption.svelte';
 	import ErrorCorrectionModeConfig from '../../components/config/errorCorrectionModeConfig.svelte';
 	import { userData } from '../../shared/userData.svelte';
+	import { showToast } from '../../shared/toastController.svelte';
+	import { fetchBackend } from '../../lib/fetch';
+
+	async function saveConfig() {
+		try {
+			await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
+			showToast({ message: 'Config saved succesfully', type: 'success' });
+		} catch (e) {
+			console.error(e);
+		}
+	}
 </script>
 
 <div id="config">
@@ -15,13 +26,15 @@
 				defaultValue={userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard}
 				onChange={(value) => {
 					userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard = value;
+					saveConfig();
 				}}
 			/>
 			<ToggleOption
 				title="Show smart mode keyboard"
 				defaultValue={userData.userTypingConfig.visualConfig.showSmartModeKeyboard}
-				onChange={(value) => {
+				onChange={async (value) => {
 					userData.userTypingConfig.visualConfig.showSmartModeKeyboard = value;
+					await saveConfig();
 				}}
 			/>
 		</div>
