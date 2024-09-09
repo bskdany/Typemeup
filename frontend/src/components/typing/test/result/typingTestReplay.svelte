@@ -9,9 +9,7 @@
 	const typingResultContextData: TypingResultContextData = typingResultContext.typingResultContextData;
 
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(typingTestRunData.targetText, typingTestRunData.errorCorrectionMode));
-	let userTypedTextObject: TextObjectHandler = $state(
-		new TextObjectHandler(groupTextByWords(typingTestRunData.userTypedText), typingTestRunData.errorCorrectionMode)
-	);
+	let userTypedTextObject: TextObjectHandler = $state(new TextObjectHandler(typingTestRunData.userTypedText, 3, false));
 
 	let simulateTypingTimeout: any = null;
 	let playPauseButtonText: string = $state('Play');
@@ -40,28 +38,13 @@
 		}
 	}
 
-	function groupTextByWords(text: string[]) {
-		return text.reduce<string[]>((accumulator, value, index) => {
-			if (index === 0) {
-				accumulator.push('');
-			}
-
-			if (value === ' ') {
-				accumulator.push('');
-			} else {
-				accumulator[accumulator.length - 1] += value;
-			}
-			return accumulator;
-		}, []);
-	}
-
 	function handlePlayPauseButton() {
 		typingResultContextData.typingTestReplayStatus = 'active';
 		if (playPauseButtonText === 'Play') {
 			playPauseButtonText = 'Pause';
 			if (simulateTypingTimeout === null) {
 				textObject = new TextObjectHandler(typingTestRunData.targetText, typingTestRunData.errorCorrectionMode);
-				userTypedTextObject = new TextObjectHandler(groupTextByWords(typingTestRunData.userTypedText), typingTestRunData.errorCorrectionMode);
+				userTypedTextObject = new TextObjectHandler(typingTestRunData.userTypedText, 3, false);
 			}
 			simulateTyping(remainingKeyPresses, remainingKeyPressTimings);
 		} else if (playPauseButtonText === 'Pause') {
@@ -75,7 +58,7 @@
 			clearTimeout(simulateTypingTimeout);
 			simulateTypingTimeout = null;
 			textObject = new TextObjectHandler(typingTestRunData.targetText, typingTestRunData.errorCorrectionMode);
-			userTypedTextObject = new TextObjectHandler(groupTextByWords(typingTestRunData.userTypedText), typingTestRunData.errorCorrectionMode);
+			userTypedTextObject = new TextObjectHandler(typingTestRunData.userTypedText, 3, false);
 			playPauseButtonText = 'Play';
 			completeTest();
 
@@ -98,6 +81,16 @@
 		}
 
 		return relativeKeyPressTimings;
+	}
+
+	function formatLetter(letter: string) {
+		if (letter === 'backspace') {
+			return '←';
+		} else if (letter === 'backspaceWord') {
+			return '⇇';
+		} else {
+			return letter;
+		}
 	}
 
 	completeTest();
@@ -138,7 +131,7 @@
 								? 'incorrect'
 								: ''}"
 						>
-							{text}
+							{formatLetter(text)}
 						</span>
 					{/each}
 				</div>

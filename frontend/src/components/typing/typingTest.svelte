@@ -2,12 +2,9 @@
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import { tweened } from 'svelte/motion';
 
-	import { userData } from '../../shared/userData.svelte';
-	import type { UserConfig } from 'vite';
 	import type { UserTypingConfig } from '@shared/types';
 	import type { TypingContext, TypingContextData, TypingTestRunData } from '../../types/interfaces';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
-	// import { TextObjectHandler } from './textObjectHandler.svelte';
 
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;

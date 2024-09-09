@@ -22,10 +22,11 @@ export class TextObjectHandler {
   // 0 -> automatic error detection mode
   // 1 -> need to remove all wrong letters before adding correct ones
   // 2 -> error is ignored
+  // 3 -> error is ignored, no backspace (reserved)
 
   errorHandlingMode: number;
 
-  constructor(targetText: string[], errorHandlingMode: number) {
+  constructor(targetText: string[], errorHandlingMode: number, useEntireWords = true) {
     this.hasMistaken = false;
     this.wrongInputBuffer = [];
     this.correctKeyPresses = 0;
@@ -38,7 +39,12 @@ export class TextObjectHandler {
 
     this.errorHandlingMode = errorHandlingMode;
 
-    this.textObject = this.generateTextObject(this.targetText);
+    if (useEntireWords) {
+      this.textObject = this.generateTextObject(this.targetText);
+    }
+    else {
+      this.textObject = this.generateTextObjectByLetter(this.targetText);
+    }
   }
 
   addText(targetText: string[]) {
@@ -60,13 +66,64 @@ export class TextObjectHandler {
               isTyped: false,
               errorStatus: "",
               id: 0
-            };
+            }
           }),
           id: textObject.length,
           isCompleted: false,
           length: word.length,
         }
       );
+    });
+
+    // adding a space after each word
+    textObject.forEach((wordObject, index) => {
+      if (index !== textObject.length - 1) {
+        wordObject.letters.push({ text: " ", isSpace: true, isCorrect: false, isTyped: false, errorStatus: "", id: 0 });
+        wordObject.length += 1;
+      }
+    })
+
+    // going throug each object and adding the id
+    let letterId = 0;
+    textObject.forEach((wordObject, index) => {
+      wordObject.letters.forEach(letterObject => {
+        letterObject.id = letterId;
+        letterId += 1;
+      });
+    })
+
+    return textObject;
+  }
+
+  generateTextObjectByLetter(targetText: string[]) {
+    let textObject: TextObject[] = [];
+    let wordLetters: TextObject["letters"] = [];
+
+    targetText.forEach((letter: string) => {
+      if (letter !== " ") {
+        wordLetters.push(
+          {
+            text: letter,
+            isSpace: false,
+            isCorrect: false,
+            isTyped: false,
+            errorStatus: "",
+            id: 0
+          }
+        )
+      }
+      else {
+        textObject.push(
+          {
+            letters: [...wordLetters],
+            id: textObject.length,
+            isCompleted: false,
+            length: wordLetters.length,
+          }
+        );
+
+        wordLetters = [];
+      }
     });
 
     // adding a space after each word
@@ -111,6 +168,9 @@ export class TextObjectHandler {
         break;
       case 2:
         this.handleKeyPressMode2(keyPressed);
+        break;
+      case 3:
+        this.handleKeyPressMode3(keyPressed);
         break;
       default:
         throw "Wrong mode, 0 to please";
@@ -294,6 +354,23 @@ export class TextObjectHandler {
         this.setLetterStatus(0, { isTyped: false, isCorrect: false, errorStatus: "" });
       }, 100);
     }
+  }
+
+  handleKeyPressMode3(keyPressed: string) {
+    if (this.hasMistaken) {
+      this.setLetterStatus(0, { isTyped: true, isCorrect: false });
+      this.logKeyPress(false);
+    }
+    else if (keyPressed === this.getLetter(0)?.text) {
+      this.setLetterStatus(0, { isTyped: true, isCorrect: true });
+      this.logKeyPress(true);
+    }
+    else {
+      this.setLetterStatus(0, { isTyped: true, isCorrect: false });
+      this.logKeyPress(false);
+      this.hasMistaken = true;
+    }
+    this.gotoNextLetter();
   }
 
   setLetterStatus(offset: number, data: { isTyped?: boolean, isCorrect?: boolean, errorStatus?: "extra" | "missed" | "swapped" | "wrong" | "" }): boolean {
