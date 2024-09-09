@@ -10,102 +10,38 @@
 	const typingResultContext: TypingResultContext = getContext('typingResultContext');
 	const typingResultContextData: TypingResultContextData = typingResultContext.typingResultContextData;
 
-	function createSlidingWindow<T>(input: T[]): T[][] {
-		return input.map((element, index) => {
-			return input.slice(0, index + 1);
-		});
-	}
-
 	function getChartData() {
-		const keyPressTimings: number[] = [...typingTestRunData.keyPressTimings];
+		const chartData: { x: number; y: number; isCorrect: boolean }[] = [];
 
-		// keyPressTimings[0] = keyPressTimings[1]; // because keyPrssTimings[0] is always 0 last thing I want is infinite wpm
-		const keyPressErrorStatuses: Letter['errorStatus'][] = [];
-		for (const word of typingTestRunData.textObject) {
-			for (const letter of word.letters) {
-				if (letter.isTyped) {
-					keyPressErrorStatuses.push(letter.errorStatus);
-				}
-			}
-		}
+		let correctCharCount = 0;
+		let firstKeyPressTime = 0;
 
-		const keyPressTimingsSlidingWindow: number[][] = createSlidingWindow(keyPressTimings);
-		const keyPressErrorStatusesSlidingWindow: string[][] = createSlidingWindow(keyPressErrorStatuses);
+		for (let keyPressCounter = 0; keyPressCounter < typingTestRunData.keyPressTimings.length; keyPressCounter++) {
+			let keyPressTime = typingTestRunData.keyPressTimings[keyPressCounter];
+			let isKeyPressCorrect = typingTestRunData.keyPressCorrectness[keyPressCounter];
 
-		const chartKeyPressData: { errorStatus: Letter['errorStatus']; x: number; y: number }[] = [];
-
-		let keyPressTimingsCounter = 0;
-		for (let index = 0; index < keyPressErrorStatuses.length; index++) {
-			// the hard part is aligning the two data sources into 1
-
-			let yCoordinate: number;
-			if (keyPressErrorStatuses[index] === 'extra') {
-				// merging 2 keypresses into 1 point, which means I need the wpm for both of them averaged
-				// with an extra key pressed, there is one more data point on the keyPressTimings
-
-				const totalCharsPoint1 = keyPressTimingsSlidingWindow[keyPressTimingsCounter].length;
-				const correctCharsPoint1 = keyPressErrorStatusesSlidingWindow[index].filter((value) => value === '').length;
-				const timePoint1 = keyPressTimingsSlidingWindow[keyPressTimingsCounter].reduce((sum, val) => sum + val);
-				const rawWpmPoint1 = calculateWpm(totalCharsPoint1, timePoint1);
-				const accuracyPoint1 = correctCharsPoint1 / totalCharsPoint1;
-				const wpmPoint1 = rawWpmPoint1 * accuracyPoint1;
-
-				keyPressTimingsCounter += 1;
-
-				const totalCharsPoint2 = keyPressTimingsSlidingWindow[keyPressTimingsCounter].length;
-				const correctCharsPoint2 = keyPressErrorStatusesSlidingWindow[index].filter((value) => value === '').length;
-				const timePoint2 = keyPressTimingsSlidingWindow[keyPressTimingsCounter].reduce((sum, val) => sum + val);
-				const rawWpmPoint2 = calculateWpm(totalCharsPoint2, timePoint2);
-				const accuracyPoint2 = correctCharsPoint2 / totalCharsPoint2;
-				const wpmPoint2 = rawWpmPoint2 * accuracyPoint2;
-
-				keyPressTimingsCounter += 1;
-
-				const averageWpm = Math.floor((wpmPoint1 + wpmPoint2) / 2);
-				yCoordinate = averageWpm;
-			} else if (keyPressErrorStatuses[index] === 'missed') {
-				const totalChars = keyPressTimingsSlidingWindow[keyPressTimingsCounter].length;
-				const correctChars = keyPressErrorStatusesSlidingWindow[index].filter((value) => value === '').length;
-				const time = keyPressTimingsSlidingWindow[keyPressTimingsCounter].reduce((sum, val) => sum + val);
-				const rawWpm = calculateWpm(totalChars, time);
-				const accuracy = correctChars / totalChars;
-				const wpm = rawWpm * accuracy;
-
-				yCoordinate = wpm;
-			} else {
-				const totalChars = keyPressTimingsSlidingWindow[keyPressTimingsCounter].length;
-				const correctChars = keyPressErrorStatusesSlidingWindow[index].filter((value) => value === '').length;
-				const time = keyPressTimingsSlidingWindow[keyPressTimingsCounter].reduce((sum, val) => sum + val);
-				const rawWpm = calculateWpm(totalChars, time);
-				const accuracy = correctChars / totalChars;
-				const wpm = rawWpm * accuracy;
-
-				keyPressTimingsCounter += 1;
-
-				yCoordinate = wpm;
+			if (isKeyPressCorrect) {
+				correctCharCount += 1;
 			}
 
-			chartKeyPressData.push({
-				errorStatus: keyPressErrorStatuses[index],
-				x: index,
-				y: index > 9 ? yCoordinate : getWpm(typingTestRunData)
+			let wpm = 0;
+			if (keyPressCounter === 0) {
+				firstKeyPressTime = keyPressTime;
+			} else if (keyPressCounter >= 10) {
+				wpm = calculateWpm(correctCharCount, keyPressTime - firstKeyPressTime);
+			}
+
+			chartData.push({
+				x: keyPressCounter,
+				y: wpm,
+				isCorrect: isKeyPressCorrect
 			});
 		}
 
-		const chartWpmData: { x: number; y: number }[] = chartKeyPressData.filter((element, index, arr) => {
-			return (index % 10 === 0 && index > 0) || index === arr.length - 1;
-		});
-
-		return { chartKeyPressData: chartKeyPressData, chartWpmData: chartWpmData };
+		return chartData;
 	}
 
-	function buildChartData({
-		chartKeyPressData,
-		chartWpmData
-	}: {
-		chartKeyPressData: { x: number; y: number; errorStatus: Letter['errorStatus'] }[];
-		chartWpmData: { x: number; y: number }[];
-	}) {
+	function buildChartData(chartData: { x: number; y: number; isCorrect: boolean }[]) {
 		const fillerData: { x: number; y: number }[] = [];
 		for (let i = 0; i < 10; i++) {
 			fillerData.push({ x: i, y: 0 });
@@ -116,7 +52,7 @@
 				{
 					label: 'Wrong Keypress',
 					type: 'scatter',
-					data: chartKeyPressData.filter((point) => point.errorStatus !== '' && point.x > 9),
+					data: chartData.filter((point) => point.isCorrect === false && point.x > 9),
 					pointStyle: 'cross',
 					rotation: 45,
 					borderColor: 'red',
@@ -126,7 +62,7 @@
 				{
 					label: 'Wpm',
 					type: 'line' as any,
-					data: chartWpmData,
+					data: chartData.filter((point) => point.x > 9),
 					borderColor: userData.userTypingConfig.theme.colorScheme.accentColor.value,
 					backgroundColor: userData.userTypingConfig.theme.colorScheme.accentColor.value,
 					borderWidth: 2,
@@ -138,7 +74,7 @@
 				},
 				{
 					label: 'Correct KeyPresses',
-					data: chartKeyPressData.filter((point) => point.errorStatus === '' && point.x > 9),
+					data: chartData.filter((point) => point.isCorrect === true && point.x > 9),
 					backgroundColor: userData.userTypingConfig.theme.colorScheme.textColor.value,
 					pointRadius: 0,
 					hoverRadius: 0,

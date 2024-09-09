@@ -57,8 +57,6 @@
 	let timeInterval: any = null;
 	let timeStarted: string;
 
-	const keyPressTimings: number[] = [];
-
 	function typingTestStarted() {
 		msTime = 0;
 		msTimeAtLastKeyPress = Date.now();
@@ -84,13 +82,14 @@
 				timeTaken: msTime,
 				targetText: textObject.targetText.slice(0, textObject.wordIndex + 1),
 				userTypedText: textObject.userTypedText,
-				keyPressTimings: keyPressTimings,
 				textObject: JSON.parse(JSON.stringify(textObject.textObject)), // deep copy
 				errorCorrectionMode: errorCorrectionMode,
 				timeStarted: timeStarted,
 				timeEnded: new Date().toISOString(),
 				correctKeyPresses: textObject.correctKeyPresses,
-				totalKeyPresses: textObject.totalKeyPresses
+				totalKeyPresses: textObject.totalKeyPresses,
+				keyPressTimings: textObject.keyPressTimings,
+				keyPressCorrectness: textObject.keyPressCorrectness
 			});
 		}
 	}
@@ -122,10 +121,6 @@
 		textObject.addKeyPressed(pressedKey);
 
 		onProgress?.(getProgress());
-
-		const msTimeSinceLastKeypress = Date.now() - msTimeAtLastKeyPress;
-		msTimeAtLastKeyPress = Date.now();
-		keyPressTimings.push(msTimeSinceLastKeypress);
 
 		handleCursor();
 		checkIfMoveText();

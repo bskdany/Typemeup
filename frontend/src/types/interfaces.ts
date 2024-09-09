@@ -55,13 +55,14 @@ export interface TypingTestRunData {
   timeTaken: number;
   targetText: string[];   // word by word`
   userTypedText: string[];// letter by letter
-  keyPressTimings: number[];
   textObject: TextObject[];
   errorCorrectionMode: number;
   timeStarted: string;
   timeEnded: string;
   correctKeyPresses: number,
   totalKeyPresses: number;
+  keyPressTimings: number[];
+  keyPressCorrectness: boolean[];
 }
 
 export type PastTypingTestResult = {

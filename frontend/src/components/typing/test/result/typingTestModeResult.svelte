@@ -50,12 +50,7 @@
 	<button id="restartButton" onclick={restart}>Restart (or press tab!)</button>
 
 	<div style="width: 80%;">
-		<TypingTestReplay
-			targetText={typingTestRunData.targetText}
-			userTypedText={typingTestRunData.userTypedText}
-			typingTestKeypressTimings={typingTestRunData.keyPressTimings}
-			errorCorrectionMode={typingTestRunData.errorCorrectionMode}
-		/>
+		<TypingTestReplay {typingTestRunData} />
 	</div>
 </div>
 

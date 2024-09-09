@@ -15,6 +15,9 @@ export class TextObjectHandler {
 
   targetText: string[];
   userTypedText: string[];
+  keyPressTimings: number[];
+  keyPressCorrectness: boolean[];
+
 
   // 0 -> automatic error detection mode
   // 1 -> need to remove all wrong letters before adding correct ones
@@ -29,7 +32,9 @@ export class TextObjectHandler {
     this.totalKeyPresses = 0;
 
     this.targetText = targetText;
+    this.keyPressTimings = [];
     this.userTypedText = [];
+    this.keyPressCorrectness = [];
 
     this.errorHandlingMode = errorHandlingMode;
 
@@ -40,7 +45,6 @@ export class TextObjectHandler {
     const newTextObjectData = this.generateTextObject(targetText);
     this.textObject = this.textObject.concat(newTextObjectData);
   }
-
 
   generateTextObject(targetText: string[]) {
     let textObject: TextObject[] = [];
@@ -85,8 +89,18 @@ export class TextObjectHandler {
     return textObject;
   }
 
+  logKeyPress(isCorrect: boolean) {
+    this.totalKeyPresses += 1;
+    this.keyPressCorrectness.push(isCorrect);
+
+    if (isCorrect) {
+      this.correctKeyPresses += 1;
+    }
+  }
+
   addKeyPressed(keyPressed: string) {
     this.userTypedText.push(keyPressed);
+    this.keyPressTimings.push(Date.now());
 
     switch (this.errorHandlingMode) {
       case 0:
@@ -101,14 +115,18 @@ export class TextObjectHandler {
       default:
         throw "Wrong mode, 0 to please";
     }
+
   }
 
   handleKeyPressMode0(keyPressed: string) {
     if (keyPressed === "backspace") {
       this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
       this.gotoPreviousLetter();
+      this.logKeyPress(false);
     }
     else if (keyPressed === "backspaceWord") {
+
+      this.logKeyPress(false);
       if (this.getLetter(-1)?.text === " ") {
         this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
         this.gotoPreviousLetter();
@@ -124,14 +142,14 @@ export class TextObjectHandler {
     else if (!this.hasMistaken) {
       if (this.getLetter(0)?.text === keyPressed) {
         this.setLetterStatus(0, { isTyped: true, isCorrect: true });
-        this.correctKeyPresses += 1;
+        this.logKeyPress(true);
       } else {
         this.wrongInputBuffer.push(keyPressed);
         this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
         this.hasMistaken = true;
+        this.logKeyPress(false);
       }
       this.gotoNextLetter();
-      this.totalKeyPresses += 1;
     }
     else {
       // Handling mistake detection and correction logic
@@ -148,7 +166,7 @@ export class TextObjectHandler {
           this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "swapped" });
           this.setLetterStatus(-1, { errorStatus: "swapped" });
           this.gotoNextLetter();
-          this.totalKeyPresses += 1;
+          this.logKeyPress(false);
         }
         // target text    a b c d d e
         //                | |  \
@@ -156,11 +174,9 @@ export class TextObjectHandler {
         else {
           // in this situation the user made 1 mistake only, which is pressing x when it should've pressed c
           // because of this there is no point of counting the next error, when the user pressed c instead of d
-          this.correctKeyPresses += 1;
-          this.totalKeyPresses += 1;
+          this.logKeyPress(true);
+          this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "extra" });
         }
-
-        this.setLetterStatus(-1, { isTyped: true, isCorrect: false, errorStatus: "extra" });
 
         this.hasMistaken = false
         this.wrongInputBuffer = [];
@@ -175,9 +191,7 @@ export class TextObjectHandler {
         this.hasMistaken = false;
         this.wrongInputBuffer = [];
         this.gotoNextLetter();
-
-        this.correctKeyPresses += 1;
-        this.totalKeyPresses += 1;
+        this.logKeyPress(true);
       }
       // 3. Missed letter 
       // target text      a b c d e f
@@ -190,8 +204,7 @@ export class TextObjectHandler {
         this.gotoNextLetter();
         this.gotoNextLetter();
 
-        this.correctKeyPresses += 1;
-        this.totalKeyPresses += 1;
+        this.logKeyPress(true);
 
         this.hasMistaken = false;
         this.wrongInputBuffer = [];
@@ -201,13 +214,15 @@ export class TextObjectHandler {
         // when this burts happens,
         this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
         this.gotoNextLetter();
-        this.totalKeyPresses += 1;
+        this.logKeyPress(false);
       }
     }
   }
 
   handleKeyPressMode1(keyPressed: string) {
     if (keyPressed === "backspace") {
+      this.logKeyPress(false);
+
       if (this.getLetter(-1)?.isCorrect === false) {
         this.hasMistaken = false
       }
@@ -215,6 +230,8 @@ export class TextObjectHandler {
       this.gotoPreviousLetter();
     }
     else if (keyPressed === "backspaceWord") {
+      this.logKeyPress(false);
+
       if (this.getLetter(-1)?.text === " ") {
         this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
         this.gotoPreviousLetter();
@@ -223,40 +240,42 @@ export class TextObjectHandler {
       // backspace to the previous space
       while (this.getLetter(-1) && this.getLetter(-1)?.text !== " ") {
         this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
-        this.gotoPreviousLetter();
       }
+
+      this.gotoPreviousLetter();
     }
     else {
       if (this.hasMistaken) {
         this.setLetterStatus(0, { isTyped: true, isCorrect: false });
+        this.logKeyPress(false);
       }
       else if (keyPressed === this.getLetter(0)?.text) {
         this.setLetterStatus(0, { isTyped: true, isCorrect: true });
-        this.correctKeyPresses += 1;
+        this.logKeyPress(true);
       }
       else {
         this.setLetterStatus(0, { isTyped: true, isCorrect: false });
+        this.logKeyPress(false);
         this.hasMistaken = true;
       }
       this.gotoNextLetter();
-      this.totalKeyPresses += 1;
     }
   }
 
   handleKeyPressMode2(keyPressed: string) {
     if (this.getLetter(0)?.text === keyPressed) {
+      this.logKeyPress(true);
       this.setLetterStatus(0, { isTyped: true, isCorrect: true });
-      const success = this.gotoNextLetter();
-      if (success) {
-        this.correctKeyPresses += 1;
-        this.totalKeyPresses += 1;
-      }
+      this.gotoNextLetter();
     }
     else if (keyPressed === "backspace") {
+      this.logKeyPress(false);
       this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
       this.gotoPreviousLetter();
     }
     else if (keyPressed === "backspaceWord") {
+      this.logKeyPress(false);
+
       if (this.getLetter(-1)?.text === " ") {
         this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
         this.gotoPreviousLetter();
@@ -269,8 +288,8 @@ export class TextObjectHandler {
       }
     }
     else {
+      this.logKeyPress(false);
       this.setLetterStatus(0, { isTyped: true, isCorrect: false, errorStatus: "wrong" });
-      this.totalKeyPresses += 1;
       setTimeout(() => {
         this.setLetterStatus(0, { isTyped: false, isCorrect: false, errorStatus: "" });
       }, 100);
