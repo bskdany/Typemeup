@@ -99,7 +99,7 @@ export class TextObjectHandler {
     let textObject: TextObject[] = [];
     let wordLetters: TextObject["letters"] = [];
 
-    targetText.forEach((letter: string) => {
+    targetText.forEach((letter: string, index) => {
       if (letter !== " ") {
         wordLetters.push(
           {
@@ -112,7 +112,8 @@ export class TextObjectHandler {
           }
         )
       }
-      else {
+
+      if (letter === " " || index === targetText.length - 1) {
         textObject.push(
           {
             letters: [...wordLetters],
