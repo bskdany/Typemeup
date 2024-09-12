@@ -7,7 +7,7 @@ export function migrateDbSchema(db: Database) {
       // Check if the column already exists
       const columnInfo = db.prepare("PRAGMA table_info(user)").all();
 
-      const githubIdColumnExists = columnInfo.some(column => column.name === 'github_id');
+      const githubIdColumnExists = columnInfo.some((column: any) => column.name === 'github_id');
 
       if (!githubIdColumnExists) {
         // Step 1: Add the github_id column without UNIQUE constraint
@@ -29,7 +29,7 @@ export function migrateDbSchema(db: Database) {
         const updatedColumnInfo = db.prepare("PRAGMA table_info(user)").all();
         console.log("Updated table structure:", updatedColumnInfo);
 
-        const columnAdded = updatedColumnInfo.some(column => column.name === 'github_id');
+        const columnAdded = updatedColumnInfo.some((column: any) => column.name === 'github_id');
         if (!columnAdded) {
           throw new Error("Column was not added despite no error being thrown.");
         }
@@ -55,7 +55,7 @@ export function migrateDbSchema(db: Database) {
 
   try {
     const columnInfo = db.prepare("PRAGMA table_info(user)").all();
-    const needsUpdate = columnInfo.some(col =>
+    const needsUpdate = columnInfo.some((col: any) =>
       (col.name === 'password' && col.notnull === 1)
     );
 

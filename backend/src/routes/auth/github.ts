@@ -9,6 +9,11 @@ import type { DatabaseUser } from "../../lib/db.js";
 import { defaultUserTypingConfig, generateKeyStatistic } from "../../lib/defaultData.js";
 import { config } from "../../lib/config.js";
 
+interface GitHubUser {
+  id: string;
+  login: string;
+}
+
 export const githubLoginRoute = async (_: Request, res: Response) => {
   const state = generateState();
   const scopes = ["user:email", "repo"];
@@ -43,7 +48,7 @@ export const githubLoginCallbackRoute = async (req: Request, res: Response) => {
         Authorization: `Bearer ${tokens.accessToken()}`
       }
     });
-    const githubUser: GitHubUser = await githubUserResponse.json();
+    const githubUser: GitHubUser = await githubUserResponse.json() as GitHubUser;
     const existingUser = db.prepare("SELECT * FROM user WHERE github_id = ?").get(githubUser.id) as
       | DatabaseUser
       | undefined;
@@ -95,7 +100,3 @@ export const githubLoginCallbackRoute = async (req: Request, res: Response) => {
   }
 };
 
-interface GitHubUser {
-  id: string;
-  login: string;
-}
