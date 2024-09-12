@@ -10,7 +10,9 @@ export const config: Config = {
   port_backend: port_backend,
   db_path: db_path,
   frontend_url: frontend_url,
-  use_cors: process.env.USE_CORS ? true : false
+  use_cors: process.env.USE_CORS ? true : false,
+  githubCLientId: process.env.GITHUB_CLIENT_ID || "",
+  githubClientSecret: process.env.GITHUB_CLIENT_SECRET || ""
 }
 
 export interface Config {
@@ -19,5 +21,7 @@ export interface Config {
   port_backend: number,
   db_path: string,
   frontend_url: string,
-  use_cors: boolean
+  use_cors: boolean,
+  githubCLientId: string,
+  githubClientSecret: string
 }

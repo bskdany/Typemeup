@@ -10,6 +10,7 @@ import { db } from "./lib/db.js";
 import http from 'http';
 import WebSocket, { WebSocketServer } from 'ws';
 import { handleCompetition } from './lib/competitionHandler.js';
+import { migrateDbSchema } from "./lib/migrateDbSchema.js";
 
 console.log("PROD: " + config.is_prod);
 console.log("DOCKER: " + config.is_docker);
@@ -19,7 +20,8 @@ console.log("CORS: " + config.use_cors);
 console.log("Origin: " + config.frontend_url);
 
 // doing server migration from here for now
-migrateUserTypingConfig(db);
+// migrateUserTypingConfig(db);
+migrateDbSchema(db);
 
 const app = express();
 const server = http.createServer(app);

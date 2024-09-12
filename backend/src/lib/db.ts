@@ -6,7 +6,8 @@ export const db = new Database(config.db_path);
 db.exec(`CREATE TABLE IF NOT EXISTS user (
   id TEXT NOT NULL PRIMARY KEY,
   username TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL,
+  github_id TEXT UNIQUE,
+  password TEXT,
   typing_config TEXT NOT NULL, 
   key_statistics TEXT NOT NULL
 )`);
@@ -36,5 +37,6 @@ db.exec(`CREATE TABLE IF NOT EXISTS TypingTest (
 export interface DatabaseUser {
   id: string;
   username: string;
+  github_id: string;
   password: string;
 }

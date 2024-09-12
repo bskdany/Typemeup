@@ -31,6 +31,6 @@ export function migrateUserTypingConfig(db: Database) {
   })();
 
 
-  console.log("MIGRATION COMPLETED")
+  // console.log("MIGRATION COMPLETED")
 }
 

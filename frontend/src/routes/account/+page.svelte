@@ -1,8 +1,13 @@
 <script lang="ts">
 	import LoginToAccount from '../../components/account/loginToAccount.svelte';
 	import RegisterAccount from '../../components/account/registerAccount.svelte';
+	import { fetchBackend } from '../../lib/fetch';
 
 	let loginOrRegister: string = 'login';
+
+	async function loginWithGithub() {
+		window.location.href = import.meta.env.VITE_URL_BACKEND + '/auth/github/login';
+	}
 </script>
 
 <div id="container">
@@ -16,9 +21,13 @@
 				}}
 			/>
 		{/if}
-		<button on:click={() => (loginOrRegister = loginOrRegister === 'login' ? 'register' : 'login')}
+		<button onclick={() => (loginOrRegister = loginOrRegister === 'login' ? 'register' : 'login')}
 			>{loginOrRegister === 'login' ? 'Register instead' : 'Login instead'}</button
 		>
+	</div>
+
+	<div>
+		<button onclick={loginWithGithub}>Login with github</button>
 	</div>
 </div>
 

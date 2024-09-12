@@ -3,6 +3,8 @@ import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
 import { db } from "./db.js";
 
 import type { DatabaseUser } from "./db.js";
+import { GitHub } from "arctic";
+import { config } from "./config.js";
 
 const adapter = new BetterSqlite3Adapter(db, {
   user: "user",
@@ -17,10 +19,12 @@ export const lucia = new Lucia(adapter, {
   },
   getUserAttributes: (attributes) => {
     return {
-      username: attributes.username
+      username: attributes.username,
+      githubId: attributes.github_id,
     };
   }
 });
+export const github = new GitHub(config.githubCLientId, config.githubClientSecret, "http://localhost:3000/api/auth/github/login/callback");
 
 declare module "lucia" {
   interface Register {
