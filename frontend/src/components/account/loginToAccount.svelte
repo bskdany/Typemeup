@@ -33,4 +33,8 @@
 		flex-direction: column;
 		gap: var(--spacing-small);
 	}
+
+	button {
+		padding: var(--spacing-medium);
+	}
 </style>

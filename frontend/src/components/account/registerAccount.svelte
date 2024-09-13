@@ -35,4 +35,8 @@
 		gap: var(--spacing-small);
 		width: min-content;
 	}
+
+	button {
+		padding: var(--spacing-medium);
+	}
 </style>
