@@ -16,7 +16,7 @@ interface GitHubUser {
 
 export const githubLoginRoute = async (_: Request, res: Response) => {
   const state = generateState();
-  const scopes = ["user:email", "repo"];
+  const scopes = ["user:email"];
   const url = github.createAuthorizationURL(state, scopes);
   res
     .appendHeader(
