@@ -35,5 +35,5 @@ export async function fetchBackend(fetch: any, endpoint: string, options?: { bod
 }
 
 export function getWebSocket(): WebSocket {
-  return new WebSocket(`${import.meta.env.VITE_URL_BACKEND_WS}/compete`);
+  return new WebSocket(import.meta.env.VITE_URL_BACKEND_WS);
 }
