@@ -109,4 +109,16 @@
 	.invisible {
 		border: none;
 	}
+
+	@media screen and (max-width: 768px) {
+		#testTypingModeKeyboard {
+			display: none;
+		}
+	}
+
+	@media screen and (min-width: 768px) {
+		#testTypingModeKeyboard {
+			display: block;
+		}
+	}
 </style>

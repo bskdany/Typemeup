@@ -139,4 +139,16 @@
 		border: none;
 		background-color: var(--background-color);
 	}
+
+	@media screen and (max-width: 768px) {
+		#smartTypingModeKeyboard {
+			display: none;
+		}
+	}
+
+	@media screen and (min-width: 768px) {
+		#smartTypingModeKeyboard {
+			display: block;
+		}
+	}
 </style>
