@@ -1,42 +1,79 @@
 <script lang="ts">
-	const {
-		title,
-		options,
-		defaultOption,
-		onOptionSelected
-	}: { title?: string; options: readonly any[]; defaultOption?: any; onOptionSelected: (arg0: any) => void } = $props();
+	import { icons } from '../../lib/icons';
+
+	const { options, defaultOption, onOptionSelected }: { options: readonly any[]; defaultOption?: any; onOptionSelected: (arg0: any) => void } = $props();
 
 	let selectedOption: any = $state(defaultOption);
+	let isDropdownExpanded = $state(false);
 </script>
 
 <div class="dropDownWrapper">
-	{title}
-	<select class="dropdown" onclick={() => onOptionSelected(selectedOption)} bind:value={selectedOption}>
-		{#each options as option}
-			<option class="option" value={option}>{option}</option>
-		{/each}
-	</select>
+	<button style="display: flex; align-items: center; justify-content: center; gap: 2px " onclick={() => (isDropdownExpanded = !isDropdownExpanded)}>
+		<div>
+			{selectedOption}
+		</div>
+		<div class="icon-container">
+			{@html icons.dropdown}
+		</div>
+	</button>
+	<div style="position: relative">
+		{#if isDropdownExpanded}
+			<div id="dropdownOptions">
+				{#each options as option}
+					{#if option === selectedOption}
+						<button class="option selected" onclick={() => (isDropdownExpanded = false)}>{option}</button>
+					{:else}
+						<button
+							class="option"
+							onclick={() => {
+								onOptionSelected(option);
+								selectedOption = option;
+								isDropdownExpanded = false;
+							}}>{option}</button
+						>
+					{/if}
+				{/each}
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style>
-	.dropDownWrapper {
+	.icon-container {
 		display: flex;
-		justify-self: center;
+		height: 1rem;
+		width: 1rem;
 		align-items: center;
-		height: min-content;
-		flex-direction: row;
-		gap: var(--spacing-small);
+		justify-content: center;
 	}
 
-	.dropdown {
-		color: var(--accent-color);
-		border: 1px solid var(--primary-color);
-		border-radius: var(--border-radius);
-		background-color: var(--secondary-color);
-		padding: var(--padding-small);
-		outline: none;
+	.dropDownWrapper {
+		width: 100px;
+		height: min-content;
+		display: flex;
+		flex-direction: column;
 	}
+
+	#dropdownOptions {
+		display: flex;
+		flex-direction: column;
+		width: max(100px, min-content);
+		position: absolute;
+		background-color: var(--secondary-color);
+		border-radius: var(--border-radius);
+		z-index: 100;
+	}
+
 	.option {
 		color: var(--text-color);
+	}
+
+	.selected {
+		color: var(--accent-color);
+	}
+
+	button {
+		background-color: transparent;
+		font-size: 1rem;
 	}
 </style>

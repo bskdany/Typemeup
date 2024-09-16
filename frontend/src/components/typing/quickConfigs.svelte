@@ -1,21 +1,38 @@
 <script lang="ts">
 	import { typingEndModes, typingEndTimeModes, typingEndWordModes, typingModes, userData } from '../../shared/userData.svelte';
+	import Dropdown from '../common/dropdown.svelte';
+	import TypingTestModeResult from './test/result/typingTestModeResult.svelte';
+	let isDesktop = $state(true);
 </script>
 
 <div id="configWrapper">
-	{#each typingModes as typingMode}
-		<button
-			class:selected-text={userData.userTypingConfig.typingMode === typingMode}
-			onclick={() => {
+	<div id="quickConfigsDesktop">
+		{#each typingModes as typingMode}
+			<button
+				class:selected-text={userData.userTypingConfig.typingMode === typingMode}
+				onclick={() => {
+					userData.userTypingConfig.typingMode = typingMode;
+					if (typingMode === 'smart' || typingMode === 'compete') {
+						userData.userTypingConfig.typingEndMode = 'words';
+					}
+				}}
+			>
+				{typingMode}
+			</button>
+		{/each}
+	</div>
+	<div id="quickConfigsMobile">
+		<Dropdown
+			options={typingModes}
+			defaultOption={userData.userTypingConfig.typingMode}
+			onOptionSelected={(typingMode) => {
 				userData.userTypingConfig.typingMode = typingMode;
 				if (typingMode === 'smart' || typingMode === 'compete') {
 					userData.userTypingConfig.typingEndMode = 'words';
 				}
 			}}
-		>
-			{typingMode}
-		</button>
-	{/each}
+		/>
+	</div>
 
 	{#if userData.userTypingConfig.typingMode !== 'compete'}
 		<div class="separator"></div>
@@ -85,5 +102,25 @@
 	.separator {
 		width: 1px;
 		background-color: var(--text-color);
+	}
+
+	@media screen and (min-width: 768px) {
+		#quickConfigsDesktop {
+			display: block;
+		}
+
+		#quickConfigsMobile {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 768px) {
+		#quickConfigsDesktop {
+			display: none;
+		}
+
+		#quickConfigsMobile {
+			display: block;
+		}
 	}
 </style>

@@ -41,7 +41,7 @@
 
 <BubbleContainer>
 	<div id="themePanelContent">
-		<Dropdown title="Theme" options={[...Object.keys(themes), 'custom']} onOptionSelected={applyPreset} defaultOption={userData.userTypingConfig.theme.name} />
+		<Dropdown options={[...Object.keys(themes), 'custom']} onOptionSelected={applyPreset} defaultOption={userData.userTypingConfig.theme.name} />
 		{#each Object.entries(userData.userTypingConfig.theme.colorScheme) as [key, colorScheme]}
 			<div class="color-choser">
 				<div style="display: flex; justify-content: center; align-items:center">{colorScheme.name}</div>
