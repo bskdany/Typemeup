@@ -52,6 +52,31 @@ export function migrateDbSchema(db: Database) {
   catch (e) {
   }
 
+  // adding github_id column
+  try {
+    // Start a transaction
+    const transaction = db.transaction(() => {
+      // Check if the column already exists
+      const columnInfo = db.prepare("PRAGMA table_info(user)").all();
+
+      const existingColumn = columnInfo.some((column: any) => column.name === 'google_id');
+
+      if (!existingColumn) {
+        // Step 1: Add the github_id column without UNIQUE constraint
+        db.prepare(`
+            ALTER TABLE user
+            ADD COLUMN google_id TEXT
+          `).run();
+        console.log("Added column google_id");
+      } else {
+        console.log("google_id column already exists in user table");
+      }
+    });
+    transaction();
+  }
+  catch (e) {
+    console.log(`Failed to create column google_id: ${e}`)
+  }
 
   try {
     const columnInfo = db.prepare("PRAGMA table_info(user)").all();

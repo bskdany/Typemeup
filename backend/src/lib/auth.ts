@@ -1,9 +1,8 @@
 import { Lucia } from "lucia";
 import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
 import { db } from "./db.js";
-
 import type { DatabaseUser } from "./db.js";
-import { GitHub } from "arctic";
+import { GitHub, Google } from "arctic";
 import { config } from "./config.js";
 
 const adapter = new BetterSqlite3Adapter(db, {
@@ -24,8 +23,9 @@ export const lucia = new Lucia(adapter, {
     };
   }
 });
-export const github = new GitHub(config.githubCLientId, config.githubClientSecret, "http://localhost:3000/api/auth/github/login/callback");
 
+export const github = new GitHub(config.githubCLientId, config.githubClientSecret, config.backendUrl + "/auth/github/login/callback");
+export const google = new Google(config.googleClientId, config.googleClientSecret, config.backendUrl + "/auth/google/login/callback");
 declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;
