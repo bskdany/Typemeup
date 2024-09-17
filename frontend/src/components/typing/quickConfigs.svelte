@@ -5,34 +5,75 @@
 	let isDesktop = $state(true);
 </script>
 
-<div id="configWrapper">
-	<div id="quickConfigsDesktop">
-		{#each typingModes as typingMode}
-			<button
-				class:selected-text={userData.userTypingConfig.typingMode === typingMode}
-				onclick={() => {
-					userData.userTypingConfig.typingMode = typingMode;
-					if (typingMode === 'smart' || typingMode === 'compete') {
-						userData.userTypingConfig.typingEndMode = 'words';
-					}
-				}}
-			>
-				{typingMode}
-			</button>
-		{/each}
-	</div>
-	<div id="quickConfigsMobile">
+<div id="quickConfigsMobile">
+	<Dropdown
+		options={typingModes}
+		defaultOption={userData.userTypingConfig.typingMode}
+		onOptionSelected={(typingMode) => {
+			userData.userTypingConfig.typingMode = typingMode;
+			if (typingMode === 'smart' || typingMode === 'compete') {
+				userData.userTypingConfig.typingEndMode = 'words';
+			}
+		}}
+	/>
+
+	{#if userData.userTypingConfig.typingMode !== 'compete'}
+		<div class="separator"></div>
+	{/if}
+
+	{#if userData.userTypingConfig.typingMode === 'test'}
 		<Dropdown
-			options={typingModes}
-			defaultOption={userData.userTypingConfig.typingMode}
-			onOptionSelected={(typingMode) => {
+			options={typingEndModes}
+			defaultOption={userData.userTypingConfig.typingEndMode}
+			onOptionSelected={(typingEndMode) => {
+				userData.userTypingConfig.typingEndMode = typingEndMode;
+			}}
+		/>
+
+		<div class="separator"></div>
+
+		{#if userData.userTypingConfig.typingEndMode === 'words'}
+			<Dropdown
+				options={typingEndWordModes}
+				defaultOption={userData.userTypingConfig.typingEndWordMode}
+				onOptionSelected={(typingEndWordMode) => {
+					userData.userTypingConfig.typingEndWordMode = typingEndWordMode;
+				}}
+			/>
+		{:else if userData.userTypingConfig.typingEndMode === 'time'}
+			<Dropdown
+				options={typingEndTimeModes}
+				defaultOption={userData.userTypingConfig.typingEndTimeMode}
+				onOptionSelected={(typingEndTimeMode) => {
+					userData.userTypingConfig.typingEndTimeMode = typingEndTimeMode;
+				}}
+			/>
+		{/if}
+	{:else if userData.userTypingConfig.typingMode === 'smart'}
+		<Dropdown
+			options={typingEndWordModes}
+			defaultOption={userData.userTypingConfig.typingEndWordMode}
+			onOptionSelected={(typingEndWordMode) => {
+				userData.userTypingConfig.typingEndWordMode = typingEndWordMode;
+			}}
+		/>
+	{/if}
+</div>
+
+<div id="quickConfigsDesktop">
+	{#each typingModes as typingMode}
+		<button
+			class:selected-text={userData.userTypingConfig.typingMode === typingMode}
+			onclick={() => {
 				userData.userTypingConfig.typingMode = typingMode;
 				if (typingMode === 'smart' || typingMode === 'compete') {
 					userData.userTypingConfig.typingEndMode = 'words';
 				}
 			}}
-		/>
-	</div>
+		>
+			{typingMode}
+		</button>
+	{/each}
 
 	{#if userData.userTypingConfig.typingMode !== 'compete'}
 		<div class="separator"></div>
@@ -79,8 +120,6 @@
 			</button>
 		{/each}
 	{/if}
-
-	<!-- <div class="separator"></div> -->
 </div>
 
 <style>
@@ -89,7 +128,13 @@
 		background-color: var(--secondary-color);
 	}
 
-	#configWrapper {
+	.separator {
+		width: 1px;
+		background-color: var(--text-color);
+	}
+
+	#quickConfigsMobile,
+	#quickConfigsDesktop {
 		display: flex;
 		flex-direction: row;
 		padding: var(--padding-medium);
@@ -99,14 +144,10 @@
 		width: fit-content;
 		margin: auto;
 	}
-	.separator {
-		width: 1px;
-		background-color: var(--text-color);
-	}
 
 	@media screen and (min-width: 768px) {
 		#quickConfigsDesktop {
-			display: block;
+			display: flex;
 		}
 
 		#quickConfigsMobile {
@@ -120,7 +161,7 @@
 		}
 
 		#quickConfigsMobile {
-			display: block;
+			display: flex;
 		}
 	}
 </style>
