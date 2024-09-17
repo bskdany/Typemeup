@@ -17,13 +17,13 @@
 </script>
 
 <div id="typingResult" class="bubble">
-	<div style="display: flex; gap: var(--spacing-medium); width: 100%;">
+	<div style="display: flex; gap: var(--spacing-medium); width: 100%; justify-content: space-evenly;">
 		<div style="display: grid; grid-template-rows: 1fr 1fr; gap: var(--spacing-medium);">
 			<SingleDataContainer title={'wpm'} data={getWpm(typingTestRunData)} data_rem={2.5} />
 			<SingleDataContainer title={'accuracy'} data={getAccuracy(typingTestRunData) + '%'} data_rem={2.5} />
 		</div>
 
-		<div style="min-height: 100%; width: 100%;">
+		<div style="min-height: 100%; width: 100%;" id="resultDesktop">
 			<KeyPressTimingsChart {typingTestRunData} />
 		</div>
 
@@ -43,6 +43,10 @@
 					getWrongCharCount(typingTestRunData, 'swapped')}
 			/>
 		</div>
+	</div>
+
+	<div style="min-height: 100%; width: 100%;" id="resultMobile">
+		<KeyPressTimingsChart {typingTestRunData} />
 	</div>
 
 	<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacing-medium);"></div>
@@ -66,5 +70,25 @@
 
 	#restartButton {
 		font-size: 1rem;
+	}
+
+	@media screen and (max-width: 768px) {
+		#resultDesktop {
+			display: none;
+		}
+
+		#resultMobile {
+			display: block;
+		}
+	}
+
+	@media screen and (min-width: 768px) {
+		#resultDesktop {
+			display: block;
+		}
+
+		#resultMobile {
+			display: none;
+		}
 	}
 </style>
