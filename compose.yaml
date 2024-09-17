@@ -21,6 +21,7 @@ services:
       - .env
     ports:
       - "${VITE_PORT_FRONTEND}:3000"
+    restart: always
 
   backend:
     build:
@@ -32,6 +33,7 @@ services:
       - "${PORT_BACKEND}:3000"
     volumes:
       - "${PATH_TO_DB}:/data"
+    restart: always
 
   backend_websockets:
     build:
@@ -39,3 +41,4 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "8080:8080"
+    restart: always
