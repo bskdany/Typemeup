@@ -2,6 +2,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig, loadEnv } from 'vite';
 import { config } from "dotenv";
 import Markdown from 'vite-plugin-md';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 config({ path: "../.env" })
 
@@ -10,7 +11,15 @@ export default defineConfig(({ mode }) => {
   const port_frontend = parseInt(env.VITE_PORT_FRONTEND ?? "") ?? 5173;
 
   return {
-    plugins: [sveltekit(), Markdown()],
+    plugins: [
+      sveltekit(),
+      Markdown(),
+      visualizer({
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+      }),
+    ],
     test: {
       include: ['src/**/*.{test,spec}.{js,ts}'],
     },
