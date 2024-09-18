@@ -35,31 +35,9 @@
   },
   "type": "module",
   "dependencies": {
-      "devDependencies": {
-        "@sveltejs/adapter-auto": "^3.0.0",
-        "@sveltejs/adapter-node": "^5.2.0",
-        "@sveltejs/kit": "^2.0.0",
-        "@sveltejs/vite-plugin-svelte": "^3.0.0",
-        "@types/eslint": "^8.56.7",
-        "@types/chart.js": "^2.9.41",
-        "eslint": "^9.0.0",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-svelte": "^2.36.0",
-        "globals": "^15.0.0",
-        "prettier": "^3.1.1",
-        "prettier-plugin-svelte": "^3.1.2",
-        "svelte": "^5.0.0-next.79",
-        "svelte-check": "^3.6.0",
-        "tslib": "^2.4.1",
-        "typescript": "^5.0.0",
-        "typescript-eslint": "^8.0.0-alpha.20",
-        "vite": "^5.0.3",
-        "vite-plugin-md": "^0.21.5",
-        "vitest": "^1.2.0",
-        "dotenv": "^16.4.5",
-        "marked": "^14.0.0"
-      },
-      "type": "module",
-      "dependencies": {
-        "chart.js": "^4.4.3"
-      }
+    "@types/chart.js": "^2.9.41",
+    "chart.js": "^4.4.3",
+    "dotenv": "^16.4.5",
+    "marked": "^14.0.0"
+  }
+}

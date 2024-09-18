@@ -22,8 +22,7 @@
     "check": "cd backend && npm run check && cd .. && cd frontend && npm run check"
   },
   "devDependencies": {
-    "concurrently": "^6.2.0",
-    "rollup-plugin-visualizer": "^5.12.0"
+    "concurrently": "^6.2.0"
   },
   "author": "bskdany",
   "license": "ISC"
