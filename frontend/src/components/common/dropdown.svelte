@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { icons } from '../../lib/icons';
 
-	const { options, defaultOption, onOptionSelected }: { options: readonly any[]; defaultOption?: any; onOptionSelected: (arg0: any) => void } = $props();
+	let { options, selectedOption, onOptionSelected }: { options: readonly any[]; selectedOption?: any; onOptionSelected: (arg0: any) => void } = $props();
 
-	let selectedOption: any = $state(defaultOption);
 	let isDropdownExpanded = $state(false);
 </script>
 
@@ -27,8 +26,8 @@
 							class="option"
 							onclick={() => {
 								onOptionSelected(option);
-								selectedOption = option;
 								isDropdownExpanded = false;
+								selectedOption = option;
 							}}>{option}</button
 						>
 					{/if}
