@@ -369,7 +369,7 @@ func generatePlayersData(players []*Player) *[]PlayerData {
 func generateWords() *[25]string {
 	file, err := os.ReadFile("./words.json")
 	if err == nil {
-		fmt.Println(err)
+		log.Printf("Error reading words.json: %v", err)
 	}
 
 	type WordsFile struct {

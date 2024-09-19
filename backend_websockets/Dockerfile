@@ -66,13 +66,24 @@ RUN adduser \
     --no-create-home \
     --uid "${UID}" \
     appuser
+
+RUN mkdir /app && chown appuser:appuser /app
 USER appuser
 
-# Copy the executable from the "build" stage.
-COPY --from=build /bin/server /bin/
+# Create app directory and set as working directory
+WORKDIR /app
+
+# Copy the executable from the "build" stage to the /app directory
+COPY --from=build --chown=appuser:appuser /bin/server /app/server
+
+# Copy the words.json file into the container
+COPY --chown=appuser:appuser words.json /app/words.json
+
+# Switch to non-root user
+USER appuser
 
 # Expose the port that the application listens on.
 EXPOSE 8080
 
 # What the container should run when it is started.
-ENTRYPOINT [ "/bin/server" ]
+ENTRYPOINT [ "./server" ]
