@@ -45,7 +45,7 @@ app.use(validateSession);
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 
-app.get('api/sitemap.xml', (_, res) => {
+app.get('/api/sitemap.xml', (_, res) => {
   const baseUrl = config.frontend_url;
   const routes = [
     '',
