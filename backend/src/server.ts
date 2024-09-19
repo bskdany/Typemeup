@@ -5,11 +5,8 @@ import { authRouter } from "./routes/auth/authRouter.js";
 import { devMode, validateSession } from "./routes/middleware.js";
 import { config } from "./lib/config.js";
 import cors from 'cors';
-import { migrateUserTypingConfig } from "./lib/migrateTypingConfig.js";
 import { db } from "./lib/db.js";
 import http from 'http';
-import WebSocket, { WebSocketServer } from 'ws';
-import { handleCompetition } from './lib/competitionHandler.js';
 import { migrateDbSchema } from "./lib/migrateDbSchema.js";
 
 console.log("PROD: " + config.is_prod);
@@ -25,7 +22,6 @@ migrateDbSchema(db);
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
 
 if (config.use_cors)
   app.use(cors({
@@ -49,8 +45,30 @@ app.use(validateSession);
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 
-wss.on('connection', (socket) => {
-  handleCompetition(socket);
+app.get('api/sitemap.xml', (_, res) => {
+  const baseUrl = config.frontend_url;
+  const routes = [
+    '',
+    '/about',
+    '/account',
+    '/config',
+    '/profile'
+  ];
+
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      ${routes.map(route => `
+        <url>
+          <loc>${baseUrl}${route}</loc>
+          <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+          <changefreq>weekly</changefreq>
+          <priority>0.8</priority>
+        </url>
+      `).join('')}
+    </urlset>`;
+
+  res.header('Content-Type', 'application/xml');
+  res.send(sitemap);
 });
 
 server.listen(3000, () => {
