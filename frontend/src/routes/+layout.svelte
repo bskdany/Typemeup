@@ -31,7 +31,7 @@
 		showThemePanel = !showThemePanel;
 	}
 
-	let appBind: HTMLElement;
+	let appBind: HTMLElement | undefined = $state();
 	$effect(() => {
 		if (appBind) {
 			appBind.style.setProperty('--background-color', userData.userTypingConfig.theme.colorScheme.backgroundColor.value);
@@ -52,7 +52,6 @@
 <svelte:head>
 	<script defer src="https://analytics.bskdany.com/script.js" data-website-id={import.meta.env.VITE_ANALYTICS_ID}></script>
 </svelte:head>
-
 {#await hasInitialized()}
 	<TypingTestLoad />
 {:then}
