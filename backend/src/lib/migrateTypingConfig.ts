@@ -15,6 +15,10 @@ export function migrateUserTypingConfig(db: Database) {
         config.theme = defaultUserTypingConfig.theme
       }
 
+      if (!config.typingLanguage) {
+        config.typingLanguage = "english"
+      }
+
       if (!config.visualConfig) {
         config.visualConfig = defaultUserTypingConfig.visualConfig
       }

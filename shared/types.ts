@@ -19,6 +19,7 @@ export interface KeypressData {
 
 export interface UserTypingConfig {
   errorCorrectionMode: number,
+  typingLanguage: string,
   typingMode: "test" | "smart" | "compete",
   typingEndMode: "time" | "words",
   typingEndTimeMode: number,

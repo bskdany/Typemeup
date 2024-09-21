@@ -8,6 +8,7 @@ import cors from 'cors';
 import { db } from "./lib/db.js";
 import http from 'http';
 import { migrateDbSchema } from "./lib/migrateDbSchema.js";
+import { migrateUserTypingConfig } from "./lib/migrateTypingConfig.js";
 
 console.log("PROD: " + config.is_prod);
 console.log("DOCKER: " + config.is_docker);
@@ -17,7 +18,7 @@ console.log("CORS: " + config.use_cors);
 console.log("Origin: " + config.frontend_url);
 
 // doing server migration from here for now
-// migrateUserTypingConfig(db);
+migrateUserTypingConfig(db);
 migrateDbSchema(db);
 
 const app = express();

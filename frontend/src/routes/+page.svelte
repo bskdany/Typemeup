@@ -1,17 +1,15 @@
 <script lang="ts">
 	import '../global.css';
-	import { onDestroy, onMount, setContext } from 'svelte';
+	import { setContext } from 'svelte';
 	import type { TypingTestRunData } from '../types/interfaces';
 	import { fetchBackend } from '../lib/fetch';
 	import { getAccuracy, getWpm } from '../lib/typingTestRunHelper';
 	import { getCombinedTypingEndMode, hasInitialized, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
 	import QuickConfigs from '../components/typing/quickConfigs.svelte';
 	import { showToast } from '../shared/toastController.svelte';
-	import TypingTestLoad from '../components/typing/typingTestLoad.svelte';
 	import CompetitionMode from '../components/typing/compete/competeTypingMode.svelte';
 	import SmartTypingMode from '../components/typing/smart/smartTypingMode.svelte';
 	import TestTypingMode from '../components/typing/test/testTypingMode.svelte';
-	import TypingProgress from '../components/typing/typingProgress.svelte';
 
 	let typingContextData = $state({
 		displayTypingTest: true,
@@ -54,20 +52,16 @@
 	}
 </script>
 
-{#await hasInitialized()}
-	<TypingTestLoad />
-{:then}
-	<div style="display: grid; grid-template-rows: 1fr 2fr; height: 100%;">
-		<div style="display: flex; flex-direction: column; justify-content: space-between;">
-			<QuickConfigs />
-		</div>
-
-		{#if userData.userTypingConfig.typingMode === 'compete'}
-			<CompetitionMode onTypingStart={handleTypingStarted} onTypingEnd={handleTypingEnded} />
-		{:else if userData.userTypingConfig.typingMode === 'test'}
-			<TestTypingMode onTypingStart={handleTypingStarted} onTypingEnd={handleTypingEnded} />
-		{:else if userData.userTypingConfig.typingMode === 'smart'}
-			<SmartTypingMode onTypingStart={handleTypingStarted} onTypingEnd={handleTypingEnded} />
-		{/if}
+<div style="display: grid; grid-template-rows: 1fr 2fr; height: 100%;">
+	<div style="display: flex; flex-direction: column; justify-content: space-between;">
+		<QuickConfigs />
 	</div>
-{/await}
+
+	{#if userData.userTypingConfig.typingMode === 'compete'}
+		<CompetitionMode onTypingStart={handleTypingStarted} onTypingEnd={handleTypingEnded} />
+	{:else if userData.userTypingConfig.typingMode === 'test'}
+		<TestTypingMode onTypingStart={handleTypingStarted} onTypingEnd={handleTypingEnded} />
+	{:else if userData.userTypingConfig.typingMode === 'smart'}
+		<SmartTypingMode onTypingStart={handleTypingStarted} onTypingEnd={handleTypingEnded} />
+	{/if}
+</div>

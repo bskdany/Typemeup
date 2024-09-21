@@ -1,6 +1,6 @@
 import type { KeyStatistic } from "@shared/types";
-import wordsFile from "../words/words.json";
-import { userData } from "../shared/userData.svelte";
+import { getWordsFile, userData } from "../shared/userData.svelte";
+
 
 function generateLettersToWordsByAffinities(allPossibleWords: string[], letters: string[]) {
   // each letter will point to a list of words that contain that letter, sorted from the word
@@ -53,16 +53,16 @@ function mergeAffinitiesByKeyWeight(lettersToWordsAffinities: Map<string, Map<st
 }
 
 export function generateWordsAlgo2(keyStatistics: KeyStatistic[], howManyWords: number) {
-  const lettersToWordsAffinities = generateLettersToWordsByAffinities(wordsFile.words, userData.userTypingConfig.smartModeConfig.fingerMap.flat(2));
-  // console.log(lettersToWordsAffinities)
+  const lettersToWordsAffinities = generateLettersToWordsByAffinities(getWordsFile().words, userData.userTypingConfig.smartModeConfig.fingerMap.flat(2));
 
   const mergedAffinities = mergeAffinitiesByKeyWeight(lettersToWordsAffinities, keyStatistics);
-  // console.log(mergedAffinities);
 
   return chooseRandomFromWordlist(mergedAffinities.map(entry => entry[0]).filter((entry, index) => index < howManyWords * 2), howManyWords);
 }
 
 export function generateRandomWords(howManyWords: number): string[] {
+  const wordsFile = getWordsFile();
+
   const words: string[] = [];
   for (let i = 0; i < howManyWords; i++) {
     const randomVal = Math.random();

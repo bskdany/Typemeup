@@ -4,6 +4,7 @@ export const defaultUserTypingConfig: UserTypingConfig = {
   errorCorrectionMode: 0,
   typingMode: "test",
   typingEndMode: "time",
+  typingLanguage: "english",
   typingEndTimeMode: 60,
   typingEndWordMode: 50,
   smartModeConfig: {

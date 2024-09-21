@@ -2,25 +2,17 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { userData } from '../shared/userData.svelte';
+	import { hasInitialized, userData } from '../shared/userData.svelte';
 	import { showToast, toastList } from '../shared/toastController.svelte';
 	import Toast from '../components/common/toast.svelte';
 	import { fetchBackend } from '../lib/fetch';
 	import ThemePanel from '../components/theme/themePanel.svelte';
 	import { icons } from '../lib/icons';
+	import TypingTestLoad from '../components/typing/typingTestLoad.svelte';
 
 	let { children } = $props();
 	let currentPath = $derived($page.url.pathname);
 	let showThemePanel = $state(false);
-
-	// async function saveConfig() {
-	// 	try {
-	// 		await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
-	// 		showToast({ message: 'Config saved succesfully', type: 'success' });
-	// 	} catch (e) {
-	// 		console.error(e);
-	// 	}
-	// }
 
 	async function logout() {
 		try {
@@ -60,100 +52,105 @@
 <svelte:head>
 	<script defer src="https://analytics.bskdany.com/script.js" data-website-id={import.meta.env.VITE_ANALYTICS_ID}></script>
 </svelte:head>
-<div id="app" bind:this={appBind}>
-	<div id="toastContainer">
-		{#each toastList as toast}
-			<Toast type={toast.type} message={toast.message} duration={toast.duration} />
-		{/each}
-	</div>
 
-	<header>
-		{#if currentPath === '/'}
-			<div id="leftHeader">
-				<button onclick={() => toggleThemeEditor()}>
-					<div class="icon-container">
-						{@html icons.theme}
-					</div>
-				</button>
-			</div>
-			<div id="rightHeader">
-				<button onclick={() => goto('/config')}>
-					<div class="icon-container">
-						{@html icons.config}
-					</div>
-				</button>
-				<button onclick={() => goto('/profile')} class="link">
-					{#if userData.username === ''}
+{#await hasInitialized()}
+	<TypingTestLoad />
+{:then}
+	<div id="app" bind:this={appBind}>
+		<div id="toastContainer">
+			{#each toastList as toast}
+				<Toast type={toast.type} message={toast.message} duration={toast.duration} />
+			{/each}
+		</div>
+
+		<header>
+			{#if currentPath === '/'}
+				<div id="leftHeader">
+					<button onclick={() => toggleThemeEditor()}>
 						<div class="icon-container">
-							{@html icons.profile}
+							{@html icons.theme}
 						</div>
-					{:else}
+					</button>
+				</div>
+				<div id="rightHeader">
+					<button onclick={() => goto('/config')}>
 						<div class="icon-container">
-							{@html icons.profile}
+							{@html icons.config}
 						</div>
-						<div>
-							{userData.username}
+					</button>
+					<button onclick={() => goto('/profile')} class="link">
+						{#if userData.username === ''}
+							<div class="icon-container">
+								{@html icons.profile}
+							</div>
+						{:else}
+							<div class="icon-container">
+								{@html icons.profile}
+							</div>
+							<div>
+								{userData.username}
+							</div>
+						{/if}
+					</button>
+				</div>
+			{:else if currentPath === '/config'}
+				<div id="leftHeader">
+					<button onclick={() => goto('/')}>
+						<div class="icon-container">
+							{@html icons.home}
 						</div>
-					{/if}
-				</button>
-			</div>
-		{:else if currentPath === '/config'}
-			<div id="leftHeader">
-				<button onclick={() => goto('/')}>
-					<div class="icon-container">
-						{@html icons.home}
-					</div>
-				</button>
-			</div>
-		{:else if currentPath === '/profile'}
-			<div id="leftHeader">
-				<button onclick={() => goto('/')}>
-					<div class="icon-container">
-						{@html icons.home}
-					</div>
-				</button>
-			</div>
-			<div id="rightHeader">
-				<button onclick={() => logout()}>Logout</button>
-			</div>
-		{:else}
-			<div id="leftHeader">
-				<button onclick={() => goto('/')}>
-					<div class="icon-container">
-						{@html icons.home}
-					</div>
-				</button>
-			</div>
-		{/if}
-	</header>
+					</button>
+				</div>
+			{:else if currentPath === '/profile'}
+				<div id="leftHeader">
+					<button onclick={() => goto('/')}>
+						<div class="icon-container">
+							{@html icons.home}
+						</div>
+					</button>
+				</div>
+				<div id="rightHeader">
+					<button onclick={() => logout()}>Logout</button>
+				</div>
+			{:else}
+				<div id="leftHeader">
+					<button onclick={() => goto('/')}>
+						<div class="icon-container">
+							{@html icons.home}
+						</div>
+					</button>
+				</div>
+			{/if}
+		</header>
 
-	<div style="position: relative;">
-		{#if showThemePanel}
-			<div id="themePanel">
-				<ThemePanel />
-			</div>
-		{/if}
-		{@render children()}
+		<div style="position: relative;">
+			{#if showThemePanel}
+				<div id="themePanel">
+					<ThemePanel />
+				</div>
+			{/if}
+			{@render children()}
+		</div>
+
+		<footer>
+			<a href="/about">about</a>
+
+			<a href="https://github.com/bskdany/typemeup" target="_blank" class="link">
+				<div class="icon-container">
+					{@html icons.github}
+				</div>
+				<div>github</div>
+			</a>
+
+			<a href="https://discord.gg/YdcJdE4HBv" target="_blank" class="link">
+				<div class="icon-container">
+					{@html icons.discord}
+				</div>
+				<div>discord</div>
+			</a>
+		</footer>
 	</div>
-
-	<footer>
-		<a href="/about">about</a>
-
-		<a href="https://github.com/bskdany/typemeup" target="_blank" class="link">
-			<div class="icon-container">
-				{@html icons.github}
-			</div>
-			<div>github</div>
-		</a>
-
-		<a href="https://discord.gg/YdcJdE4HBv" target="_blank" class="link">
-			<div class="icon-container">
-				{@html icons.discord}
-			</div>
-			<div>discord</div>
-		</a>
-	</footer>
-</div>
+{/await}
 
 <style>
 	#app {

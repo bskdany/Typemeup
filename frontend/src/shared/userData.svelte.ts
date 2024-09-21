@@ -12,15 +12,32 @@ export const userData: { username: string, userTypingConfig: UserTypingConfig, k
   keyStatistics: [] as KeyStatistic[],
 } as const);
 
-export function isLoggedIn(): boolean { return userData.username?.length > 0 }
-export function isSessionFresh(): boolean { return userData.keyStatistics.length === 0 }
-export function getCombinedTypingEndMode(): string { return userData.userTypingConfig.typingEndMode + " " + (userData.userTypingConfig.typingEndMode === "time" ? userData.userTypingConfig.typingEndTimeMode : userData.userTypingConfig.typingEndWordMode) };
+
+let wordsFile: any;
+
+export function setWordsFile(value: any) {
+  wordsFile = value;
+}
+export function getWordsFile() {
+  return wordsFile;
+}
+
+let initialized = false;
+export function setInitialized(value: boolean): void {
+  initialized = value;
+}
+
 export function hasInitialized(): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    if (userData.keyStatistics.length > 0) {
+    if (initialized) {
       resolve(true);
     } else {
       reject(false);
     }
   });
 }
+
+export function isLoggedIn(): boolean { return userData.username?.length > 0 }
+export function isSessionFresh(): boolean { return userData.keyStatistics.length === 0 }
+export function getCombinedTypingEndMode(): string { return userData.userTypingConfig.typingEndMode + " " + (userData.userTypingConfig.typingEndMode === "time" ? userData.userTypingConfig.typingEndTimeMode : userData.userTypingConfig.typingEndWordMode) };
+
