@@ -12,12 +12,15 @@ export const userData: { username: string, userTypingConfig: UserTypingConfig, k
   keyStatistics: [] as KeyStatistic[],
 } as const);
 
-
 let wordsFile: any;
 
 export async function loadWordsFile(value: any) {
-  wordsFile = await import(`../static/languages/${value}.json`)
+  await import(`../static/languages/${value}.json`).then(file => {
+    wordsFile = file;
+    userData.userTypingConfig.typingLanguage = value;
+  });
 }
+
 export function getWordsFile() {
   return wordsFile;
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy, getContext } from 'svelte';
 	import TypingTest from '../typingTest.svelte';
-	import { userData } from '../../../shared/userData.svelte';
+	import { getWordsFile, userData } from '../../../shared/userData.svelte';
 	import type { TypingContext, TypingContextData, TypingTestRunData } from '../../../types/interfaces';
 	import { generateRandomWords } from '../../../algo/textGenerator';
 	import TypingTestModeKeyboard from './testTypingModeKeyboard.svelte';
@@ -40,6 +40,7 @@
 	}
 
 	$effect(() => {
+		userData.userTypingConfig.typingLanguage;
 		userData.userTypingConfig.typingEndTimeMode;
 		userData.userTypingConfig.typingEndWordMode;
 		restart();

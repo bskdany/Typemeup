@@ -38,16 +38,9 @@
 </div>
 
 <style>
-	.icon-container {
-		display: flex;
-		height: 1rem;
-		width: 1rem;
-		align-items: center;
-		justify-content: center;
-	}
-
 	.dropDownWrapper {
-		width: 100px;
+		min-width: 100px;
+		width: fit-content;
 		height: min-content;
 		display: flex;
 		flex-direction: column;

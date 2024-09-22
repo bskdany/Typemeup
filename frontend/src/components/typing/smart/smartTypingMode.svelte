@@ -69,7 +69,7 @@
 </script>
 
 <div style="display: grid; grid-template-rows: 1fr 2fr; ">
-	{#key [resetTrigger, userData.userTypingConfig.typingEndWordMode]}
+	{#key [resetTrigger, userData.userTypingConfig.typingEndWordMode, userData.userTypingConfig.typingLanguage]}
 		<div>
 			{#if typingContextData.typingTestStatus === 'started'}
 				<TypingProgress />
