@@ -53,6 +53,7 @@
 	let msTimeAtLastKeyPress: number;
 	let timeInterval: any = null;
 	let timeStarted: string;
+	let isFocused = $state(true);
 
 	function typingTestStarted() {
 		msTime = 0;
@@ -167,9 +168,10 @@
 		mainTextTranslateDistance = -cursorElementPosition.y;
 	}
 
-	export function focus() {
+	function focus() {
 		if (typingTestInputBind && typingTestInputBind instanceof HTMLElement && document.activeElement != typingTestInputBind) {
 			typingTestInputBind.focus();
+			console.log('Input focused');
 		}
 	}
 
@@ -214,26 +216,56 @@
 	});
 </script>
 
-<div id="overflow-placeholder" style="height: {textHeight}px;">
-	<div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
+<div style="position:relative">
+	{#if !isFocused}
 		<div
-			id="cursor"
-			style="height:{textHeight / 3}px; transform: translate({$cursorElementPositionX}px, {cursorElementPosition.y}px)"
-			bind:this={cursorElement}
-		></div>
-		{#each textObject?.textObject as word, index}
-			<div class="word" bind:this={textObjectBind[index]}>
-				{#each word.letters as { text, isCorrect, isSpace, isTyped }}
-					<span class="letter {isSpace ? 'space' : ''} {isTyped && isCorrect ? 'correct' : ''} {isTyped && !isCorrect ? 'incorrect' : ''}">
-						{text}
-					</span>
-				{/each}
-			</div>
-		{/each}
+			style="color: var(--text-color); text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0px 1px 1px #000000);"
+		>
+			Click to focus
+		</div>
+	{/if}
+	<div
+		id="overflow-placeholder"
+		role="button"
+		style="height: {textHeight}px; {isFocused ? '' : 'filter: blur(3px)'};"
+		onclick={() => {
+			if (!isFocused) {
+				focus();
+			}
+		}}
+		onkeydown={() => focus()}
+		tabindex="0"
+	>
+		<div id="main-text" style="transform: translateY({mainTextTranslateDistance}px)" bind:this={mainTextElement}>
+			<div
+				id="cursor"
+				style="height:{textHeight / 3}px; transform: translate({$cursorElementPositionX}px, {cursorElementPosition.y}px)"
+				bind:this={cursorElement}
+			></div>
+			{#each textObject?.textObject as word, index}
+				<div class="word" bind:this={textObjectBind[index]}>
+					{#each word.letters as { text, isCorrect, isSpace, isTyped }}
+						<span class="letter {isSpace ? 'space' : ''} {isTyped && isCorrect ? 'correct' : ''} {isTyped && !isCorrect ? 'incorrect' : ''}">
+							{text}
+						</span>
+					{/each}
+				</div>
+			{/each}
+		</div>
 	</div>
 </div>
 
-<input bind:this={typingTestInputBind} id="wordsInput" oninput={processKeyPress} autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+<input
+	bind:this={typingTestInputBind}
+	onfocusin={() => (isFocused = true)}
+	onfocusout={() => (isFocused = false)}
+	id="wordsInput"
+	oninput={processKeyPress}
+	autocomplete="off"
+	autocorrect="off"
+	autocapitalize="off"
+	spellcheck="false"
+/>
 
 <style>
 	.word {

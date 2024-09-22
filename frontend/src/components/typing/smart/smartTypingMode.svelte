@@ -15,7 +15,6 @@
 	const typingContext: TypingContext = getContext('typingContext') as TypingContext;
 	const typingContextData: TypingContextData = typingContext.typingContextData;
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
-	let typingTestRef: TypingTest;
 	let resetTrigger = $state(0); // incrementing this will reset the typing test
 
 	function handleTypingEnd(typingTestRunData: TypingTestRunData) {
@@ -53,8 +52,6 @@
 			event.preventDefault();
 			resetTrigger += 1;
 		}
-
-		typingTestRef?.focus();
 	}
 
 	onMount(() => {
@@ -82,7 +79,6 @@
 				typingEndMode="words"
 				testStarted={onTypingStart}
 				testEnded={handleTypingEnd}
-				bind:this={typingTestRef}
 			/>
 		</div>
 	{/key}

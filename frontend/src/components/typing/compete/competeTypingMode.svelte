@@ -13,7 +13,6 @@
 
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 
-	let typingTestRef: TypingTest;
 	let socket: WebSocket;
 	let competitionStatus: 'waiting' | 'inProgress' | 'finished' | 'terminated' = $state('waiting');
 
@@ -92,8 +91,6 @@
 				restart();
 			}
 		}
-
-		typingTestRef?.focus();
 	}
 
 	function initializePlayersData() {
@@ -272,7 +269,6 @@
 
 			{#if displayCountdown}
 				<TypingTest
-					bind:this={typingTestRef}
 					{targetText}
 					inputBlocked={true}
 					errorCorrectionMode={2}
@@ -281,14 +277,7 @@
 					testEnded={handleTypingEnd}
 				/>
 			{:else}
-				<TypingTest
-					bind:this={typingTestRef}
-					{targetText}
-					errorCorrectionMode={2}
-					typingEndMode="words"
-					onProgress={handleTypingProgress}
-					testEnded={handleTypingEnd}
-				/>
+				<TypingTest {targetText} errorCorrectionMode={2} typingEndMode="words" onProgress={handleTypingProgress} testEnded={handleTypingEnd} />
 			{/if}
 		</div>
 	</div>

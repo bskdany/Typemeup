@@ -29,8 +29,6 @@
 			resetTrigger += 1;
 			displayTypingTest = true;
 		}
-
-		typingTestRef?.focus();
 	}
 
 	function restart() {
