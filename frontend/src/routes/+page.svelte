@@ -41,7 +41,8 @@
 						timeStarted: typingTestRunData.timeStarted,
 						timeEnded: typingTestRunData.timeEnded,
 						wpm: getWpm(typingTestRunData),
-						accuracy: getAccuracy(typingTestRunData)
+						accuracy: getAccuracy(typingTestRunData),
+						language: userData.userTypingConfig.typingLanguage
 					}
 				});
 			} catch (e) {

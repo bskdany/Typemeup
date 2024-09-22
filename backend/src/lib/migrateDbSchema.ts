@@ -100,5 +100,25 @@ export function migrateDbSchema(db: Database) {
     console.log("Table Users non unique password migration failed")
     console.error(error);
   }
+
+
+  // adding the language column to the TypingTest table
+  try {
+    const columnInfo = db.prepare("PRAGMA table_info(user)").all();
+    const needsUpdate = columnInfo.some((col: any) =>
+      (col.name !== 'language')
+    );
+
+    if (needsUpdate) {
+      db.transaction(() => {
+        db.prepare(`ALTER TABLE TypingTest ADD COLUMN language`).run();
+      })();
+    }
+    console.log("Added language column in TypingTest table");
+  }
+  catch (error) {
+    console.log("Language column addition failed")
+    console.error(error);
+  }
 };
 

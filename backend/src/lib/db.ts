@@ -30,6 +30,7 @@ db.exec(`CREATE TABLE IF NOT EXISTS TypingTest (
   timeTaken INTEGER NOT NULL,
   wpm REAL NOT NULL,
   accuracy REAL NOT NULL,
+  language TEXT NOT NULL,
   targetText TEXT NOT NULL,
   FOREIGN KEY(user_id) REFERENCES user(id)
 )`)
