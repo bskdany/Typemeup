@@ -83,5 +83,7 @@
 		</div>
 	{/key}
 
-	<SmartTypingModeKeyboard keyStats={$state.snapshot(userData.keyStatistics)} />
+	{#if userData.userTypingConfig.visualConfig.showSmartModeKeyboard}
+		<SmartTypingModeKeyboard keyStats={$state.snapshot(userData.keyStatistics)} />
+	{/if}
 </div>

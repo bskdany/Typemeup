@@ -64,8 +64,6 @@
 			userData.userTypingConfig.theme = JSON.parse(JSON.stringify(themeChangeHistory[themeChangeHistoryIndex]));
 		}
 	}
-
-	// $inspect(themeChangeHistory);
 </script>
 
 <BubbleContainer>

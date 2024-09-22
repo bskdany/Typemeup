@@ -87,7 +87,9 @@
 				{/if}
 			</div>
 
-			<TypingTestModeKeyboard />
+			{#if userData.userTypingConfig.visualConfig.showLiveKeypressKeyboard}
+				<TypingTestModeKeyboard />
+			{/if}
 		</div>
 	{:else}
 		<TypingTestModeResult {typingTestRunData} {restart} />
