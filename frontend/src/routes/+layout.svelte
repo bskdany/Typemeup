@@ -34,6 +34,7 @@
 	let appBind: HTMLElement | undefined = $state();
 	$effect(() => {
 		if (appBind) {
+			console.warn("Style updated");
 			appBind.style.setProperty('--background-color', userData.userTypingConfig.theme.colorScheme.backgroundColor.value);
 			appBind.style.setProperty('--primary-color', userData.userTypingConfig.theme.colorScheme.primaryColor.value);
 			appBind.style.setProperty('--secondary-color', userData.userTypingConfig.theme.colorScheme.secondaryColor.value);

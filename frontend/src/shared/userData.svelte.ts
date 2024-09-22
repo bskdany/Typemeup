@@ -15,8 +15,8 @@ export const userData: { username: string, userTypingConfig: UserTypingConfig, k
 
 let wordsFile: any;
 
-export function setWordsFile(value: any) {
-  wordsFile = value;
+export async function loadWordsFile(value: any) {
+  wordsFile = await import(`../static/languages/${value}.json`)
 }
 export function getWordsFile() {
   return wordsFile;

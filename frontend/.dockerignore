@@ -32,3 +32,8 @@
 **/dist
 LICENSE
 README.md
+
+*.json
+
+!package.json
+!package-lock.json

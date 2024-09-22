@@ -20,7 +20,7 @@ ENV VITE_URL_BACKEND_WS=${VITE_URL_BACKEND_WS}
 ENV VITE_ANALYTICS_ID=${VITE_ANALYTICS_ID}
 ENV VITE_TEST="FUCK YOU VITE WHY DO YOU DO THIS TO ME GOD DAMNIT"
 ENV VITE_IS_DOCKER=true
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=16384"
 
 ################################################################################
 # Create a stage for installing production dependencies.

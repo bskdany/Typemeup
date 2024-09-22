@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { typingEndModes, typingEndTimeModes, typingEndWordModes, typingModes, userData } from '../../shared/userData.svelte';
 	import Dropdown from '../common/dropdown.svelte';
-	import TypingTestModeResult from './test/result/typingTestModeResult.svelte';
-	let isDesktop = $state(true);
+	import AdditionalQuickConfigs from './additionalQuickConfigs.svelte';
 </script>
 
 <div id="quickConfigsMobile">
 	<Dropdown
 		options={typingModes}
-		defaultOption={userData.userTypingConfig.typingMode}
+		selectedOption={userData.userTypingConfig.typingMode}
 		onOptionSelected={(typingMode) => {
 			userData.userTypingConfig.typingMode = typingMode;
 			if (typingMode === 'smart' || typingMode === 'compete') {
@@ -24,7 +23,7 @@
 	{#if userData.userTypingConfig.typingMode === 'test'}
 		<Dropdown
 			options={typingEndModes}
-			defaultOption={userData.userTypingConfig.typingEndMode}
+			selectedOption={userData.userTypingConfig.typingEndMode}
 			onOptionSelected={(typingEndMode) => {
 				userData.userTypingConfig.typingEndMode = typingEndMode;
 			}}
@@ -35,7 +34,7 @@
 		{#if userData.userTypingConfig.typingEndMode === 'words'}
 			<Dropdown
 				options={typingEndWordModes}
-				defaultOption={userData.userTypingConfig.typingEndWordMode}
+				selectedOption={userData.userTypingConfig.typingEndWordMode}
 				onOptionSelected={(typingEndWordMode) => {
 					userData.userTypingConfig.typingEndWordMode = typingEndWordMode;
 				}}
@@ -43,7 +42,7 @@
 		{:else if userData.userTypingConfig.typingEndMode === 'time'}
 			<Dropdown
 				options={typingEndTimeModes}
-				defaultOption={userData.userTypingConfig.typingEndTimeMode}
+				selectedOption={userData.userTypingConfig.typingEndTimeMode}
 				onOptionSelected={(typingEndTimeMode) => {
 					userData.userTypingConfig.typingEndTimeMode = typingEndTimeMode;
 				}}
@@ -52,7 +51,7 @@
 	{:else if userData.userTypingConfig.typingMode === 'smart'}
 		<Dropdown
 			options={typingEndWordModes}
-			defaultOption={userData.userTypingConfig.typingEndWordMode}
+			selectedOption={userData.userTypingConfig.typingEndWordMode}
 			onOptionSelected={(typingEndWordMode) => {
 				userData.userTypingConfig.typingEndWordMode = typingEndWordMode;
 			}}
@@ -121,6 +120,9 @@
 		{/each}
 	{/if}
 </div>
+
+<AdditionalQuickConfigs />
+
 
 <style>
 	button {

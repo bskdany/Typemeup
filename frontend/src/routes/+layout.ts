@@ -1,8 +1,8 @@
 import { fetchBackend } from "../lib/fetch";
-import { isSessionFresh, userData, setInitialized, setWordsFile, getWordsFile } from "../shared/userData.svelte";
+import { isSessionFresh, userData, setInitialized, getWordsFile, loadWordsFile } from "../shared/userData.svelte";
 import type { PageLoad } from "./profile/$types";
 
-export const load: PageLoad = async ({ fetch }) => {
+export const load: PageLoad = async ({ fetch }: any) => {
 	if (isSessionFresh()) {
 		try {
 			const data = await fetchBackend(fetch, "/profile/getUserData");
@@ -10,11 +10,9 @@ export const load: PageLoad = async ({ fetch }) => {
 				userData.username = data?.username;
 				userData.userTypingConfig = JSON.parse(data?.userTypingConfig);
 				userData.keyStatistics = JSON.parse(data?.keyStatistics);
-				setWordsFile(await import(`../static/languages/${userData.userTypingConfig.typingLanguage}.json`));
+				await loadWordsFile(userData.userTypingConfig.typingLanguage);
 				setInitialized(true)
-				console.log(getWordsFile())
 			}
-			console.log(userData.userTypingConfig)
 		}
 		catch (e) {
 			console.error(e);
