@@ -65,7 +65,7 @@ export class TextObjectHandler {
               isCorrect: false,
               isTyped: false,
               errorStatus: "",
-              id: 0
+              id: 0,
             }
           }),
           id: textObject.length,
@@ -108,7 +108,7 @@ export class TextObjectHandler {
             isCorrect: false,
             isTyped: false,
             errorStatus: "",
-            id: 0
+            id: 0,
           }
         )
       }
@@ -181,9 +181,23 @@ export class TextObjectHandler {
 
   handleKeyPressMode0(keyPressed: string) {
     if (keyPressed === "backspace") {
-      this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
-      this.gotoPreviousLetter();
-      this.logKeyPress(false);
+      if (this.getLetter(-1)?.errorStatus === "extra") {
+        this.setLetterStatus(-1, { errorStatus: "wrong" })
+      }
+      else if (this.getLetter(-2)?.errorStatus === "missed") {
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true, errorStatus: "" });
+        this.gotoPreviousLetter();
+
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true, errorStatus: "" });
+        this.gotoPreviousLetter();
+
+        this.logKeyPress(false);
+      }
+      else {
+        this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+        this.gotoPreviousLetter();
+        this.logKeyPress(false);
+      }
     }
     else if (keyPressed === "backspaceWord") {
 
