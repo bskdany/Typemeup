@@ -20,7 +20,7 @@
 	.toggle {
 		display: inline-flex;
 		width: 100%;
-		justify-content: space-around;
+		justify-content: space-between;
 		align-items: center;
 		cursor: pointer;
 	}

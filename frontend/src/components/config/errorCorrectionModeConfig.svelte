@@ -20,35 +20,34 @@
 	}
 </script>
 
-<BubbleContainer>
-	<div id="content">
-		<div id="title">Error Correction Mode</div>
-		<div id="description">
-			<table>
-				<tbody>
-					{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
-						<tr style="display: flex; gap: 8px">
-							<th style="white-space: nowrap; display: flex;">{name}:</th>
-							<td class:selected-text={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}>{description}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+<div class="bubble" id="content">
+	<h2>Error Correction Mode</h2>
 
-		<div id="choiceSelection">
-			{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
-				<button
-					class:selected={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}
-					onclick={async () => {
-						userData.userTypingConfig.errorCorrectionMode = parseInt(modeNumber);
-						await saveConfig();
-					}}>{name}</button
-				>
-			{/each}
-		</div>
+	<div id="description">
+		<table>
+			<tbody>
+				{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
+					<tr style="display: flex; gap: 8px">
+						<th style="white-space: nowrap; display: flex;">{name}:</th>
+						<td class:selected-text={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}>{description}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
-</BubbleContainer>
+
+	<div id="choiceSelection">
+		{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
+			<button
+				class:selected={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}
+				onclick={async () => {
+					userData.userTypingConfig.errorCorrectionMode = parseInt(modeNumber);
+					await saveConfig();
+				}}>{name}</button
+			>
+		{/each}
+	</div>
+</div>
 
 <style>
 	#choiceSelection {
@@ -60,10 +59,6 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-around;
-	}
-
-	#title {
-		font-size: 1.5rem;
 	}
 
 	#description {
