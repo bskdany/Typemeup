@@ -4,7 +4,7 @@
 	import type { TypingTestRunData } from '../types/interfaces';
 	import { fetchBackend } from '../lib/fetch';
 	import { getAccuracy, getWpm } from '../lib/typingTestRunHelper';
-	import { getCombinedTypingEndMode, hasInitialized, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
+	import { getCombinedTypingEndMode, hasInitialized, initUserData, isLoggedIn, typingEndModes, userData } from '../shared/userData.svelte';
 	import QuickConfigs from '../components/typing/quickConfigs.svelte';
 	import { showToast } from '../shared/toastController.svelte';
 	import CompetitionMode from '../components/typing/compete/competeTypingMode.svelte';

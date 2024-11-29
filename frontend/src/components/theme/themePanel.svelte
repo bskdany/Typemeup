@@ -21,14 +21,6 @@
 
 		themeChangeHistory.push(JSON.parse(JSON.stringify(userData.userTypingConfig.theme)));
 		themeChangeHistoryIndex += 1;
-
-		if (isLoggedIn()) {
-			try {
-				await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
-			} catch (e) {
-				console.error(e);
-			}
-		}
 	}
 
 	async function applyCustomTheme(key: keyof typeof userData.userTypingConfig.customTheme) {
@@ -41,14 +33,6 @@
 
 		themeChangeHistory.push(JSON.parse(JSON.stringify(userData.userTypingConfig.theme)));
 		themeChangeHistoryIndex = themeChangeHistory.length - 1;
-
-		if (isLoggedIn()) {
-			try {
-				await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
-			} catch (e) {
-				console.error(e);
-			}
-		}
 	}
 
 	function previousTheme() {

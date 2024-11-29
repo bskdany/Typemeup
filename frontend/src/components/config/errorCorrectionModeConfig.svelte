@@ -9,15 +9,6 @@
 		1: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
 		2: { name: 'Error ignore', description: 'Incorrect letters are ignored from being added' }
 	};
-
-	async function saveConfig() {
-		try {
-			await fetchBackend(fetch, '/profile/saveUserTypingConfig', { method: 'POST', body: { userTypingConfig: userData.userTypingConfig } });
-			showToast({ message: 'Config saved succesfully', type: 'success' });
-		} catch (e) {
-			console.error(e);
-		}
-	}
 </script>
 
 <div class="bubble" id="content">
@@ -40,9 +31,8 @@
 		{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
 			<button
 				class:selected={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}
-				onclick={async () => {
+				onclick={() => {
 					userData.userTypingConfig.errorCorrectionMode = parseInt(modeNumber);
-					await saveConfig();
 				}}>{name}</button
 			>
 		{/each}
