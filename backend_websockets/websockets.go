@@ -7,6 +7,7 @@ import (
 	"math/rand/v2"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -32,6 +33,7 @@ type PlayerData struct {
 	Ranking     uint8   `json:"ranking"`
 	HasFinished bool    `json:"hasFinished,omitempty"`
 	Progress    uint8   `json:"progress"`
+	mu          sync.Mutex
 }
 
 type WSRequest struct {
@@ -61,6 +63,7 @@ type Competition struct {
 	capacity             uint8
 	activePlayers        uint8
 	playersData          map[string]*PlayerData
+	mu                   sync.Mutex
 }
 
 const PLAYERS_PER_COMPETITION = 3
@@ -338,9 +341,11 @@ func main() {
 }
 
 func sendMessageToCompetition(competition *Competition, response *WSResponse) {
+	competition.mu.Lock()
 	for _, player := range competition.players {
 		player.socket.WriteJSON(response)
 	}
+	competition.mu.Unlock()
 }
 
 func sendWaitingRoomUpdate() {
