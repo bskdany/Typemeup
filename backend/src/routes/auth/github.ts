@@ -6,7 +6,7 @@ import { generateId } from "lucia";
 import type { Request, Response } from "express";
 
 import type { DatabaseUser } from "../../lib/db.js";
-import { defaultUserTypingConfig, generateKeyStatistic } from "../../lib/defaultData.js";
+import { defaultUserTypingConfig, generateKeyStatistic } from "@shared/defaultData.js";
 import { config } from "../../lib/config.js";
 
 interface GitHubUser {

@@ -1,5 +1,5 @@
 import type { Database } from 'better-sqlite3';
-import { defaultUserTypingConfig } from './defaultData.js';
+import { defaultUserTypingConfig } from '@shared/defaultData.js';
 
 export function migrateUserTypingConfig(db: Database) {
 
