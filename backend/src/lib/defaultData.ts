@@ -1,7 +1,7 @@
-import type { KeyStatistic, UserTypingConfig } from "@shared/types";
+import { ErrorCorrectionMode, type KeyStatistic, type UserTypingConfig } from "@shared/types";
 
 export const defaultUserTypingConfig: UserTypingConfig = {
-  errorCorrectionMode: 0,
+  errorCorrectionMode: ErrorCorrectionMode.smart,
   typingMode: "test",
   typingEndMode: "time",
   typingLanguage: "english",

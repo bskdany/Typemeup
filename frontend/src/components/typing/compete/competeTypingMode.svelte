@@ -10,6 +10,7 @@
 	import ProfileOverview from '../../profile/profileOverview.svelte';
 	import { compile } from 'svelte/compiler';
 	import TypingTestLoad from '../typingTestLoad.svelte';
+	import { ErrorCorrectionMode } from '@shared/types';
 
 	const { onTypingStart, onTypingEnd }: { onTypingStart: () => void; onTypingEnd: (data: TypingTestRunData) => void } = $props();
 
@@ -271,13 +272,19 @@
 				<TypingTest
 					{targetText}
 					inputBlocked={true}
-					errorCorrectionMode={2}
+					errorCorrectionMode={ErrorCorrectionMode.errorBlock}
 					typingEndMode="words"
 					onProgress={handleTypingProgress}
 					testEnded={handleTypingEnd}
 				/>
 			{:else}
-				<TypingTest {targetText} errorCorrectionMode={2} typingEndMode="words" onProgress={handleTypingProgress} testEnded={handleTypingEnd} />
+				<TypingTest
+					{targetText}
+					errorCorrectionMode={ErrorCorrectionMode.errorBlock}
+					typingEndMode="words"
+					onProgress={handleTypingProgress}
+					testEnded={handleTypingEnd}
+				/>
 			{/if}
 		</div>
 	</div>

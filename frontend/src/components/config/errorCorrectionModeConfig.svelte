@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { userData } from '../../shared/userData.svelte';
-	import BubbleContainer from '../common/bubbleContainer.svelte';
-	import { showToast } from '../../shared/toastController.svelte';
-	import { fetchBackend } from '../../lib/fetch';
 
-	let errorCorrectionModes = {
-		0: { name: 'Smart', description: 'Smart error detection mode (recomended)' },
-		1: { name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
-		2: { name: 'Error ignore', description: 'Incorrect letters are ignored from being added' }
-	};
+	const errorCorrectionModeOptions = [
+		{ name: 'Smart', description: 'Smart error detection mode (recomended)' },
+		{ name: 'Error block', description: 'Need to remove all incorrect letters before continuing' },
+		{ name: 'Error ignore', description: 'Incorrect letters are ignored from being added' }
+	];
 </script>
 
 <div class="bubble" id="content">
@@ -17,10 +14,10 @@
 	<div id="description">
 		<table>
 			<tbody>
-				{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
+				{#each errorCorrectionModeOptions as errorCorrectionMode, index}
 					<tr style="display: flex; gap: 8px">
-						<th style="white-space: nowrap; display: flex;">{name}:</th>
-						<td class:selected-text={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}>{description}</td>
+						<th style="white-space: nowrap; display: flex;">{errorCorrectionMode.name}:</th>
+						<td class:selected-text={userData.userTypingConfig.errorCorrectionMode === index}>{errorCorrectionMode.description}</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -28,12 +25,12 @@
 	</div>
 
 	<div id="choiceSelection">
-		{#each Object.entries(errorCorrectionModes) as [modeNumber, { name, description }]}
+		{#each errorCorrectionModeOptions as errorCorrectionMode, index}
 			<button
-				class:selected={userData.userTypingConfig.errorCorrectionMode === parseInt(modeNumber)}
+				class:selected={userData.userTypingConfig.errorCorrectionMode === index}
 				onclick={() => {
-					userData.userTypingConfig.errorCorrectionMode = parseInt(modeNumber);
-				}}>{name}</button
+					userData.userTypingConfig.errorCorrectionMode = index;
+				}}>{errorCorrectionMode.name}</button
 			>
 		{/each}
 	</div>

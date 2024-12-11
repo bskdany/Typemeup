@@ -2,7 +2,7 @@
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import { tweened } from 'svelte/motion';
 
-	import type { UserTypingConfig } from '@shared/types';
+	import type { ErrorCorrectionMode, UserTypingConfig } from '@shared/types';
 	import type { TypingContext, TypingContextData, TypingTestRunData } from '../../types/interfaces';
 	import { TextObjectHandler } from './textObjectHandler.svelte';
 
@@ -23,7 +23,7 @@
 		inputBlocked = false
 	}: {
 		targetText: string[];
-		errorCorrectionMode: number;
+		errorCorrectionMode: ErrorCorrectionMode;
 		typingEndMode: UserTypingConfig['typingEndMode'];
 		typingEndTimeMode?: number;
 		testStarted?: () => void;

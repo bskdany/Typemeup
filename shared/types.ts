@@ -17,8 +17,15 @@ export interface KeypressData {
   timeSinceLastKeypress: number;
 }
 
+
+export enum ErrorCorrectionMode {
+  smart,
+  errorBlock,
+  errorIgnore
+}
+
 export interface UserTypingConfig {
-  errorCorrectionMode: number,
+  errorCorrectionMode: ErrorCorrectionMode,
   typingLanguage: string,
   typingMode: "test" | "smart" | "compete",
   typingEndMode: "time" | "words",

@@ -1,3 +1,4 @@
+import { ErrorCorrectionMode } from "@shared/types";
 import type { Letter, TextObject } from "../../types/interfaces";
 
 export class TextObjectHandler {
@@ -22,9 +23,8 @@ export class TextObjectHandler {
   // 0 -> automatic error detection mode
   // 1 -> need to remove all wrong letters before adding correct ones
   // 2 -> error is ignored
-  // 3 -> error is ignored, no backspace (reserved)
 
-  errorHandlingMode: number;
+  errorHandlingMode: ErrorCorrectionMode;
 
   constructor(targetText: string[], errorHandlingMode: number, useEntireWords = true) {
     this.hasMistaken = false;
@@ -161,17 +161,14 @@ export class TextObjectHandler {
     this.keyPressTimings.push(Date.now());
 
     switch (this.errorHandlingMode) {
-      case 0:
+      case ErrorCorrectionMode.smart:
         this.handleKeyPressMode0(keyPressed);
         break;
-      case 1:
+      case ErrorCorrectionMode.errorBlock:
         this.handleKeyPressMode1(keyPressed);
         break;
-      case 2:
+      case ErrorCorrectionMode.errorIgnore:
         this.handleKeyPressMode2(keyPressed);
-        break;
-      case 3:
-        this.handleKeyPressMode3(keyPressed);
         break;
       default:
         throw "Wrong mode, 0 to please";

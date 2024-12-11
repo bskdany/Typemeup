@@ -1,3 +1,5 @@
+import type { ErrorCorrectionMode } from "@shared/types";
+
 export interface TextObject {
   letters: Letter[];
   id: number;
@@ -56,7 +58,7 @@ export interface TypingTestRunData {
   targetText: string[];   // word by word`
   userTypedText: string[];// letter by letter
   textObject: TextObject[];
-  errorCorrectionMode: number;
+  errorCorrectionMode: ErrorCorrectionMode;
   timeStarted: string;
   timeEnded: string;
   correctKeyPresses: number,
@@ -68,7 +70,7 @@ export interface TypingTestRunData {
 export type PastTypingTestResult = {
   typingMode: string;
   typingEndMode: string;
-  errorCorrectionMode: number;
+  errorCorrectionMode: ErrorCorrectionMode;
   timeStarted: string;
   timeEnded: string;
   timeTaken: number;
