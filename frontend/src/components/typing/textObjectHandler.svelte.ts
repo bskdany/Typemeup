@@ -312,9 +312,9 @@ export class TextObjectHandler {
       // backspace to the previous space
       while (this.getLetter(-1) && this.getLetter(-1)?.text !== " ") {
         this.setLetterStatus(-1, { isTyped: false, isCorrect: true });
+        this.gotoPreviousLetter();
       }
 
-      this.gotoPreviousLetter();
     }
     else {
       if (this.hasMistaken) {
