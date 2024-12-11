@@ -21,7 +21,8 @@ export interface KeypressData {
 export enum ErrorCorrectionMode {
   smart,
   errorBlock,
-  errorIgnore
+  errorIgnore,
+  replayReserved
 }
 
 export interface UserTypingConfig {

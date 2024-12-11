@@ -49,47 +49,50 @@
 
 	let resizeObserver; // to handle mainText resizing
 
-	let msTime = 0;
+	let msTimeStart: number;
+	let timeStartedIso: string;
+
 	let msTimeAtLastKeyPress: number;
 	let timeInterval: any = null;
-	let timeStarted: string;
+	let timeProgressInterval: any = null;
+	let timeEndTimeout: any = null;
 	let isFocused = $state(true);
 
 	function typingTestStarted() {
-		msTime = 0;
+		msTimeStart = Date.now();
 		msTimeAtLastKeyPress = Date.now();
-		timeStarted = new Date().toISOString();
-		timeInterval = setInterval(() => {
-			msTime += 10;
-			if (msTime % 1000 === 0) {
-				typingContextData.progressTimeElapsed += 1;
-			}
+		timeStartedIso = new Date().toISOString();
 
-			if (typingEndMode === 'time') {
-				checkIfTestEnded();
-			}
-		}, 10);
+		typingContextData.progressTimeElapsed = 0;
+
+		timeProgressInterval = setInterval(() => {
+			typingContextData.progressTimeElapsed += 1;
+		}, 1000);
+
+		if (typingEndMode === 'time') {
+			timeEndTimeout = setTimeout(() => {
+				typingTestEnded();
+			}, typingEndTimeMode * 1000);
+		}
 	}
 
-	function checkIfTestEnded() {
-		if ((typingEndMode === 'words' && textObject.isEnd()) || (typingEndMode === 'time' && msTime > typingEndTimeMode * 1000)) {
-			typingContextData.typingTestStatus = 'ended';
-			typingContextData.livePressedKey.key = '';
+	function typingTestEnded() {
+		typingContextData.typingTestStatus = 'ended';
+		typingContextData.livePressedKey.key = '';
 
-			testEnded({
-				timeTaken: msTime,
-				targetText: textObject.targetText.slice(0, textObject.wordIndex + 1),
-				userTypedText: textObject.userTypedText,
-				textObject: JSON.parse(JSON.stringify(textObject.textObject)), // deep copy
-				errorCorrectionMode: errorCorrectionMode,
-				timeStarted: timeStarted,
-				timeEnded: new Date().toISOString(),
-				correctKeyPresses: textObject.correctKeyPresses,
-				totalKeyPresses: textObject.totalKeyPresses,
-				keyPressTimings: textObject.keyPressTimings,
-				keyPressCorrectness: textObject.keyPressCorrectness
-			});
-		}
+		testEnded({
+			timeTaken: typingEndMode === 'time' ? typingEndTimeMode * 1000 : Date.now() - msTimeStart,
+			targetText: textObject.targetText.slice(0, textObject.wordIndex + 1),
+			userTypedText: textObject.userTypedText,
+			textObject: JSON.parse(JSON.stringify(textObject.textObject)), // deep copy
+			errorCorrectionMode: errorCorrectionMode,
+			timeStarted: timeStartedIso,
+			timeEnded: new Date().toISOString(),
+			correctKeyPresses: textObject.correctKeyPresses,
+			totalKeyPresses: textObject.totalKeyPresses,
+			keyPressTimings: textObject.keyPressTimings,
+			keyPressCorrectness: textObject.keyPressCorrectness
+		});
 	}
 
 	function getProgress() {
@@ -122,7 +125,9 @@
 
 		handleCursor();
 		checkIfMoveText();
-		checkIfTestEnded();
+		if (typingEndMode === 'words' && textObject.isEnd()) {
+			typingTestEnded();
+		}
 
 		typingContextData.livePressedKey.key = pressedKey;
 		typingContextData.livePressedKey.count += 1;
@@ -212,7 +217,8 @@
 	});
 
 	onDestroy(() => {
-		clearInterval(timeInterval);
+		clearInterval(timeProgressInterval);
+		clearTimeout(timeEndTimeout);
 	});
 </script>
 

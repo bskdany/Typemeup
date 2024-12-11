@@ -170,6 +170,9 @@ export class TextObjectHandler {
       case ErrorCorrectionMode.errorIgnore:
         this.handleKeyPressMode2(keyPressed);
         break;
+      case ErrorCorrectionMode.replayReserved:
+        this.handleKeyPressMode3(keyPressed);
+        break;
       default:
         throw "Wrong mode, 0 to please";
     }

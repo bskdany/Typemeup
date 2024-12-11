@@ -2,6 +2,7 @@
 	import { getContext, onMount, setContext } from 'svelte';
 	import type { TypingResultContext, TypingResultContextData, TypingTestRunData } from '../../../../types/interfaces';
 	import { TextObjectHandler } from '../../textObjectHandler.svelte';
+	import { ErrorCorrectionMode } from '@shared/types';
 
 	const { typingTestRunData }: { typingTestRunData: TypingTestRunData } = $props();
 
@@ -9,7 +10,7 @@
 	const typingResultContextData: TypingResultContextData = typingResultContext.typingResultContextData;
 
 	let textObject: TextObjectHandler = $state(new TextObjectHandler(typingTestRunData.targetText, typingTestRunData.errorCorrectionMode));
-	let userTypedTextObject: TextObjectHandler = $state(new TextObjectHandler(typingTestRunData.userTypedText, 3, false));
+	let userTypedTextObject: TextObjectHandler = $state(new TextObjectHandler(typingTestRunData.userTypedText, ErrorCorrectionMode.replayReserved, false));
 
 	let simulateTypingTimeout: any = null;
 	let playPauseButtonText: string = $state('Play');
