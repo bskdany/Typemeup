@@ -4,8 +4,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "ES2023",
-    "module": "EsNext",
-    "moduleResolution": "Node",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "allowJs": false,
     "resolveJsonModule": true,
     "moduleDetection": "force",
@@ -17,12 +17,20 @@
     "outDir": "dist",
     "sourceMap": true,
     "lib": [
-      "es2022"
+      "ES2022"
     ],
+    "baseUrl": ".",
     "paths": {
       "@shared/*": [
         "../shared/*"
       ]
     }
-  }
+  },
+  "include": [
+    "src",
+    "../shared"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

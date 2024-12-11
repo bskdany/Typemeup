@@ -4,7 +4,7 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start": "node ./dist/app/src/server.js",
     "dev": "npx tsx watch --env-file=../.env src/server.ts",
     "check": "npx tsc --noEmit"
@@ -31,6 +31,7 @@
     "@types/node": "^20.14.12",
     "@types/ws": "^8.5.12",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.5.4"
   },
   "keywords": [],
