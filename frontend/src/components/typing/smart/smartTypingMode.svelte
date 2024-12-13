@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy, getContext } from 'svelte';
 	import TypingTest from '../typingTest.svelte';
-	import { userData } from '../../../shared/userData.svelte';
+	import { isLoggedIn, userData } from '../../../shared/userData.svelte';
 	import { generateWordsAlgo2 } from '../../../algo/textGenerator';
 	import type { TypingContext, TypingContextData, TypingTestRunData } from '../../../types/interfaces';
 	import SmartTypingModeKeyboard from './smartTypingModeKeyboard.svelte';
@@ -27,19 +27,22 @@
 			typingTestRunData.keyPressTimings
 		);
 
-		userData.keyStatistics = updateKeyStatistics($state.snapshot(userData.keyStatistics), keypressData);
+		// userData.keyStatistics = updateKeyStatistics($state.snapshot(userData.keyStatistics), keypressData);
+		userData.keyStatistics = updateKeyStatistics(userData.keyStatistics, keypressData);
 
 		// saving the updated statistics
-		try {
-			fetchBackend(fetch, '/profile/saveKeyStatistic', {
-				method: 'POST',
-				body: {
-					keyStatistics: Array.from(userData.keyStatistics)
-				}
-			});
-		} catch (e) {
-			console.error(e);
-			showToast({ message: "Couldn't save fingers statistics" });
+		if (isLoggedIn()) {
+			try {
+				fetchBackend(fetch, '/profile/saveKeyStatistic', {
+					method: 'POST',
+					body: {
+						keyStatistics: Array.from(userData.keyStatistics)
+					}
+				});
+			} catch (e) {
+				console.error(e);
+				showToast({ message: "Couldn't save fingers statistics" });
+			}
 		}
 
 		onTypingEnd(typingTestRunData);
