@@ -57,8 +57,9 @@ export async function initUserData(data: any) {
     }
     const username = $state(data.username);
     const reactiveUserTypingConfig = $state(JSON.parse(data.userTypingConfig));
+    const reactiveKeyStatistics = $state(JSON.parse(data.keyStatistics));
     const userTypingConfig = createProxy(reactiveUserTypingConfig);
-    const keyStatistics = JSON.parse(data.keyStatistics);
+    const keyStatistics = createProxy(reactiveKeyStatistics);
 
     userData = {
         username: username,
