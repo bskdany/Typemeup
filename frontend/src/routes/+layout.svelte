@@ -34,7 +34,7 @@
 	let appBind: HTMLElement | undefined = $state();
 	$effect(() => {
 		if (appBind) {
-			console.warn("Style updated");
+			console.warn('Style updated');
 			appBind.style.setProperty('--background-color', userData.userTypingConfig.theme.colorScheme.backgroundColor.value);
 			appBind.style.setProperty('--primary-color', userData.userTypingConfig.theme.colorScheme.primaryColor.value);
 			appBind.style.setProperty('--secondary-color', userData.userTypingConfig.theme.colorScheme.secondaryColor.value);
@@ -51,7 +51,7 @@
 </script>
 
 <svelte:head>
-	<script defer src="https://analytics.bskdany.com/script.js" data-website-id={import.meta.env.VITE_ANALYTICS_ID}></script>
+	<script defer src="https://analytics.bskdany.com/script.js" data-website-id="018236e4-bf79-43d2-b935-faf47e3a0604"></script>
 </svelte:head>
 {#await hasInitialized()}
 	<TypingTestLoad />
